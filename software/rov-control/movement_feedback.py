@@ -29,6 +29,9 @@ PARAMETERS = [
     "roll.ki",
     "roll.kd",
     "floatability",
+    "pitch.kd",
+    "pitch.ki",
+    "pitch.kp"
 ]
 
 
@@ -55,7 +58,7 @@ class PID:
         """Creates a PID controller using provided PID parameters
 
         Args:
-            k_proportaiol (float): the proportional error constant of the desired PID
+            k_proportional (float): the proportional error constant of the desired PID
             k_integral (float): the Integral error constant of the desired PID
             k_derivative (float): the derivative error constant of the desired PID
         """
@@ -143,6 +146,9 @@ class Param:
     kp_roll: float
     ki_roll: float
     kd_roll: float
+    kp_pitch: float
+    kd_pitch: float
+    ki_pitch: float
     floatability: float
 
     windup_val_x = 0.1
@@ -150,6 +156,7 @@ class Param:
     windup_val_w = 0.1
     windup_val_depth = 0.1
     windup_val_roll = 0.1
+    windup_val_pitch = 0.1
 
     thruster_max = 1660
     thruster_min = 1310  # Changed to 1180 instead of 1160 to make sure that the center is 1485 which is a stoping value
@@ -185,6 +192,7 @@ class Measured:
     yaw = 0
     roll = 0
     depth = 0
+    pitch = 0
 
 
 @dataclasses.dataclass
@@ -196,6 +204,7 @@ class Reference:
     w_z = 0
     roll = 0
     depth = 0
+    pitch = 0
 
 
 @dataclasses.dataclass
@@ -238,8 +247,16 @@ def create_pid_objects(parameter_object: Param):
         k_integral=parameter_object.ki_roll,
         windup_val=parameter_object.windup_val_roll,
     )
+    pid_pitch = PID(
+        k_proportaiol= parameter_object.kp_depth,
+        k_derivative=parameter_object.kd_depth,
+        k_integral=parameter_object.ki_depth,
+        windup_val=parameter_object.windup_val_pitch
+    )
+        
+    
 
-    return pid_vx, pid_vy, pid_wz, pid_depth, pid_stabilization
+    return pid_vx, pid_vy, pid_wz, pid_depth, pid_stabilization, pid_pitch
 
 
 class Robot:
@@ -354,6 +371,8 @@ class CalibrationNode(Node):
             subscriber to ROV/depth with depth_recieved_callback callback 
             
             subscriber to ROV/imu with imu_recieved_callback callback function
+
+            subscriber to ROV/pitch with pitch_received_callback callback function            
         """
         self.thrusters_voltages_publisher = self.create_publisher(
             Float32MultiArray, "ROV/thrusters", 10
@@ -366,6 +385,9 @@ class CalibrationNode(Node):
         )
         self.imu_subscriber = self.create_subscription(
             Imu, "ROV/imu", self.imu_recieved_callback, 10
+        )
+        self.pitch_subscriber = self.create_subscription(
+            Float64, "ROV/pitch", self.pitch_received_callback, 10
         )
         """
             self.timer {Timer object}: timer with timer_callback as callback function that is called 
@@ -405,6 +427,7 @@ class CalibrationNode(Node):
             self.pid_wz,
             self.pid_depth,
             self.pid_stabilization,
+            self.pid_pitch
         ) = create_pid_objects(self.PARAM)
 
     def log_parameters(self, parameters_dict: dict):
@@ -545,6 +568,10 @@ class CalibrationNode(Node):
 
         planer_thrusters_list.append(phi_5)
         planer_thrusters_list.append(phi_6)
+        phi_7 = self.pid_pitch.compute(self.actual.pitch, self.desired.pitch)
+        phi_7 = max(phi_7, self.PARAM.thruster_side_min)
+        phi_7 = min(phi_7, self.PARAM.thruster_side_max)
+        planer_thrusters_list.append(phi_7)
 
         # create the message instance
         thrusters_voltages = Float32MultiArray()
@@ -569,7 +596,14 @@ class CalibrationNode(Node):
         self.desired.v_y = twist_msg.linear.y
         self.desired.depth = twist_msg.linear.z
         self.desired.w_z = twist_msg.angular.z
+    def pitch_received_callback(self, pitch_msg: Float64):
+        """updates the target pitch
 
+        Args:
+            pitch_msg (Float64): pitch in degrees
+        """
+        self.get_logger().info(f"Target pitch: {pitch_msg.data}")
+        self.desired.pitch = pitch_msg.data
     def depth_recieved_callback(self, depth_msg: Float64):
         """callback function for the subscriber to the ROV/depth topic and updates teh self.actual attribute
 
@@ -590,13 +624,14 @@ class CalibrationNode(Node):
             imu.angular_velocity.y,
             imu.angular_velocity.z,
         ]
-        roll, _pith, yaw = euler_from_quaternion(
+        roll, pitch, yaw = euler_from_quaternion(
             [imu.orientation.x, imu.orientation.y, imu.orientation.z, imu.orientation.w]
         )
 
         self.actual.w_z = yaw_dot * -1
         self.actual.yaw = yaw * 180 / math.pi
         self.actual.roll = roll * 180 / math.pi
+        self.actual.pitch = pitch * 180 / math.pi
 
         self.get_logger().info(
             f"actual w_z: {self.actual.w_z}, roll: {self.actual.roll}, yaw: {self.actual.yaw}"
