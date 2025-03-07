@@ -7,39 +7,36 @@ import rclpy.logging
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 import rclpy.parameter
-from std_msgs.msg import Float64, Float32MultiArray
+from std_msgs.msg import Float64, Float32MultiArray,Bool
 from sensor_msgs.msg import Imu
 from tf_transformations import euler_from_quaternion
 from rcl_interfaces.msg import SetParametersResult
 
-
-"""
-    PID Controller Equation:
-    
-        u(t) = Kp * e(t) + Ki * ∫ e(t) dt + Kd * d(e(t))/dt
-"""
-
-"""
-list of PID parameters that is used for different control axes
-"""
-
 PARAMETERS = [
-    "x.kp",   # PID parameters of proportional gain for x axis
-    "x.ki",   # PID parameters of integral gain for x axis
-    "x.kd",   # PID parameters of derivative gain for x axis
-    "y.kp",   # PID parameters of proportional gain for y axis
-    "y.ki",   # PID parameters of integral gain for y axis
-    "y.kd",   # PID parameters of derivative gain for y axis
-    "w.kp",   # PID parameters of proportional gain for angular velocity (yaw)
-    "w.ki",   # PID parameters of integral gain for angular velocity (yaw)
-    "w.kd",   # PID parameters of derivative gain for angular velocity (yaw)
-    "depth.kp", # PID parameters of proportional gain for depth
-    "depth.ki", # PID parameters of integral gain for depth
-    "depth.kd", # PID parameters of derivative gain for depth
-    "roll.kp",  # PID parameters of proportional gain for roll
-    "roll.ki",  # PID parameters of integral gain for roll
-    "roll.kd",  # PID parameters of derivative gain for roll
-    "floatability", # Parameter for buoyancy adjustments
+    "x.kp",
+    "x.ki",
+    "x.kd",
+    "y.kp",
+    "y.ki",
+    "y.kd",
+    "w.kp",
+    "w.ki",
+    "w.kd",
+    "depth.kp",
+    "depth.ki",
+    "depth.kd",
+    "roll.kp",
+    "roll.ki",
+    "roll.kd",
+    "floatability",
+    "pitch.kd",
+    "pitch.ki",
+    "pitch.kp",
+    ###
+    "yaw.kp",
+    "yaw.ki",
+    "yaw.kd"
+    ###
 ]
 
 
@@ -47,10 +44,10 @@ PARAMETERS = [
 class ErrorVal:
     """PID error terms"""
 
-    e_sum: float = 0  # Integral of error
-    d_error: float = 0    # Derivative of error
-    current_error: float = 0    # Current error
-    prev_error: float = 0       # Previous error
+    e_sum: float = 0
+    d_error: float = 0
+    current_error: float = 0
+    prev_error: float = 0
 
 
 class PID:
@@ -66,7 +63,7 @@ class PID:
         """Creates a PID controller using provided PID parameters
 
         Args:
-            k_proportaiol (float): the proportional error constant of the desired PID
+            k_proportional (float): the proportional error constant of the desired PID
             k_integral (float): the Integral error constant of the desired PID
             k_derivative (float): the derivative error constant of the desired PID
         """
@@ -75,7 +72,7 @@ class PID:
         self.k_derivative = k_derivative
         self.pid: float = 0
         self.error = ErrorVal()
-        self.windup_val = windup_val  # Windup threshold for integral reset
+        self.windup_val = windup_val
 
     def compute(self, ref: float, measured: float) -> float:
         """Computes the PID value based on the given reference and measured output values
@@ -95,8 +92,8 @@ class PID:
             + self.k_integral * self.error.e_sum
             + self.k_derivative * self.error.d_error
         )
-        self.error.prev_error = self.error.current_error  # Update previous error to the current error for the next iteration
-        if self.error.current_error <= self.windup_val: # Prevent integral windup by resetting accumulated error if it is within limits
+        self.error.prev_error = self.error.current_error
+        if self.error.current_error <= self.windup_val:
             self.error.e_sum = 0
         return self.pid
 
@@ -138,7 +135,7 @@ def map_from_to(
 @dataclasses.dataclass
 class Param:
     """Tuning and utils params"""
-    # PID Gains for different axes
+
     kp_x: float
     ki_x: float
     kd_x: float
@@ -154,23 +151,30 @@ class Param:
     kp_roll: float
     ki_roll: float
     kd_roll: float
+    ###
+    kp_yaw: float
+    ki_yaw: float
+    kd_yaw: float
+    ###
+    kp_pitch: float
+    kd_pitch: float
+    ki_pitch: float
     floatability: float
 
-    # Windup limits for integral term in PID controllers
     windup_val_x = 0.1
     windup_val_y = 0.1
     windup_val_w = 0.1
     windup_val_depth = 0.1
     windup_val_roll = 0.1
+    windup_val_pitch = 0.1
+    windup_val_yaw = 0.1
 
-    # Thruster limits
     thruster_max = 1660
     thruster_min = 1310  # Changed to 1180 instead of 1160 to make sure that the center is 1485 which is a stoping value
 
     thruster_side_max = 1700
     thruster_side_min = 1300
 
-    # Velocity and angular constraints
     # corredponding to motion control node
     # TODO: adjust the PARAM.min and PARAM.max to all 3 motions
     max_vx = 3
@@ -182,8 +186,11 @@ class Param:
     max_pool_depth = 1
     max_roll = 90
     min_roll = -90
+    ###
+    min_yaw=-180
+    max_yaw=180
+    ###
 
-  # Sensor calibration offsets for the IMU
     accel_x_offset = 0
     accel_y_offset = 0
     accel_z_offset = 0
@@ -192,13 +199,16 @@ class Param:
 
 @dataclasses.dataclass
 class Measured:
-    """Stores real-time sensor measurements of the ROV."""
-    v_x = 0  # Measured x-axis velocity
-    v_y = 0  # Measured y-axis velocity
-    w_z = 0  # Measured angular velocity (yaw)
-    yaw = 0  # Yaw angle
-    roll = 0  # Roll angle
-    depth = 0  # Current depth
+    """Sensor measurments"""
+
+    v_x = 0
+    v_y = 0
+    w_z = 0
+    yaw = 0
+    roll = 0
+    depth = 0
+    pitch = 0
+
 
 @dataclasses.dataclass
 class Reference:
@@ -209,6 +219,11 @@ class Reference:
     w_z = 0
     roll = 0
     depth = 0
+    pitch = 0
+    ###
+    yaw=0
+    ###
+
 
 
 @dataclasses.dataclass
@@ -221,7 +236,6 @@ class Time:
 
 
 def create_pid_objects(parameter_object: Param):
-    """Creates and initializes PID controllers using provided parameters."""
     pid_vx = PID(
         k_proportaiol=parameter_object.kp_x,
         k_derivative=parameter_object.kd_x,
@@ -252,16 +266,32 @@ def create_pid_objects(parameter_object: Param):
         k_integral=parameter_object.ki_roll,
         windup_val=parameter_object.windup_val_roll,
     )
+    pid_pitch = PID(
+        k_proportaiol= parameter_object.kp_depth,
+        k_derivative=parameter_object.kd_depth,
+        k_integral=parameter_object.ki_depth,
+        windup_val=parameter_object.windup_val_pitch
+    )
+    ###
+    pid_yaw= PID(  
+        k_proportaiol=parameter_object.kp_yaw,
+        k_derivative=parameter_object.kd_yaw,
+        k_integral=parameter_object.ki_yaw,
+        windup_val=parameter_object.windup_val_yaw,  
+    )
+    ###
 
-    return pid_vx, pid_vy, pid_wz, pid_depth, pid_stabilization
+    return pid_vx, pid_vy, pid_wz, pid_depth, pid_stabilization, pid_pitch,pid_yaw
 
 
 class Robot:
     """Robot Class to solve the kinematic model"""
 
     @staticmethod
-    def kinematic_control(pid_val_x: float, pid_val_y: float, pid_val_w: float) -> List:
-        """_summary_
+    def kinematic_control(pid_val_x: float, pid_val_y: float, pid_val_w: float ) -> List:
+        """
+        Calculates the thrusters' values based on their position and the desired
+        planner movement
 
         Args:
             pid_val_x (float): PID value calculated for the error in x velocity
@@ -310,7 +340,8 @@ class Robot:
         min_phi_val: float,
         max_phi_val: float,
     ) -> List:
-        """_summary_
+        """
+        Bounds the value of the thrusters between the max and min values for each one
 
         Args:
             phi_1 (float): Unsaturated thruster 1 value in the ROV configuration
@@ -337,15 +368,42 @@ class Robot:
 
 
 class CalibrationNode(Node):
+    """
+        Node That subscribes to the sensors and cmd_vel topics, calculates the thrusters' values, and 
+        publishes them to thrusters topic.
+
+        Node name: kinematic_model
+    """
     def __init__(self):
+        """
+            t {Time object}: stores time data for integrating and differentiating
+
+            actual {Measured object}: The actual position and orientation of the rov
+
+            desired {Reference object}: The target position and orientation
+        """
         self.t = Time()
         self.actual = Measured()
         self.desired = Reference()
-
         self.t.t_prev = time()
 
-        super().__init__("kinematic_model")
+        ###
+        self.is_rotating = False  # Is the ROV currently rotating?
+        self.rotation_stage = 0  # 0: Full rotation, 1: Tilt & rotate
+        ###
 
+        super().__init__("kinematic_model")
+        """
+            publisher to ROV/thrusters topic
+
+            subscriber to ROV/cmd_vel with cmd_vel_recieved_callback callback function
+
+            subscriber to ROV/depth with depth_recieved_callback callback 
+            
+            subscriber to ROV/imu with imu_recieved_callback callback function
+
+            subscriber to ROV/pitch with pitch_received_callback callback function            
+        """
         self.thrusters_voltages_publisher = self.create_publisher(
             Float32MultiArray, "ROV/thrusters", 10
         )
@@ -358,7 +416,29 @@ class CalibrationNode(Node):
         self.imu_subscriber = self.create_subscription(
             Imu, "ROV/imu", self.imu_recieved_callback, 10
         )
+        self.pitch_subscriber = self.create_subscription(
+            Float64, "ROV/pitch", self.pitch_received_callback, 10
+        )
+        ###
+        self.rotating_button_subscriber = self.create_subscription(
+            Bool, "ROV/rotating", self.rotating_button_callback, 10
+        )
 
+        ###
+        """
+            self.timer {Timer object}: timer with timer_callback as callback function that is called 
+            every 0.01 sec
+
+            Rov {Robot object}: Calculates the values for the planner thrusters
+
+            self.declare_parameters, self.add_on_set_parameters_callback and parameters_callback 
+            set the parameters the declare_parameters takes a list of tuples each having the parameter 
+            name and optionally its value. The add_on_set_parameters_callback function is then called for 
+            once for each parameter which runs the parameters_callback that uses setattr and updates the 
+            parameters dictionary. The log_parameters function is called each time parameters_callback is 
+            called.
+
+        """
         self.timer = self.create_timer(0.01, self.timer_callback)
 
         self.ROV = Robot()
@@ -383,9 +463,18 @@ class CalibrationNode(Node):
             self.pid_wz,
             self.pid_depth,
             self.pid_stabilization,
+            self.pid_pitch,
+            ###
+            self.pid_yaw
+            ###
         ) = create_pid_objects(self.PARAM)
 
     def log_parameters(self, parameters_dict: dict):
+        """loops over the parameters_dict and logs them using get_logger
+
+        Args:
+            parameters_dict (dict): the parameters' dictionary 
+        """
         self.get_logger().info("Logging received parameters...")
         for param, param_value in parameters_dict.items():
 
@@ -394,6 +483,15 @@ class CalibrationNode(Node):
         self.get_logger().info("Logging parameters done...")
 
     def parameters_callback(self, params):
+        """
+            sets the parameters attribute given a 
+
+        Args:
+            params (tuple or list of tuples): tuples contain the parameter's name and optionally its value
+
+        Returns:
+            set_result(SetParametersResult): an object indicating the result of setting a parameter
+        """
 
         for param in params:
             name = vars(param)["_name"]
@@ -410,12 +508,49 @@ class CalibrationNode(Node):
         return SetParametersResult(successful=True)
 
     def timer_callback(self):
+        """
+            The main tick function that updates the thrusters' values based on the latest
+            data from the sensors and cmd_vel
+        """
+
+        """
+            updates the desired velocities in the x and y axis and the desired depth using the 
+            proportional constants  
+        """
         v_x = self.desired.v_x * self.PARAM.kp_x
         v_y = self.desired.v_y * self.PARAM.kp_y
         d_z = self.desired.depth * self.PARAM.kp_depth
-
+        """calculates the angular velocity around the z axis (the yaw)
+        """
         w_z = self.pid_wz.compute(self.desired.w_z, self.actual.w_z)
 
+    ### logic for rotation
+        if self.is_rotating:
+            yaw_error = (self.desired.yaw - self.actual.yaw + 180) % 360 - 180  # Normalize to [-180, 180]
+
+        if self.rotation_stage == 0:  # First 360° rotation
+            if abs(yaw_error) > 2:  # If yaw error is significant, keep rotating
+                self.desired.w_z = 1  # Maintain rotation
+            else:
+                self.desired.w_z = 0  # Stop rotation
+                self.rotation_stage = 1  # Move to next stage
+                self.desired.yaw = (self.actual.yaw + 360) % 360  # Set new yaw target
+                self.desired.pitch = 45  # Tilt ROV
+                self.get_logger().info("First rotation complete! Tilting and rotating again...")
+
+        elif self.rotation_stage == 1:  # Second 360° rotation (with tilt)
+            if abs(yaw_error) > 2:
+                self.desired.w_z = 1
+            else:
+                self.desired.w_z = 0
+                self.is_rotating = False  # Stop after second rotation
+                self.get_logger().info("Second rotation complete! Motion stopped.")
+    ###
+
+        """
+            calculate the four planner thrusters' values and  bounds them between the minimum and
+            maximum value for the thrusters 
+        """
         phi_1, phi_2, phi_3, phi_4 = self.ROV.kinematic_control(v_x, v_y, w_z)
         min_phi_val, max_phi_val = self.ROV.find_phi_boudary_values(self.PARAM)
 
@@ -427,7 +562,8 @@ class CalibrationNode(Node):
             min_phi_val,
             max_phi_val,
         )
-
+        """scales the values of each thruster and add them to a list: planer_thrusters_list 
+        """
         phi_1 = map_from_to(
             phi_1,
             min_phi_val,
@@ -459,8 +595,12 @@ class CalibrationNode(Node):
 
         planer_thrusters_list = [phi_2, phi_1, phi_3, phi_4]
 
+        """
+            initialize the distance between the actual depth value and the desired value and
+            multiply it with the proportionality constant then scale it between the max and min
+            values of the side thrusters 
+        """
         depth_error = self.desired.depth - self.actual.depth
-
         correction_value = depth_error * self.PARAM.kp_depth
         depth_thruster = map_from_to(
             correction_value,
@@ -470,6 +610,12 @@ class CalibrationNode(Node):
             self.PARAM.thruster_side_max,
         )
 
+        """
+            adjust the side thrusters' values to account for changes in the roll and add them
+            to the planer_thrusters_list which is used to populate a Float32MultiArray. 
+            the thrusters_voltages message data is logged and then the message is published to
+            the  ROV/thrusters topic  
+        """
         stabilization_actuation = self.pid_stabilization.compute(
             self.desired.roll, self.actual.roll
         )
@@ -484,6 +630,10 @@ class CalibrationNode(Node):
 
         planer_thrusters_list.append(phi_5)
         planer_thrusters_list.append(phi_6)
+        phi_7 = self.pid_pitch.compute(self.actual.pitch, self.desired.pitch)
+        phi_7 = max(phi_7, self.PARAM.thruster_side_min)
+        phi_7 = min(phi_7, self.PARAM.thruster_side_max)
+        planer_thrusters_list.append(phi_7)
 
         # create the message instance
         thrusters_voltages = Float32MultiArray()
@@ -496,8 +646,34 @@ class CalibrationNode(Node):
 
         self.thrusters_voltages_publisher.publish(thrusters_voltages)
 
+
+    ### 
+    def rotating_button_callback(self, msg: Bool):
+        """callback function for the subscriber to the ROV/rotating topic and updates t self.actual attribute
+
+        Args:
+            msg (Bool): boolean sent by the button of rotating
+        """
+        if msg.data :
+            if self.is_rotating:  # to stop it by pressing the button again
+                self.desired.w_z=0
+                self.is_rotating = False
+
+            else:
+            # Start first rotation (360°)
+                self.is_rotating = True
+                self.rotation_stage = 0  # Start first rotation
+                self.desired.yaw = (self.actual.yaw + 360) % 360  # Target yaw
+                self.get_logger().info("Rotation Started!")
+        
+    ###
+
+
+
     def cmd_vel_recieved_callback(self, twist_msg: Twist):
-        """callback function for the subscriber to the ROV/cmd_vel topic
+        """
+            callback function for the subscriber to the ROV/cmd_vel topic 
+            updating the self.desired attribute 
 
         Args:
             msg (Twist): Twist message sent by the control node
@@ -507,8 +683,16 @@ class CalibrationNode(Node):
         self.desired.depth = twist_msg.linear.z
         self.desired.w_z = twist_msg.angular.z
 
+    def pitch_received_callback(self, pitch_msg: Float64):
+        """updates the target pitch
+
+        Args:
+            pitch_msg (Float64): pitch in degrees
+        """
+        self.get_logger().info(f"Target pitch: {pitch_msg.data}")
+        self.desired.pitch = pitch_msg.data
     def depth_recieved_callback(self, depth_msg: Float64):
-        """callback function for the subscriber to the ROV/depth topic
+        """callback function for the subscriber to the ROV/depth topic and updates teh self.actual attribute
 
         Args:
             msg (Float64): depth sent by the the depth sensor
@@ -518,7 +702,7 @@ class CalibrationNode(Node):
         self.actual.depth = depth_msg.data
 
     def imu_recieved_callback(self, imu: Imu):
-        """recieves the imu readings from the MPU9025
+        """recieves the imu readings from the MPU9025 and updates the self.actual attribute
         Args:
             imu (sensor_msgs/Imu): sensor message containing linear accelerations and angular velocities
         """
@@ -527,13 +711,14 @@ class CalibrationNode(Node):
             imu.angular_velocity.y,
             imu.angular_velocity.z,
         ]
-        roll, _pith, yaw = euler_from_quaternion(
+        roll, pitch, yaw = euler_from_quaternion(
             [imu.orientation.x, imu.orientation.y, imu.orientation.z, imu.orientation.w]
         )
 
         self.actual.w_z = yaw_dot * -1
         self.actual.yaw = yaw * 180 / math.pi
         self.actual.roll = roll * 180 / math.pi
+        self.actual.pitch = pitch * 180 / math.pi
 
         self.get_logger().info(
             f"actual w_z: {self.actual.w_z}, roll: {self.actual.roll}, yaw: {self.actual.yaw}"
