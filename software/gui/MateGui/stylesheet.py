@@ -28,7 +28,7 @@ QPushButton {
     color: white; 
     border-radius: 10px; 
     border: 2px solid #3498DB; 
-    font-family: "Gill Sans", sans-serif; 
+    font-family: "Gill Sans", sans-serif;
     font-size: 24px;
     padding: 12px 24px;  
 
@@ -52,7 +52,7 @@ QLabel {
     padding-left: 20px;
     padding-right: 20px;
     background-color: #2980B9;
-    font-family: "Arial", sans-serif; 
+    font-family: "Gill Sans", sans-serif;
     font-size: 16px;  
 }
 
@@ -73,7 +73,7 @@ QLabel {
     padding-left: 20px;
     padding-right: 20px;
     background-color: rgb(34, 36, 44);
-    font-family: "Arial", sans-serif; 
+    font-family: "Gill Sans", sans-serif;
     font-size: 16px; 
 }
 
@@ -108,3 +108,4 @@ QPushButton:pressed {
     border-color: #B03A2E;  
 }
 """
+apply_st=' font-family: "Gill Sans", sans-serif;  /* Custom font */'
