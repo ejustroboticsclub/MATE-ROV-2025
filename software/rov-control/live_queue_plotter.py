@@ -41,14 +41,4 @@ def draw():
     print("updated the figure")
     plt.pause(0.001)
 
-def main_loop():
-    while True:
-        new_point = random.randint(0, 80)
-        update(new_point)
-        draw()
-        print("<<<main thread active>>>")
-        time.sleep(0.1)
 
-if __name__ == '__main__':
-    fig = initialize_queue(100, 10)
-    main_loop()
