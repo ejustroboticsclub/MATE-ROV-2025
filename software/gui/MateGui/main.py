@@ -1,9 +1,11 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QDialog
+from PyQt5.QtGui import QFont
 from landingPage import LandingPageUi
 from pilot import PilotUi
-from copilot import CopilotUi
+from copilot import CopilotUi, CAM_PORTS
 from engineer import EngineerUi
+from Float import FloatUi
 from utils import VideoCaptureThread 
 
 class MainWindow(QMainWindow):
@@ -17,6 +19,7 @@ class MainWindow(QMainWindow):
         self.pilot_page = QDialog()
         self.co_pilot_page = QDialog()
         self.engineer_page = QDialog()
+        self.float_page = QDialog()
 
         # code for Setting up the UI for each page
         self.landing_page_ui = LandingPageUi()
@@ -25,7 +28,10 @@ class MainWindow(QMainWindow):
         self.pilot_ui = PilotUi()
         self.pilot_ui.setupUi(self.pilot_page)
 
-        self.co_pilot_ui = CopilotUi()
+        self.float_ui = FloatUi()
+        self.float_ui.setupUi(self.float_page)
+
+        self.co_pilot_ui = CopilotUi("192.168.216.175", "suzuki", "samir2023")
         self.co_pilot_ui.setupUi(self.co_pilot_page)
 
         self.engineer_ui = EngineerUi()
@@ -36,6 +42,7 @@ class MainWindow(QMainWindow):
         self.stacked_widget.addWidget(self.pilot_page)
         self.stacked_widget.addWidget(self.co_pilot_page)
         self.stacked_widget.addWidget(self.engineer_page)
+        self.stacked_widget.addWidget(self.float_page)
 
         
         self.setCentralWidget(self.stacked_widget)
@@ -44,10 +51,12 @@ class MainWindow(QMainWindow):
         self.landing_page_ui.PilotButton.clicked.connect(self.show_pilot_page)
         self.landing_page_ui.CoButton.clicked.connect(self.show_co_pilot_page)
         self.landing_page_ui.EngButton.clicked.connect(self.show_engineer_page)
+        self.landing_page_ui.FloatButton.clicked.connect(self.show_float_page)
 
         self.pilot_ui.BackButton.clicked.connect(self.show_landing_page)
         self.co_pilot_ui.back_button.clicked.connect(self.show_landing_page)
         self.engineer_ui.BackButton.clicked.connect(self.show_landing_page)
+        self.float_ui.back_button.clicked.connect(self.show_landing_page)
 
         
         self.video_thread = VideoCaptureThread()
@@ -68,6 +77,9 @@ class MainWindow(QMainWindow):
     def show_engineer_page(self):
         self.stacked_widget.setCurrentWidget(self.engineer_page)
 
+    def show_float_page(self):
+        self.stacked_widget.setCurrentWidget(self.float_page)
+
     def start_recording(self):
         self.video_thread.start_recording()
 
@@ -76,6 +88,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setFont = QFont()
     window = MainWindow()
     window.setWindowTitle("Mate ROV 2025")
     window.resize(930, 600)

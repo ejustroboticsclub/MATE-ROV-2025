@@ -7,7 +7,6 @@ QPushButton {
     color: white;  
     border-radius: 10px; 
     border: 2px solid #3498DB; 
-    font-size: 16px;  
     padding: 10px 20px; 
 
 }
@@ -29,7 +28,7 @@ QPushButton {
     border-radius: 10px; 
     border: 2px solid #3498DB; 
     font-family: "Gill Sans", sans-serif;
-    font-size: 24px;
+
     padding: 12px 24px;  
 
 }
@@ -53,7 +52,7 @@ QLabel {
     padding-right: 20px;
     background-color: #2980B9;
     font-family: "Gill Sans", sans-serif;
-    font-size: 16px;  
+
 }
 
 QLabel:hover {
@@ -74,7 +73,7 @@ QLabel {
     padding-right: 20px;
     background-color: rgb(34, 36, 44);
     font-family: "Gill Sans", sans-serif;
-    font-size: 16px; 
+
 }
 
 QLabel:hover {
@@ -93,7 +92,7 @@ QPushButton {
     border-radius: 10px; 
     border: 2px solid #B03A2E;
     font-family: "Gill Sans", sans-serif;
-    font-size: 16px; 
+
     padding: 12px 24px; 
 
 }
@@ -108,4 +107,87 @@ QPushButton:pressed {
     border-color: #B03A2E;  
 }
 """
-apply_st=' font-family: "Gill Sans", sans-serif;  /* Custom font */'
+apply_st="""            QPushButton {
+                background-color: rgba(0, 0, 0, 0.2);
+                border: none;
+                border-radius: 8px;
+                padding: 6px;
+                font-family: "Gill Sans", sans-serif;
+                color: white;
+            }
+            QPushButton:hover, QPushButton:pressed {
+                background-color: rgba(0, 0, 0, 0.2);
+            }"""
+
+back_st="""
+    QPushButton {
+        background-color: rgba(0, 0, 0, 0.2);
+        border: none;
+        border-radius: 8px;
+        padding: 6px;
+        font-family: "Gill Sans", sans-serif;
+        color: white;
+    }
+    QPushButton:hover, QPushButton:pressed {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+"""
+
+selection_st="""    QComboBox {
+        background-color: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 6px;
+        padding: 5px 30px 5px 10px;
+        font-family: "Gill Sans", sans-serif;
+        color: white;
+        selection-background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    QComboBox::drop-down {
+        subcontrol-origin: padding;
+        subcontrol-position: right center;
+        width: 25px;
+        border: none;
+        background: transparent;
+    }
+    
+    QComboBox::down-arrow {
+        image: none;
+        width: 0; 
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 7px solid rgba(255, 255, 255, 0.8);
+    }
+    
+
+    
+    QComboBox:hover {
+        background-color: rgba(0, 0, 0, 0.25);
+    }
+    
+    /* Keep the previous item view styling */
+    QComboBox QAbstractItemView {
+        background-color: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        color: white;
+        font-family: "Gill Sans", sans-serif;
+        selection-background-color: rgba(255, 255, 255, 0.2);
+        outline: none;
+    }"""
+float_st="""QLabel {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 8px;
+    padding: 6px;
+    font-family: "Gill Sans", sans-serif;
+    color: white;
+    text-align: center; /* Center the text horizontally */
+    vertical-align: middle; /* Center the text vertically */
+}
+
+QPushButton:hover, QPushButton:pressed {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+"""

@@ -8,12 +8,15 @@ from PyQt5.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PyQt5.QtWidgets import (QApplication, QDialog, QLabel, QPushButton,
     QSizePolicy, QWidget)
 
-from stylesheet import Engineer_buttons_st
+from stylesheet import Engineer_buttons_st , back_st
 
 class PilotUi(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(928, 596)
+        QFontDatabase.addApplicationFont("Gill Sans.otf")
+        font=QFont("Gill Sans",24)
+        Afont=QFont("Gill Sans",13)
 
         # Background
         self.Bg_label = QLabel(Dialog)
@@ -29,12 +32,15 @@ class PilotUi(object):
         icon = QIcon()
         icon = QIcon.fromTheme("go-previous")  
         self.BackButton.setIcon(icon)
+        self.BackButton.setStyleSheet(back_st)
+        self.BackButton.setFont(Afont)
 
         # Camera system button
         self.CamButton = QPushButton(Dialog)
         self.CamButton.setObjectName("Launching the Camera system button")
         self.CamButton.setGeometry(QRect(290, 240, 351, 81))
         self.CamButton.setStyleSheet(Engineer_buttons_st)
+        self.CamButton.setFont(font)
 
         self.setText(Dialog)
 
