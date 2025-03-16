@@ -18,6 +18,8 @@ CAM_PORTS = {
 
 class CopilotUi(object):
     
+    
+    #unhash line 26 here when testing on rpi 
     def __init__(self, ip, username, password):
         self.ip = ip
         self.username = username

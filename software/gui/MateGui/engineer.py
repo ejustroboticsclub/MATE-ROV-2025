@@ -10,9 +10,6 @@ class EngineerUi(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(928, 596)
         font_path = os.path.abspath("GillSans.ttf")
-
-
-        # Try loading the font
         id = QFontDatabase.addApplicationFont(font_path)
         if id == -1:
             print("Failed to load font!")

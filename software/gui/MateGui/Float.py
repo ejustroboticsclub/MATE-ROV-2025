@@ -96,10 +96,10 @@ class FloatUi(object):
         QMetaObject.connectSlotsByName(Dialog)
 
     def setText(self, Dialog):
-        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
+        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", "Dialog", None))
         self.Bg_label.setText("")
         self.Dlabel.setText("")
-        self.DT.setText(QCoreApplication.translate("Dialog", u"    Depth Tracker", None))
-        self.time.setText(QCoreApplication.translate("Dialog", u"Time", None))
-        self.depth.setText(QCoreApplication.translate("Dialog", u"Depth ", None))
+        self.DT.setText(QCoreApplication.translate("Dialog", "   Depth Tracker", None))
+        self.time.setText(QCoreApplication.translate("Dialog", "Time", None))
+        self.depth.setText(QCoreApplication.translate("Dialog","Depth ", None))
         self.back_button.setText(QCoreApplication.translate("Dialog", "Back", None))
