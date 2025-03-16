@@ -2,18 +2,28 @@ from PyQt5.QtCore import QCoreApplication, QMetaObject, QRect, Qt
 from PyQt5.QtGui import QIcon, QPixmap, QFont, QFontDatabase
 from PyQt5.QtWidgets import QLabel, QPushButton, QSlider, QComboBox, QFrame
 from stylesheet import Copilot_st1, Copilot_st2, float_st , back_st , Engineer_buttons_st
-
+import os
+from utils import BG_path
 class FloatUi(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(930, 599)
-        QFontDatabase.addApplicationFont("Gill Sans.otf")
-        font=QFont("Gill Sans",16)
+        font_path = os.path.abspath("GillSans.ttf")
+
+
+        # Try loading the font
+        id = QFontDatabase.addApplicationFont(font_path)
+        if id == -1:
+            print("Failed to load font!")
+        
+        families = QFontDatabase.applicationFontFamilies(id)
+        font=QFont(families[0],13)
+        Afont=QFont(families[0],15)
         # Background
         self.Bg_label = QLabel(Dialog)
         self.Bg_label.setObjectName("BG label")
-        self.Bg_label.setGeometry(QRect(-3, -5, 931, 601))
-        self.Bg_label.setPixmap(QPixmap("Visuals/Background(final).jpg"))
+        self.Bg_label.setGeometry(QRect(-3, -5, 945, 607))
+        self.Bg_label.setPixmap(QPixmap(BG_path))
         self.Bg_label.setScaledContents(True)
 
         self.Dlabel = QLabel(Dialog)
@@ -31,7 +41,7 @@ class FloatUi(object):
         self.DT.setObjectName(u"label_3")
         self.DT.setGeometry(QRect(350, 10, 201, 41))
         self.DT.setStyleSheet(Copilot_st1)
-        self.DT.setFont(font)
+        self.DT.setFont(Afont)
 
         self.time = QLabel(Dialog)
         self.time.setObjectName("label_4")
@@ -89,7 +99,7 @@ class FloatUi(object):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
         self.Bg_label.setText("")
         self.Dlabel.setText("")
-        self.DT.setText(QCoreApplication.translate("Dialog", u"      Depth Tracker", None))
+        self.DT.setText(QCoreApplication.translate("Dialog", u"    Depth Tracker", None))
         self.time.setText(QCoreApplication.translate("Dialog", u"Time", None))
         self.depth.setText(QCoreApplication.translate("Dialog", u"Depth ", None))
         self.back_button.setText(QCoreApplication.translate("Dialog", "Back", None))

@@ -3,6 +3,7 @@ from PyQt5.QtGui import (QIcon, QPixmap)
 from PyQt5.QtWidgets import (QLabel, QPushButton)
 
 from stylesheet import Laning_buttons_st
+from utils import BG_path ,copilot_path,pilot_path,engineer_path,float_path
 class LandingPageUi(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -11,8 +12,8 @@ class LandingPageUi(object):
         # Background
         self.Bg_label = QLabel(Dialog)
         self.Bg_label.setObjectName("BG label")
-        self.Bg_label.setGeometry(QRect(-3, -5, 931, 601))
-        self.Bg_label.setPixmap(QPixmap("Visuals/Background(final).jpg"))
+        self.Bg_label.setGeometry(QRect(-3, -5, 945, 607))
+        self.Bg_label.setPixmap(QPixmap(BG_path))
         self.Bg_label.setScaledContents(True)
 
         # Pilot button
@@ -21,7 +22,7 @@ class LandingPageUi(object):
         self.PilotButton.setGeometry(QRect(240, 100, 201, 201))
         self.PilotButton.setStyleSheet(Laning_buttons_st)
         icon = QIcon()
-        icon.addFile("Visuals/pilot(final).png", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(pilot_path, QSize(), QIcon.Normal, QIcon.Off)
         self.PilotButton.setIcon(icon)
         self.PilotButton.setIconSize(QSize(158, 140))
 
@@ -31,7 +32,7 @@ class LandingPageUi(object):
         self.CoButton.setGeometry(QRect(490, 100, 201, 201))
         self.CoButton.setStyleSheet(Laning_buttons_st)
         icon1 = QIcon()
-        icon1.addFile("Visuals/copilot(final).png", QSize(), QIcon.Normal, QIcon.Off)
+        icon1.addFile(copilot_path, QSize(), QIcon.Normal, QIcon.Off)
         self.CoButton.setIcon(icon1)
         self.CoButton.setIconSize(QSize(158, 135))
 
@@ -41,7 +42,7 @@ class LandingPageUi(object):
         self.EngButton.setGeometry(QRect(240, 330, 201, 191))
         self.EngButton.setStyleSheet(Laning_buttons_st)
         icon2 = QIcon()
-        icon2.addFile("Visuals/Engineer(final).png", QSize(), QIcon.Normal, QIcon.Off)
+        icon2.addFile(engineer_path, QSize(), QIcon.Normal, QIcon.Off)
         self.EngButton.setIcon(icon2)
         self.EngButton.setIconSize(QSize(140, 140))
 
@@ -51,7 +52,7 @@ class LandingPageUi(object):
         self.FloatButton.setGeometry(QRect(489, 331, 201, 191))
         self.FloatButton.setStyleSheet(Laning_buttons_st)
         icon3 = QIcon()
-        icon3.addFile("Visuals/Float(final).png", QSize(), QIcon.Normal, QIcon.Off)
+        icon3.addFile(float_path, QSize(), QIcon.Normal, QIcon.Off)
         self.FloatButton.setIcon(icon3)
         self.FloatButton.setIconSize(QSize(160, 160))
 
@@ -66,4 +67,3 @@ class LandingPageUi(object):
         self.CoButton.setText("")
         self.EngButton.setText("")
         self.FloatButton.setText("")
-

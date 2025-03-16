@@ -2,8 +2,11 @@ from PyQt5.QtCore import QCoreApplication, QMetaObject, QRect, Qt
 from PyQt5.QtGui import QIcon, QPixmap , QFont ,QFontDatabase
 from PyQt5.QtWidgets import QLabel, QPushButton , QSlider , QComboBox
 from utils import create_ssh_client, send_command, reset_cameras
-
+import os
+from utils import BG_path , ROV_path
 from stylesheet import Copilot_st1, Copilot_st2, apply_st , red_button , back_st, selection_st
+
+
 CAM_PORTS = {
     "Main": "/dev/video0",
     "Tilt": "/dev/video2",
@@ -19,18 +22,27 @@ class CopilotUi(object):
         self.ip = ip
         self.username = username
         self.password = password
-        self.client = create_ssh_client(ip, username, password)
+        #self.client = create_ssh_client(ip, username, password)
     def setupUi(self, Dialog):
+
+        font_path = os.path.abspath("GillSans.ttf")
+
+
+        # Try loading the font
+        id = QFontDatabase.addApplicationFont(font_path)
+        if id == -1:
+            print("Failed to load font!")
         
+        families = QFontDatabase.applicationFontFamilies(id)
+        font=QFont(families[0],13)
+        Afont=QFont(families[0],11)
+
         Dialog.resize(929, 597)
-        QFontDatabase.addApplicationFont("Gill Sans.otf")
-        font=QFont("Gill Sans",16)
-        Afont=QFont("Gill Sans",13)
         # background label
         self.BG_label = QLabel(Dialog)
         self.BG_label.setObjectName("Background")
-        self.BG_label.setGeometry(QRect(-3, -5, 931, 601))
-        self.BG_label.setPixmap(QPixmap("Visuals/Background(final).jpg"))
+        self.BG_label.setGeometry(QRect(-3, -5, 945, 607))
+        self.BG_label.setPixmap(QPixmap(BG_path))
         self.BG_label.setScaledContents(True)
 
         # I made these (D)labels only for design purposes, no ROS interaction here
@@ -124,7 +136,7 @@ class CopilotUi(object):
         self.rov_label = QLabel(Dialog)
         self.rov_label.setObjectName("Rov image label")
         self.rov_label.setGeometry(QRect(400, 250, 421, 291))
-        self.rov_label.setPixmap(QPixmap(u"Visuals/ROV(final).png"))
+        self.rov_label.setPixmap(QPixmap(ROV_path))
         self.rov_label.setScaledContents(True)
 
         # thrusters labels 
@@ -352,7 +364,3 @@ class CopilotUi(object):
         self.comboBox.setItemText(6, QCoreApplication.translate("Dialog", "Bottom", None))
         
         self.back_button.setText(QCoreApplication.translate("Dialog","Back", None))
-
-
-
-   

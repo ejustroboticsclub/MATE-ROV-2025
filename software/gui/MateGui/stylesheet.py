@@ -1,4 +1,3 @@
-
 #This is the CSS code for each stylesheet i made & used
 
 Laning_buttons_st = """
@@ -27,7 +26,6 @@ QPushButton {
     color: white; 
     border-radius: 10px; 
     border: 2px solid #3498DB; 
-    font-family: "Gill Sans", sans-serif;
 
     padding: 12px 24px;  
 
@@ -51,7 +49,7 @@ QLabel {
     padding-left: 20px;
     padding-right: 20px;
     background-color: #2980B9;
-    font-family: "Gill Sans", sans-serif;
+
 
 }
 
@@ -72,7 +70,7 @@ QLabel {
     padding-left: 20px;
     padding-right: 20px;
     background-color: rgb(34, 36, 44);
-    font-family: "Gill Sans", sans-serif;
+
 
 }
 
@@ -91,7 +89,7 @@ QPushButton {
     color: white; 
     border-radius: 10px; 
     border: 2px solid #B03A2E;
-    font-family: "Gill Sans", sans-serif;
+
 
     padding: 12px 24px; 
 
@@ -112,7 +110,7 @@ apply_st="""            QPushButton {
                 border: none;
                 border-radius: 8px;
                 padding: 6px;
-                font-family: "Gill Sans", sans-serif;
+
                 color: white;
             }
             QPushButton:hover, QPushButton:pressed {
@@ -125,7 +123,7 @@ back_st="""
         border: none;
         border-radius: 8px;
         padding: 6px;
-        font-family: "Gill Sans", sans-serif;
+
         color: white;
     }
     QPushButton:hover, QPushButton:pressed {
@@ -138,7 +136,6 @@ selection_st="""    QComboBox {
         border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 6px;
         padding: 5px 30px 5px 10px;
-        font-family: "Gill Sans", sans-serif;
         color: white;
         selection-background-color: rgba(255, 255, 255, 0.2);
     }
@@ -172,7 +169,7 @@ selection_st="""    QComboBox {
         border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 6px;
         color: white;
-        font-family: "Gill Sans", sans-serif;
+
         selection-background-color: rgba(255, 255, 255, 0.2);
         outline: none;
     }"""
@@ -181,7 +178,7 @@ float_st="""QLabel {
     border: none;
     border-radius: 8px;
     padding: 6px;
-    font-family: "Gill Sans", sans-serif;
+
     color: white;
     text-align: center; /* Center the text horizontally */
     vertical-align: middle; /* Center the text vertically */

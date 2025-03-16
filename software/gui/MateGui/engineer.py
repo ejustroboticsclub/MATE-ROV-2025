@@ -1,25 +1,32 @@
-
 from PyQt5.QtCore import (QCoreApplication,QMetaObject, QRect)
 from PyQt5.QtGui import (QIcon, QPixmap,QFont, QFontDatabase)
 from PyQt5.QtWidgets import (QLabel, QPushButton)
-
+import os
 from stylesheet import Engineer_buttons_st , red_button , back_st
-
+from utils import BG_path
 
 class EngineerUi(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(928, 596)
-        QFontDatabase.addApplicationFont("Gill Sans.otf")
-        font=QFont("Gill Sans",24)
-        Afont=QFont("Gill Sans",13)
-        ICCfont=QFont("Gill Sans",23)
+        font_path = os.path.abspath("GillSans.ttf")
+
+
+        # Try loading the font
+        id = QFontDatabase.addApplicationFont(font_path)
+        if id == -1:
+            print("Failed to load font!")
+        
+        families = QFontDatabase.applicationFontFamilies(id)
+        font=QFont(families[0],18)
+        Afont=QFont(families[0],14)
+        ICCfont=QFont(families[0],17)
         
         # Background
         self.Bg_label = QLabel(Dialog)
         self.Bg_label.setObjectName("Background label")
-        self.Bg_label.setGeometry(QRect(-3, -5, 931, 601))
-        self.Bg_label.setPixmap(QPixmap("Visuals/Background(final).jpg"))
+        self.Bg_label.setGeometry(QRect(-3, -5, 945, 607))
+        self.Bg_label.setPixmap(QPixmap(BG_path))
         self.Bg_label.setScaledContents(True)
 
         # Back button
@@ -57,7 +64,9 @@ class EngineerUi(object):
         self.StopButton.setObjectName("Stop Recording for Photosphere Task")
         self.StopButton.setGeometry(QRect(370, 420, 181, 51))
         self.StopButton.setStyleSheet(red_button)
-        self.StopButton.setFont(QFont("Gill Sans",17))
+        self.StopButton.setFont(Afont)
+        
+        
         self.setText(Dialog)
         
 
@@ -71,6 +80,3 @@ class EngineerUi(object):
         self.IccButton.setText(QCoreApplication.translate("Dialog", "Invasive Carp Computer Model", None))
         self.RecButton.setText(QCoreApplication.translate("Dialog", "Start Recording (Photosphere)", None))
         self.StopButton.setText(QCoreApplication.translate("Dialog", "Stop Recording", None))
-
-
-   
