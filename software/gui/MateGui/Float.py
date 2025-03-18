@@ -8,10 +8,9 @@ class FloatUi(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(930, 599)
-        font_path = os.path.abspath("GillSans.ttf")
-
-
-        # Try loading the font
+        #loading font
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        font_path = os.path.join(script_dir, "GillSans.ttf")
         id = QFontDatabase.addApplicationFont(font_path)
         if id == -1:
             print("Failed to load font!")

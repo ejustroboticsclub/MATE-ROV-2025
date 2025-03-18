@@ -8,6 +8,7 @@ from engineer import EngineerUi
 from Float import FloatUi
 from utils import VideoCaptureThread 
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -31,7 +32,7 @@ class MainWindow(QMainWindow):
         self.float_ui = FloatUi()
         self.float_ui.setupUi(self.float_page)
 
-        self.co_pilot_ui = CopilotUi()
+        self.co_pilot_ui = CopilotUi("t","t","t")
         self.co_pilot_ui.setupUi(self.co_pilot_page)
 
         self.engineer_ui = EngineerUi()

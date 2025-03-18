@@ -129,9 +129,15 @@ def reset_cameras(client, reset_command="source camera_reset.bash"):
     stdin, stdout, stderr = client.exec_command(reset_command)
     _ = [print(i.strip()) for i in stdout]
     return stdout, stderr
-BG_path = os.path.abspath("Visuals/Background(final).jpg")
-ROV_path=os.path.abspath("Visuals/ROV(final).png")
-copilot_path=os.path.abspath("Visuals/copilot(final).png")
-pilot_path=os.path.abspath("Visuals/pilot(final).png")
-float_path=os.path.abspath("Visuals/Float(final).png")
-engineer_path=os.path.abspath("Visuals/Engineer(final).png")
+
+
+
+#script_path=os.path.dirname("utils.py")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+BG_path = os.path.join(script_dir,"Visuals/Background(final)")
+ROV_path=os.path.join(script_dir,"Visuals/rov(final)")
+copilot_path=os.path.join(script_dir,"Visuals/copilot(final)")
+pilot_path=os.path.join(script_dir,"Visuals/pilot(final)")
+float_path=os.path.join(script_dir,"Visuals/Float(final)")
+engineer_path=os.path.join(script_dir,"Visuals/Engineer(final)")
