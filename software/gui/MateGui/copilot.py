@@ -142,40 +142,46 @@ class CopilotUi(object):
         # thrusters labels 
         self.th1 = QLabel(Dialog)
         self.th1.setObjectName("thruster 1 label")
-        self.th1.setGeometry(QRect(420, 310, 81, 41))
+        self.th1.setGeometry(QRect(420, 320, 81, 41))
         self.th1.setStyleSheet(Copilot_st1)
         self.th1.setFont(font)
 
         self.th2 = QLabel(Dialog)
         self.th2.setObjectName("thruster 2 label")
-        self.th2.setGeometry(QRect(420, 450, 81, 41))
+        self.th2.setGeometry(QRect(420, 410, 81, 41))
         self.th2.setStyleSheet(Copilot_st1)
         self.th2.setFont(font)
 
 
         self.th3 = QLabel(Dialog)
         self.th3.setObjectName("thruster 3 label")
-        self.th3.setGeometry(QRect(550, 490, 81, 41))
+        self.th3.setGeometry(QRect(500, 470, 81, 41))
         self.th3.setStyleSheet(Copilot_st1)
         self.th3.setFont(font)
 
         self.th4 = QLabel(Dialog)
         self.th4.setObjectName("thruster 4 labe")
-        self.th4.setGeometry(QRect(690, 460, 81, 41))
+        self.th4.setGeometry(QRect(530, 280, 81, 41))
         self.th4.setStyleSheet(Copilot_st1)
         self.th4.setFont(font)
 
         self.th5 = QLabel(Dialog)
         self.th5.setObjectName("thruster 5 labe")
-        self.th5.setGeometry(QRect(680, 300, 81, 41))
+        self.th5.setGeometry(QRect(650, 300, 81, 41))
         self.th5.setStyleSheet(Copilot_st1)
         self.th5.setFont(font)
 
         self.th6 = QLabel(Dialog)
         self.th6.setObjectName("thruster 6 label")
-        self.th6.setGeometry(QRect(550, 270, 81, 41))
+        self.th6.setGeometry(QRect(650, 470, 81, 41))
         self.th6.setStyleSheet(Copilot_st1)
         self.th6.setFont(font)
+
+        self.th7 = QLabel(Dialog)
+        self.th7.setObjectName("thruster 7 label")
+        self.th7.setGeometry(QRect(710, 380, 81, 41))
+        self.th7.setStyleSheet(Copilot_st1)
+        self.th7.setFont(font)
 
         self.back_button = QPushButton(Dialog)
         self.back_button.setObjectName("pushButton")
@@ -345,6 +351,8 @@ class CopilotUi(object):
         self.th4.setText(QCoreApplication.translate("Dialog", "Th6", None))
         self.th5.setText(QCoreApplication.translate("Dialog", "Th5", None))
         self.th6.setText(QCoreApplication.translate("Dialog", "Th4", None))
+        self.th7.setText(QCoreApplication.translate("Dialog", "Th7", None))
+
 
         self.Dlabel_8.setText(QCoreApplication.translate("Dialog", "", None))
         self.CAS.setText(QCoreApplication.translate("Dialog", "Camera Adjusting System", None))
