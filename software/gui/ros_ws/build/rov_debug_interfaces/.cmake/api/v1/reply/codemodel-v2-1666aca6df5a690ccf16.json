@@ -1,0 +1,233 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-d38e53581a64d6ed79f0.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17
+					]
+				},
+				{
+					"build" : "rov_debug_interfaces__py",
+					"jsonFile" : "directory-rov_debug_interfaces__py-3794ee744db700e6827d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/rov_debug_interfaces/rov_debug_interfaces__py",
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "rov_debug_interfaces",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_build_rov_debug_interfaces_egg::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_build_rov_debug_interfaces_egg-b91e96e904603481950d.json",
+					"name" : "ament_cmake_python_build_rov_debug_interfaces_egg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_symlink_rov_debug_interfaces::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_symlink_rov_debug_interfaces-94465e9ced465af5db3f.json",
+					"name" : "ament_cmake_python_symlink_rov_debug_interfaces",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces-717ddc00058cc62dbd90.json",
+					"name" : "rov_debug_interfaces",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces__cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces__cpp-459ffda0f9bd57412ef4.json",
+					"name" : "rov_debug_interfaces__cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "rov_debug_interfaces__py::@0c49a08bc4e064d7244f",
+					"jsonFile" : "target-rov_debug_interfaces__py-d167b886ea606668974b.json",
+					"name" : "rov_debug_interfaces__py",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces__rosidl_generator_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces__rosidl_generator_c-ed8fdf75d9d61c35f934.json",
+					"name" : "rov_debug_interfaces__rosidl_generator_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces__rosidl_generator_py::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces__rosidl_generator_py-e2eda7a72ff0b24900b5.json",
+					"name" : "rov_debug_interfaces__rosidl_generator_py",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces__rosidl_typesupport_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces__rosidl_typesupport_c-b945ff7dd16b7047a2ac.json",
+					"name" : "rov_debug_interfaces__rosidl_typesupport_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces__rosidl_typesupport_c__pyext::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces__rosidl_typesupport_c__pyext-fd31ecb9a9e8b16aaccc.json",
+					"name" : "rov_debug_interfaces__rosidl_typesupport_c__pyext",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces__rosidl_typesupport_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces__rosidl_typesupport_cpp-a7ed88d1d609b214e634.json",
+					"name" : "rov_debug_interfaces__rosidl_typesupport_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces__rosidl_typesupport_fastrtps_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces__rosidl_typesupport_fastrtps_c-590d773794f9c755a5b8.json",
+					"name" : "rov_debug_interfaces__rosidl_typesupport_fastrtps_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces__rosidl_typesupport_fastrtps_c__pyext::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces__rosidl_typesupport_fastrtps_c__pyext-177b05b2c27ff3d951d9.json",
+					"name" : "rov_debug_interfaces__rosidl_typesupport_fastrtps_c__pyext",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces__rosidl_typesupport_fastrtps_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces__rosidl_typesupport_fastrtps_cpp-e0c41d2decc214510088.json",
+					"name" : "rov_debug_interfaces__rosidl_typesupport_fastrtps_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces__rosidl_typesupport_introspection_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces__rosidl_typesupport_introspection_c-a278c22d46ad84003b16.json",
+					"name" : "rov_debug_interfaces__rosidl_typesupport_introspection_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces__rosidl_typesupport_introspection_c__pyext::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces__rosidl_typesupport_introspection_c__pyext-635fbb6f54d3eac827a8.json",
+					"name" : "rov_debug_interfaces__rosidl_typesupport_introspection_c__pyext",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces__rosidl_typesupport_introspection_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces__rosidl_typesupport_introspection_cpp-8fad016910a2cf183d14.json",
+					"name" : "rov_debug_interfaces__rosidl_typesupport_introspection_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "rov_debug_interfaces_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-rov_debug_interfaces_uninstall-da9a10a4538bcb129bed.json",
+					"name" : "rov_debug_interfaces_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-78f5856ee81feebbf4cf.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/rov_debug_interfaces",
+		"source" : "/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/src/rov_debug_interfaces"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

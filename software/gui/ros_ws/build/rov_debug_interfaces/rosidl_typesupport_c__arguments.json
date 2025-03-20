@@ -1,0 +1,19 @@
+{
+  "package_name": "rov_debug_interfaces",
+  "output_dir": "/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/rov_debug_interfaces/rosidl_typesupport_c/rov_debug_interfaces",
+  "template_dir": "/opt/ros/humble/share/rosidl_typesupport_c/resource",
+  "idl_tuples": [
+    "/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/rov_debug_interfaces/rosidl_adapter/rov_debug_interfaces:msg/Imu.idl",
+    "/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/rov_debug_interfaces/rosidl_adapter/rov_debug_interfaces:msg/DecodedData.idl"
+  ],
+  "target_dependencies": [
+    "/opt/ros/humble/lib/rosidl_typesupport_c/rosidl_typesupport_c",
+    "/opt/ros/humble/local/lib/python3.10/dist-packages/rosidl_typesupport_c/__init__.py",
+    "/opt/ros/humble/share/rosidl_typesupport_c/resource/action__type_support.c.em",
+    "/opt/ros/humble/share/rosidl_typesupport_c/resource/idl__type_support.cpp.em",
+    "/opt/ros/humble/share/rosidl_typesupport_c/resource/msg__type_support.cpp.em",
+    "/opt/ros/humble/share/rosidl_typesupport_c/resource/srv__type_support.cpp.em",
+    "/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/rov_debug_interfaces/rosidl_adapter/rov_debug_interfaces/msg/Imu.idl",
+    "/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/rov_debug_interfaces/rosidl_adapter/rov_debug_interfaces/msg/DecodedData.idl"
+  ]
+}

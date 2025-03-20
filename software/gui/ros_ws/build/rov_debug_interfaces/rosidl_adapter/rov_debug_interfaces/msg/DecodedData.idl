@@ -1,0 +1,79 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rov_debug_interfaces/msg/DecodedData.msg
+// generated code does not contain a copyright notice
+
+#include "rov_debug_interfaces/msg/Imu.idl"
+
+module rov_debug_interfaces {
+  module msg {
+    struct DecodedData {
+      int32 id;
+
+      boolean valid;
+
+      rov_debug_interfaces::msg::Imu imu;
+
+      float thruster_current_1;
+
+      float thruster_current_2;
+
+      float thruster_current_3;
+
+      float thruster_current_4;
+
+      float thruster_current_5;
+
+      float thruster_current_6;
+
+      float thruster_pwm_1;
+
+      float thruster_pwm_2;
+
+      float thruster_pwm_3;
+
+      float thruster_pwm_4;
+
+      float thruster_pwm_5;
+
+      float thruster_pwm_6;
+
+      float indicator_1;
+
+      float indicator_2;
+
+      float indicator_3;
+
+      float indicator_4;
+
+      float indicator_5;
+
+      float indicator_6;
+
+      boolean heartbeat_1;
+
+      boolean heartbeat_2;
+
+      boolean heartbeat_3;
+
+      boolean heartbeat_4;
+
+      float connection_percentage_1;
+
+      float connection_percentage_2;
+
+      float connection_percentage_3;
+
+      float connection_percentage_4;
+
+      float arm_1;
+
+      float arm_2;
+
+      float arm_3;
+
+      float arm_4;
+
+      float rov_depth;
+    };
+  };
+};

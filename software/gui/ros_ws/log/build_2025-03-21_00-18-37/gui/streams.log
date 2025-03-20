@@ -1,0 +1,24 @@
+[0.404s] Invoking command in '/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/gui': PYTHONPATH=/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/gui/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/install/gui/lib/python3.10/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/gui/build --no-deps symlink_data
+[0.560s] running develop
+[0.634s] running egg_info
+[0.634s] creating gui.egg-info
+[0.634s] writing gui.egg-info/PKG-INFO
+[0.635s] writing dependency_links to gui.egg-info/dependency_links.txt
+[0.635s] writing entry points to gui.egg-info/entry_points.txt
+[0.635s] writing requirements to gui.egg-info/requires.txt
+[0.635s] writing top-level names to gui.egg-info/top_level.txt
+[0.635s] writing manifest file 'gui.egg-info/SOURCES.txt'
+[0.636s] reading manifest file 'gui.egg-info/SOURCES.txt'
+[0.637s] writing manifest file 'gui.egg-info/SOURCES.txt'
+[0.638s] running build_ext
+[0.638s] Creating /home/zainstark/MATE-ROV-2025/software/gui/ros_ws/install/gui/lib/python3.10/site-packages/gui.egg-link (link to .)
+[0.638s] Installing node script to /home/zainstark/MATE-ROV-2025/software/gui/ros_ws/install/gui/lib/gui
+[0.639s] Installing test script to /home/zainstark/MATE-ROV-2025/software/gui/ros_ws/install/gui/lib/gui
+[0.639s] 
+[0.639s] Installed /home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/gui
+[0.639s] running symlink_data
+[0.639s] creating /home/zainstark/MATE-ROV-2025/software/gui/ros_ws/install/gui/share/ament_index
+[0.639s] creating /home/zainstark/MATE-ROV-2025/software/gui/ros_ws/install/gui/share/ament_index/resource_index
+[0.639s] creating /home/zainstark/MATE-ROV-2025/software/gui/ros_ws/install/gui/share/ament_index/resource_index/packages
+[0.639s] symbolically linking /home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/gui/resource/gui -> /home/zainstark/MATE-ROV-2025/software/gui/ros_ws/install/gui/share/ament_index/resource_index/packages
+[0.639s] symbolically linking /home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/gui/package.xml -> /home/zainstark/MATE-ROV-2025/software/gui/ros_ws/install/gui/share/gui

@@ -1,0 +1,4 @@
+[console_scripts]
+node = gui.ros_logic:start_ros
+test = gui.test:main
+

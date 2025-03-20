@@ -67,8 +67,11 @@ class FloatUi(object):
         self.back_button.setIcon(icon)
         self.back_button.setStyleSheet(back_st)
         self.back_button.setFont(QFont("Gill Sans",12))
-
-        y_position = 110 
+        
+        self.depth_labels = []
+        self.current_index = 0
+        
+        y_position = 110
         for i in range(1, 6):
             time_var=1
             
@@ -83,6 +86,8 @@ class FloatUi(object):
             d_label.setGeometry(QRect(570, y_position, 31, 31))
             d_label.setStyleSheet(float_st)
             d_label.setText(QCoreApplication.translate("Dialog", "...", None))
+
+            self.depth_labels.append(d_label)
 
             line = QFrame(Dialog)
             line.setObjectName(f"line_{i}")
@@ -102,3 +107,12 @@ class FloatUi(object):
         self.time.setText(QCoreApplication.translate("Dialog", "Time", None))
         self.depth.setText(QCoreApplication.translate("Dialog","Depth ", None))
         self.back_button.setText(QCoreApplication.translate("Dialog", "Back", None))
+    
+    def update_depth(self, depth_value):
+        
+        if self.current_index < len(self.depth_labels):
+            
+            self.depth_labels[self.current_index].setText(f"{depth_value:.2f}m")
+            self.current_index += 1
+        else:
+            print("All labels have been updated.")

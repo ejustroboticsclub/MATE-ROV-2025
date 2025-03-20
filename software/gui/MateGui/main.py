@@ -6,7 +6,8 @@ from pilot import PilotUi
 from copilot import CopilotUi, CAM_PORTS
 from engineer import EngineerUi
 from Float import FloatUi
-from utils import VideoCaptureThread 
+from utils import VideoCaptureThread
+from gui.ros_logic import start_ros
 
 
 class MainWindow(QMainWindow):
@@ -66,6 +67,10 @@ class MainWindow(QMainWindow):
         self.engineer_ui.RecButton.clicked.connect(self.start_recording)
         self.engineer_ui.StopButton.clicked.connect(self.stop_recording)
 
+        self.ros_interface = start_ros()
+        self._connect_ros_signals()
+
+
     def show_landing_page(self):
         self.stacked_widget.setCurrentWidget(self.landing_page)
 
@@ -86,6 +91,11 @@ class MainWindow(QMainWindow):
 
     def stop_recording(self):
         self.video_thread.stop_recording()
+
+    def _connect_ros_signals(self):
+        """Connect ROS signals to UI updates"""
+        self.ros_interface.signal_emitter.depth_signal.connect(self.float_ui.update_depth)
+        self.ros_interface.signal_emitter.custom_signal.connect(self.co_pilot_ui.update_labels)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

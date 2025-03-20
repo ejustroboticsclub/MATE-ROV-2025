@@ -372,3 +372,33 @@ class CopilotUi(object):
         self.comboBox.setItemText(6, QCoreApplication.translate("Dialog", "Bottom", None))
         
         self.back_button.setText(QCoreApplication.translate("Dialog","Back", None))
+
+    def update_labels(self, msg):
+        """
+        Updates the IMU and thruster labels with new data from a ROS message.
+        Expected message structure (DecodedData):
+          - msg.imu.acc_x, msg.imu.acc_y, msg.imu.acc_z
+          - msg.imu.imu_roll, msg.imu.imu_pitch, msg.imu.imu_yaw
+          - msg.rov_depth
+          - msg.thruster_current_1 ... msg.thruster_current_6
+          - msg.thruster_pwm_1 ... msg.thruster_pwm_6
+        """
+        try:
+            # Update IMU (and depth) labels
+            self.vx_label.setText(f"{msg.imu.acc_x:.2f}")
+            self.vy_label.setText(f"{msg.imu.acc_y:.2f}")
+            self.wz_label.setText(f"{msg.imu.acc_z:.2f}")
+            self.roll_label.setText(f"{msg.imu.imu_roll:.2f}")
+            self.pitch_label.setText(f"{msg.imu.imu_pitch:.2f}")
+            self.yaw_label.setText(f"{msg.imu.imu_yaw:.2f}")
+            self.depth_label.setText(f"{msg.rov_depth:.2f}")
+    
+            # Update thruster labels
+            self.th1.setText(f"{msg.thruster_current_1:.2f}")
+            self.th2.setText(f"{msg.thruster_current_2:.2f}")
+            self.th3.setText(f"{msg.thruster_current_3:.2f}")
+            self.th4.setText(f"{msg.thruster_current_4:.2f}")
+            self.th5.setText(f"{msg.thruster_current_5:.2f}")
+            self.th6.setText(f"{msg.thruster_current_6:.2f}")
+        except Exception as e:
+            print(f"Error updating labels: {e}")

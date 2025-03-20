@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "rov_debug_interfaces__py",
+		"source" : "/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/rov_debug_interfaces/rov_debug_interfaces__py"
+	}
+}
