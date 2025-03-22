@@ -17,9 +17,20 @@
 \usepackage{url}
 \usepackage{times}
 \usepackage{titlesec} 
+\usepackage{tocloft}
+
 \renewcommand{\thesection}{\arabic{section}}
 \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
 \renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+% Define subsubsubsection with numbering (1.1.1.1)
+\titleformat{\paragraph}
+  {\normalfont\normalsize\itshape}{\theparagraph}{1em}{}
+
+\renewcommand{\theparagraph}{\thesubsubsection.\arabic{paragraph}}
+\setcounter{secnumdepth}{4}  % Allow numbering for \paragraph
+\setcounter{tocdepth}{4}     % Allow \paragraph to appear in ToC
+
 
 \makeatletter
 \def\@seccntformat#1{\csname the#1\endcsname\quad}
