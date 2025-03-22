@@ -1,0 +1,78 @@
+\documentclass[conference , 12pt]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[margin=0.8in , pass,paperwidth=8.5in,paperheight=11in]{geometry}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{adjustbox}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{multirow}
+\usepackage{bbding,enumitem}
+\usepackage{authblk}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{times}
+\usepackage{titlesec} 
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+\makeatletter
+\def\@seccntformat#1{\csname the#1\endcsname\quad}
+\makeatother
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\nouppercase {\leftmark}}
+\rhead{\thepage}
+
+\fancyfoot[L]{\hspace*{-1.9cm}\includegraphics[width=\paperwidth,height=1.9cm]{1Images/Foote1r.png}} % Footer
+\begin{document}
+\onecolumn
+\fancyhf{}
+\lhead{{Contents}}
+\tableofcontents
+\newpage
+
+\twocolumn
+
+\fancyhf{}
+\lhead{\nouppercase {\leftmark}}
+\rhead{\thepage}
+
+
+\section{Abstract}
+\input{Sections/1Abstract/abstract.tex}
+\newpage
+
+\section{Design Evolution}
+\input{Sections/2Design Evolution/tex/design_evolution.tex}
+\newpage
+
+
+\section{Design \& Manufacturing Process}
+\input{Sections/3Design&Manufacturing/tex/Design&Manufacturing.tex}
+\newpage
+
+
+\section{Mission-Specific auxiliary tools}
+\input{Sections/4Mission-Specific Tools/tex/Mission-Specific Tools.tex}
+\newpage
+
+\section{Testing \& Validation}
+\input{Sections/5Testing/tex/Testing.tex}
+\newpage
+
+\section{Logistics}
+\input{Sections/6Logistics/tex/Logistics.tex}
+\newpage
+
+\section{Budget \& Accounting}
+\input{Sections/7Budget&Accounting/tex/Budget&Accounting.tex}
+\newpage
+\end{document}
