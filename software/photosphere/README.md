@@ -28,7 +28,13 @@ Download the project and run following commands:
 ```bash
 sudo bash ./install_requirements.sh
 ```
-
+### For using the zed2i sdk
+First Install SDK:
+[ZED SDK Installation](https://www.stereolabs.com/en-eg/developers/release)
+Then install the required packages
+```bash
+python -m pip install cython numpy opencv-python pyopengl
+```
 ## Usage
 
 ```bash
