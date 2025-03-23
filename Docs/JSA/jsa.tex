@@ -1,0 +1,244 @@
+
+\documentclass[conference , 12pt]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[margin=0.8in , pass,paperwidth=8.5in,paperheight=11in]{geometry}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{adjustbox}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{multirow}
+\usepackage{bbding,enumitem}
+\usepackage{authblk}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{url}
+\usepackage{times}
+\usepackage{titlesec} 
+\usepackage{tocloft}
+\usepackage{array}
+\usepackage{longtable}
+
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+\makeatletter
+\def\section{\@startsection {section}{1}{\z@}%
+    {1.0ex plus 1ex minus .2ex}%
+    {1.0ex plus .2ex}% Spacing after the section
+    {\normalfont\normalsize\bfseries\raggedright}} 
+\makeatother
+% Define subsubsubsection with numbering (1.1.1.1)
+\titleformat{\paragraph}
+  {\normalfont\normalsize\itshape}{\theparagraph}{1em}{}
+
+\renewcommand{\theparagraph}{\thesubsubsection.\arabic{paragraph}}
+\setcounter{secnumdepth}{4}  % Allow numbering for \paragraph
+\setcounter{tocdepth}{4}     % Allow \paragraph to appear in ToC
+\renewcommand{\arraystretch}{1.3} % Adjust row height for better spacing
+
+
+\makeatletter
+\def\@seccntformat#1{\csname the#1\endcsname\quad}
+\makeatother
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\fancyhf{}
+\lhead{\nouppercase {\leftmark}}
+\rhead{\thepage}
+\fancyfoot[L]{\hspace*{-1.9cm}\includegraphics[width=\paperwidth,height=1.9cm]{Footer.png}} % Footer
+
+
+\begin{document}
+\onecolumn
+
+\section{Introduction}
+
+This report provides an in-depth analysis of job safety for both electrical and
+mechanical tasks. It discusses all potential hazards, the safety measures
+taken, and the team members responsible for each task.
+
+\begin{table}[h]
+    \centering
+    \setlength{\arrayrulewidth}{1pt} % Thicker table lines
+    \setlength{\tabcolsep}{10pt} % Column spacing
+    \begin{tabular}{|p{7cm}|p{7cm}|}
+        \hline
+        \rowcolor{gray!20} \textbf{Environmental and Personal Protective Equipment Considerations} & \textbf{Emergency Procedures} \\
+        \hline
+        \begin{itemize}[leftmargin=*]
+            \item Safety goggles
+            \item Gloves
+            \item Lab coats/aprons and non-loose clothing
+            \item Closed-toe shoes
+            \item Proper ventilation
+        \end{itemize}
+                                                                                                   &
+        \begin{itemize}[leftmargin=*]
+            \item \textbf{Electrical Shock:} Immediately shut down power and seek medical assistance.
+            \item \textbf{Fire (from soldering or electronics):} Use a fire extinguisher, evacuate if necessary.
+            \item \textbf{Cuts/Burns:} Apply first aid, use bandages, seek medical attention if needed.
+            \item \textbf{Water Leakage on Electronics:} Shut off power, remove Kamikaze from water, dry components thoroughly.
+        \end{itemize}         \\
+        \hline
+    \end{tabular}
+    \caption{Safety Guidelines and Emergency Procedures}
+\end{table}
+
+\section{Job-Safety Analysis for Mechanical Tasks}
+
+\begin{longtable}{|p{3.5cm}|>{\raggedright}p{3.5cm}|p{1.5cm}|>{\raggedright}p{5cm}|p{3cm}|}
+    \hline
+    \rowcolor{gray!20} \textbf{Task}                                                      & \textbf{Hazard}                                                        & \textbf{Risk Level} & \textbf{Safety Measures} & \textbf{Responsible Team Member} \\
+    \hline
+    \endfirsthead
+
+    \hline
+    \rowcolor{gray!20} \textbf{Task}                                                      & \textbf{Hazard}                                                        & \textbf{Risk Level} & \textbf{Safety Measures} & \textbf{Responsible Team Member} \\
+    \hline
+    \endhead
+
+    \hline
+    \multicolumn{5}{r}{\textbf{(Continued on next page)}}                                                                                                                                                                                              \\
+    \endfoot
+    \endlastfoot
+
+    \textbf{Transporting Kamikaze}                                                        & Falling, Slipping, Back Injury                                         & Low                 &
+    \begin{itemize}[leftmargin=*]
+        \item Maintain a clean and obstacle-free workspace.
+        \item Wear non-slip footwear to avoid slipping.
+        \item Reduce the amount of weight lifted.
+    \end{itemize}                                   & Abdelaziz Serour - CEO                                                                                                                                                                           \\
+    \hline
+    \textbf{Using sharp tools}                                                            & Hand injury, Eye injury                                                & High                &
+    \begin{itemize}[leftmargin=*]
+        \item Wear safety gloves and safety glasses.
+        \item Use tools correctly and store them safely.
+        \item Use personal protective equipment (PPE).
+    \end{itemize}                                      & Mechanical and Electrical Team                                                                                                                                                                \\
+    \hline
+    \textbf{Pneumatic system}                                                             & Exceeding the maximum pressure allowed                                 & High                &
+    \begin{itemize}[leftmargin=*]
+        \item Use a pressure relief valve set at 10 bar, the allowable pressure for the tank.
+        \item Regularly inspect and maintain the system.
+    \end{itemize} & \begin{itemize}[leftmargin=*]
+                        \item Basmala Ehab - Vice Mechanical CTO
+                        \item  Ammar Adel - Mechanical Member
+                    \end{itemize}                                                                                                                                                               \\
+    \hline
+    \textbf{Drill press}                                                                  & Hand injury, Finger injury                                             & Medium              &
+    \begin{itemize}[leftmargin=*]
+        \item Keep hands away from moving parts.
+        \item Secure materials with designated clamps before drilling.
+    \end{itemize}                        & Mechanical Team                                                                                                                                                                                      \\
+    \hline
+    \textbf{Sealing Components}                                                           & Improper sealing, Water leakage, Pressure failure                      & High                &
+    \begin{itemize}[leftmargin=*]
+        \item Ensure all seals are properly fitted and tightened.
+        \item Perform pressure tests before deployment.
+        \item Inspect seals for wear or damage regularly.
+    \end{itemize}                             & Zeyad Elbahy - Vice Mechanical CTO                                                                                                                                                                     \\
+    \hline
+    \textbf{Tether and cable connections}                                                 & Entanglement hazards                                                   & Low                 &
+    \begin{itemize}[leftmargin=*]
+        \item Organize and secure cables properly.
+        \item Monitor Kamikaze movement to prevent entanglement.
+        \item Regularly inspect tether for wear or damage.
+    \end{itemize}                              & \begin{itemize}[leftmargin=*] \item Tether man \item  \noindent All team memeber  \end{itemize}                                                                                                                                \\
+    \hline
+    \textbf{Operating thrusters}                                                          & Finger damage, Thrusters blade damage                                  & High                &
+    \begin{itemize}[leftmargin=*]
+        \item Always operate with shrouds mounted on thrusters.
+        \item Always keep hands away from moving thrusters.
+    \end{itemize}                               & Omar Hussien - Mechanical CTO                                                                                                                                                                        \\
+    \hline
+    \caption{Task Hazards and Controls for Mechanical Tasks}
+\end{longtable}
+
+\newpage
+\section{Job-Safety Analysis for Electrical Tasks}
+\begin{longtable}{|p{3.5cm}|>{\raggedright}p{3.5cm}|p{1.5cm}|>{\raggedright}p{5cm}|p{3cm}|}
+    \hline
+    \rowcolor{gray!20} \textbf{Task}                                                                                                                                               & \textbf{Hazards} & \textbf{Risk Level} & \textbf{Safety Measures} & \textbf{Responsible Team Member} \\
+    \hline
+    \endfirsthead
+
+    \hline
+    \rowcolor{gray!20} \textbf{Task}                                                                                                                                               & \textbf{Hazards} & \textbf{Risk Level} & \textbf{Safety Measures} & \textbf{Responsible Team Member} \\
+    \hline
+    \endhead
+
+    \hline
+    \multicolumn{5}{r}{\textbf{(Continued on next page)}}                                                                                                                                                                                                                                 \\
+    \endfoot
+    \endlastfoot
+
+    % Table content
+    \textbf{Soldering Electronic Components}                                                                                                                                       &
+    Fire hazard, Electrical hazard, Chemical inhalation, Toxic material, Eye injury                                                                                                &
+    High                                                                                                                                                                           &
+    \begin{itemize}[leftmargin=*]
+        \item Turn off soldering iron when it’s not used.
+        \item Remove combustible materials from work area.
+        \item Know the location of fire extinguishers and first aid kits in case of
+              emergency.
+        \item Perform work in a well-ventilated area.
+    \end{itemize}                                                                                                    &
+    Electrical Team                                                                                                                                                                                                                                                                       \\
+
+    \hline
+    \textbf{Setting Up the Power Supply}                                                                                                                                           &
+    Potential overvoltage leading to equipment damage, Fire hazards due to electrical faults or short circuits                                                                     &
+    High                                                                                                                                                                           &
+    \begin{itemize}[leftmargin=*]
+        \item Check the voltage reading that it shows nominal 48V.
+        \item Use control status indicator LED.
+        \item Use fuses on powerlines preventing drivers and DC-DC converters from burning
+              out.
+    \end{itemize}                                                                                             &
+    Electrical Team                                                                                                                                                                                                                                                                       \\
+
+    \hline
+    \textbf{Maintenance of Electrical Equipment}                                                                                                                                   &
+    Electric shock, Possibility of equipment damage if not maintained properly                                                                                                     &
+    Medium                                                                                                                                                                         &
+    \begin{itemize}[leftmargin=*]
+        \item Verify all power in the control box is off and wait 5 sec.
+        \item The operator must wear non-electrically conducting gloves.
+    \end{itemize}                                                                                                               &
+    Ahmed Elattar – Electrical CTO                                                                                                                                                                                                                                                        \\
+
+    \hline
+    \textbf{Ensuring ROV Communication}                                                                                                                                            &
+    Loss of communication will result in losing control of the ROV and could destroy the ROV and objects around it, Risk of signal interference leading to communication breakdown &
+    Low                                                                                                                                                                            &
+    \begin{itemize}[leftmargin=*]
+        \item Implementation of reliable communication protocols within the logical range to
+              prevent loss of control.
+        \item Avoidance of excessive distances between the joystick and Kamikaze to maintain
+              signal accuracy.
+    \end{itemize}                                                                                           &
+    Electrical and Software Team                                                                                                                                                                                                                                                          \\
+
+    \hline
+    \textbf{Management of Tether and Cable Connections}                                                                                                                            &
+    Entanglement hazards, leading to interruption of operations or equipment damage, Cable damage if not handled properly                                                          &
+    High                                                                                                                                                                           &
+    \begin{itemize}[leftmargin=*]
+        \item Be mindful of where you place the tether and how far the ROV is from it.
+        \item Regular inspection of cables for signs of wear or damage.
+    \end{itemize}                                                                                                 &
+    Electrical Team                                                                                                                                                                                                                                                                       \\
+    \hline
+    \caption{Hazards and Controls for Electrical Tasks}
+
+\end{longtable}
+
+\end{document}
