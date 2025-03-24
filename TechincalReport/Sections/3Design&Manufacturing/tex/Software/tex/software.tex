@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 \subsubsection{Kinematics}
 The Kamikaze's movement underwater may be one of the most important aspects of
 the design. We had to ensure stability, maneuverability, and speed. We achieved
@@ -29,3 +30,74 @@ for future teams to understand and build upon. We believe that this is a crucial
 step in the development of the Kamikaze, as it allows for a more collaborative
 environment and ensures that the knowledge gained from each year is not lost. 
 
+=======
+\section{Communication Architecture}
+The ROV's communication architecture which is illustrated in Figure 1 can be divided into two parts: the top side control unit and the ROV unit.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{rov_architecture_2.png}
+    \caption{Communication architecture}
+\end{figure}
+
+\subsection{System Evolution and Communication Backbone}
+
+In last year's architecture, we utilized ROS 1 as the main framework for communication between the control unit and the ROV's micro-controllers. 
+
+Communication with MCUs was handled through \texttt{rosserial}, which introduced a critical limitation: the presence of a single point of failure—the ROS Master. Any instability or failure in the master would cause the entire system to halt, making it unreliable in underwater environments where robustness is essential.
+
+\vspace{0.5em}
+This year, we have transitioned fully to ROS 2, eliminating the dependency on a centralized master. Communication between the topside control unit and the ROV unit is now handled using ROS2 \& CAN communication, which is more reliable, scalable, and real-time capable.
+\vspace{0.5em}
+
+
+In parallel, we’ve integrated \texttt{micro-ROS} to run a debugger node on the ROV side. This node communicates with the topside unit via an Ethernet module, acting as a backup communication path. In the event of failure of our SBC—the Raspberry Pi, this channel ensures continued monitoring of the entire system's vitals which greatly facilitates debugging in case of a problem with our system.
+
+\vspace{0.5em}
+This upgraded architecture enhances reduces the risk of total system failure, making it far more suitable for mission-critical underwater operations and industrial applications.
+
+\subsection{Topside Control Unit}
+The topside control unit hosts the nodes and agents that work above water which includes:
+\begin{itemize}
+    \item Joystick Node
+    \item Automatic Control Node
+    \item Stabilization Node
+    \item Motion Control Node 
+    \item GUI Node
+    \item Micro-ROS agent
+\end{itemize}
+Data is received from the following streams:
+\begin{itemize}
+    \item Camera feed from the ZED camera as well as the side-assisting cameras
+    \item Readings from sensors which includes an IMU sensor and a depth sensor
+    \item Readings from the joystick
+    \item Receiver from the Float unit
+\end{itemize}
+The joystick node is interfaced with the Logitech Extreme 3D Pro Joystick, capturing signals and converting them into ROS messages, which then are sent over to the motion control node in order to order to convert these signals to motion vectors and gripper operations. 
+
+For autonomous tasks, the automatic control node is pivotal. It receives commands from the joystick and autonomously sends out commands to the motion control node.
+
+The motion control node converts the received messages into motion vectors that are then sent to the stabilization node.
+
+The stabilization node is used to maintain the operational stability of the ROV by applying various PID controllers to counter any disturbances.
+
+The GUI node acts as the pilot's interface, displaying camera feeds for navigation as well as displaying the ROV's vitals.
+
+Vitals include: 
+\begin{itemize}
+    \item IMU readings
+    \item Depth readings from both the ROV unit and the Float unit
+    \item Thrusters PWM values
+\end{itemize}
+
+\subsection{ROV Unit}
+The ROV unit is where a lot of the heavy lifting happens, it executes commands received from the topside control unit, streams cameras and hosts the debugger node.
+
+The ROV unit has a Raspberry Pi 5 that's responsible for streaming cameras to the GUI node as well as it hosts a ROS 2 node that is responsible for receiving the commands from the stabilization node.
+
+Connected to the Raspberry Pi 5 is the CAN bus where it receives data from sensors such as current sensors, a depth sensor, an IMU and the power monitor.
+That are then published to both the topside control unit as well as the debugger node.
+
+\subsection{Float Unit}
+The float unit hosts a depth senor that transmits it's readings using an NRF transceiver module and an RTC (Real-time Clock) to the receiver which are then displayed on the GUI in the topside control unit.
+>>>>>>> Stashed changes
