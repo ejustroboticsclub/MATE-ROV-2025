@@ -1,86 +1,182 @@
-\documentclass[conference , 12pt]{IEEEtran}
-\IEEEoverridecommandlockouts
-\usepackage{cite}
-\usepackage{amsmath,amssymb,amsfonts}
-\usepackage[margin=0.8in , pass,paperwidth=8.5in,paperheight=11in]{geometry}
-\usepackage{algorithmic}
-\usepackage{graphicx}
-\usepackage{textcomp}
-\usepackage{adjustbox}
-\usepackage{subcaption}
+\documentclass[11pt, twocolumn]{article}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{adjustbox} 
 \usepackage{enumitem}
 \usepackage{multirow}
 \usepackage{bbding,enumitem}
 \usepackage{authblk}
-\usepackage{booktabs}
-\usepackage{xcolor}
-\usepackage{url}
-\usepackage{times}
-\usepackage{titlesec} 
-\usepackage{tocloft}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage[table]{xcolor}
+\setcounter{secnumdepth}{3} % for adjusting padding
+\pagestyle{fancy}
+\newcommand{\blueoval}{%
+    \begin{tikzpicture}[remember picture, overlay]
+    \shade[shading=axis, left color=blue, right color=white] (current page.north west) -- (3,0) arc (0:180:4cm) -- cycle;
+    \end{tikzpicture}%
+}
 
-\renewcommand{\thesection}{\arabic{section}}
-\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
-\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
 
-% Define subsubsubsection with numbering (1.1.1.1)
-\titleformat{\paragraph}
-  {\normalfont\normalsize\itshape}{\theparagraph}{1em}{}
+\newcommand{\coloredfooter}{%
+    \begin{tikzpicture}[remember picture, overlay]
+    \shade[shading=axis, left color=teal, right color=white] (current page.south east) -- (-1,-2) arc (0:80:2cm) -- cycle;
+    \end{tikzpicture}%
+}
 
-\renewcommand{\theparagraph}{\thesubsubsection.\arabic{paragraph}}
-\setcounter{secnumdepth}{4}  % Allow numbering for \paragraph
-\setcounter{tocdepth}{4}     % Allow \paragraph to appear in ToC
-
+\fancyhf{} % Clear default header and footer
+\fancyhead[L]{ \leftmark}
+% Display section title in the left header
+\fancyhead[R]{\thepage} % Display page number in the right header
+\definecolor{mypink3}{cmyk}{0, 0.7808, 0.4429, 0.1412}
 
 \makeatletter
-\def\@seccntformat#1{\csname the#1\endcsname\quad}
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+\begin{flushleft}
+  \textbf{\@title}
+
+  \@author
+\end{flushleft}\egroup
+}
 \makeatother
 
+\title{\Huge \color{mypink3}{ROV Document}  \vspace{0.5cm}}
+\author{\Large E-JUST Robotics Club \normalsize \hspace{0.5cm} }
+
+\setlength{\parindent}{0pt}
+\date{\today}
+
+\usepackage[showframe=false, margin=.75in]{geometry}
+
+\usepackage{abstract}
+\renewcommand{\abstractname}{}    % clear the title
+\renewcommand{\absnamepos}{empty} % originally center
+
+\usepackage{lipsum}
+
+\usepackage{afterpage}
+
+\renewenvironment{abstract}
+ {\small
+  \begin{center}
+  \bfseries \abstractname\vspace{-.5em}\vspace{0pt}
+  \end{center}
+  \list{}{%
+    \setlength{\leftmargin}{10mm}% <---------- Change margin here
+    \setlength{\rightmargin}{\leftmargin}%
+  }%
+  \item\relax}
+ {\endlist}
+
+\usepackage[utf8]{inputenc}
+
+%\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage[lofdepth,lotdepth]{subfig}
+\usepackage{booktabs}
+
+\usepackage{rotating}
+
+\usepackage{caption}
+%\usepackage{subcaption}
+
+%\usepackage[ngerman]{babel}
+
+\usepackage{csquotes}
+
+\setlength{\marginparwidth}{2cm} % Set marginparwidth to avoid todonotes issues
+\usepackage{todonotes}
+
+\usepackage{stfloats}
+
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{times}
+
+\usepackage{framed} %um Boxen zu machen
+
+\usepackage[citestyle=authoryear,
+			bibstyle=authoryear,
+			language=auto,
+			url=false,
+			backend=bibtex,
+			doi=false,
+			isbn=false]{biblatex}
+	\renewbibmacro*{volume+number+eid}{%
+  \printfield{volume}%
+%  \setunit*{\adddot}% DELETED
+  \setunit*{\addnbspace}% NEW (optional); there's also \addnbthinspace
+  \printfield{number}%
+  \setunit{\addcomma\space}%
+  \printfield{eid}}
+\DeclareFieldFormat[article]{number}{\mkbibparens{#1}}
+
+\usepackage{setspace}
+\onehalfspacing
+
+\setlength{\columnsep}{0.8cm}
+
+\setlength{\parskip}{0em}
+
+\usepackage{color}
+\definecolor{black}{gray}{0} % 10% gray
+
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black]{hyperref}
+
+\usepackage{tabularx}
+\newcolumntype{b}{X}
+\newcolumntype{s}{>{\hsize=.5\hsize}X}
+
+\usepackage{ntheorem}
+\newtheorem*{TRQ}{Research Question}
+
+\newtheorem{Hyp}{Hypothesis} 
+
+\usepackage{graphicx}
 \usepackage{fancyhdr}
+\usepackage{lipsum}
+\usepackage{geometry}
+\usepackage{changepage} % To adjust page margins locally
+\usepackage{afterpage}
+
+% Apply the custom header and footer to all pages
+\fancyfoot[L]{\hspace*{-1.9cm}{\includegraphics[width=\paperwidth,height=1.9cm]{1Images/Footer.png}}} % Footer
+
 \pagestyle{fancy}
+\makeatletter
+\providecommand{\sf@counterlist}{} % Define sf@counterlist to avoid undefined control sequence
+\makeatother
+
+\usepackage{titlesec}
+
+\titlespacing*{\subsection}{0pt}{5pt}{5pt}
+\titlespacing*{\subsubsection}{0pt}{5pt}{5pt}
+
+\setcounter{secnumdepth}{4}
+\renewcommand\theparagraph{\thesubsubsection.\arabic{paragraph}}
 
 \begin{document}
-\onecolumn
 
 \lhead{{Contents}}
 
 \tableofcontents
-\newpage
 
-\twocolumn
+\clearpage
 
-\fancyhf{}
-\lhead{\nouppercase {\leftmark}}
-\rhead{\thepage}
-\fancyfoot[L]{\hspace*{-1.9cm}\raisebox{-1.3cm}{\includegraphics[width=\paperwidth,height=1.9cm]{1Images/Footer.png}}} % Footer
-
-\section{Abstract}
 \input{Sections/1Abstract/abstract.tex}
-\newpage
 
-\section{Design Evolution}
-\input{Sections/2Design Evolution/tex/design_evolution.tex}
-\newpage
+\input{Sections/2Design Rationale/design_rationale.tex}
 
+\input{Sections/3Safety/safety.tex}
 
-\section{Design \& Manufacturing Process}
-\input{Sections/3Design&Manufacturing/tex/Design&Manufacturing.tex}
-\newpage
+\input{Sections/4Testing and Troubleshooting/testing_and_troubleshooting.tex}
 
+\input{Sections/5Logistics/logistics.tex}
 
-\section{Mission-Specific auxiliary tools}
-\input{Sections/4Mission-Specific Tools/tex/Mission-Specific Tools.tex}
-\newpage
+\input{Sections/6Conclusion/conclusion.tex}
 
-\section{Testing \& Validation}
-\input{Sections/5Testing/tex/Testing.tex}
-\newpage
+\input{Sections/7Appendicies/appendix.tex}
 
-\section{Logistics}
-\input{Sections/6Logistics/tex/Logistics.tex}
-\newpage
-
-\section{Budget \& Accounting}
-\input{Sections/7Budget&Accounting/tex/Budget&Accounting.tex}
-\newpage
 \end{document}
