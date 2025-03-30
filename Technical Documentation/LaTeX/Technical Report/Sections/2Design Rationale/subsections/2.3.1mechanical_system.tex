@@ -1,3 +1,4 @@
+\subsection{Vehicle Core Systems}
 \subsubsection{Mechanical System}
 
 \paragraph{Frame} \ \\
@@ -136,14 +137,64 @@ The canister serves as the primary enclosure for the ROV, protecting essential c
 \paragraph{Sealing Strategy} \ \\
 \vspace{-0.5cm}
 
-Something about sealing strategy. \lipsum[1]
+Waterproofing is critical for the ROV’s performance and durability. The sealing approach protects electronic components while maintaining structural integrity under varying pressures. This design integrates 3D-printed PETG, aluminum, high-performance adhesives, and mechanical fasteners for optimal sealing efficiency.
 
-\begin{figure}[h]
-    \centering
-    \rule{0.8\columnwidth}{4cm}
-    \caption{Sealing.}
-    \label{fig:sealing}
-\end{figure}
+\vspace{0.2cm}
+\textbf{Main Canister Sealing (Electronics Housing)}
+
+\vspace{-0.5\baselineskip}
+\begin{itemize}
+    \setlength{\itemsep}{0pt}
+    \item Sikadur-31 CF adhesive prevents micro-gaps.
+    \item IP68-rated metallic cable glands ensure watertight cable entry.
+    \item Epoxy resin \& super glue reinforce adhesion.
+    \item Bolted fastening ensures long-term stability.
+\end{itemize}
+
+\textbf{ZED Camera Enclosure}
+
+\vspace{-0.5\baselineskip}
+\begin{itemize}
+    \setlength{\itemsep}{0pt}
+    \item O-ring in a groove forms a primary seal.
+    \item RTV Gasket Maker provides additional waterproofing.
+    \item Compression sealing \& Allen bolts apply uniform pressure.
+    \item Sikadur-31 CF protects against water exposure.
+    
+\end{itemize}
+
+\textbf{Artelon Camera Enclosures}
+
+For other cameras, Artelon enclosures replace aluminum.
+
+\vspace{-0.5\baselineskip}
+\begin{itemize}
+    \setlength{\itemsep}{0pt}
+    \item Acrylic cover sandwiched with an O-ring seal ensures water resistance.
+    \item Allen bolts provide tight compression for long-term sealing.
+\end{itemize}
+
+\textbf{Bolt Spacing Calculation for Optimal Sealing}
+
+To ensure optimal sealing pressure and prevent gasket deformation under load, the bolt spacing (C) is calculated based on flange stiffness, gasket pressure, and deflection using equation \ref{eq:bolt_spacing}.
+
+\begin{equation} \label{eq:bolt_spacing}
+    C = \left[ \frac{480 \left( \frac{a}{b} \right) E t^3 \Delta H}{13 P_{\text{min}} + 2 P_{\text{max}}} \right]^{1/4}
+    \end{equation}
+    where:
+    \vspace{-0.5\baselineskip}
+    \begin{itemize}
+        \setlength{\itemsep}{0pt}
+        \item \(C\) = Bolt spacing (mm)
+        \item \(a\) = Width of the flange plate (mm)
+        \item \(b\) = Width of the gasket (mm)
+        \item \(E\) = Modulus of elasticity of the flange material (Pa or N/m\(^2\))
+        \item \(t\) = Thickness of the flange (mm)
+        \item \(\Delta H\) = Max. gasket deflection - Min. gasket deflection (mm)
+        \item \(P_{\text{min}}\) = Minimum gasket pressure (Pa or N/m\(^2\))
+        \item \(P_{\text{max}}\) = Maximum gasket pressure (Pa or N/m\(^2\))
+    \end{itemize}
+    
 
 \vspace{-0.3cm}
 \paragraph{Cameras} \ \\
@@ -162,11 +213,48 @@ Something about cameras. \lipsum[1]
 \paragraph{Grippers} \ \\
 \vspace{-0.5cm}
 
-Something about grippers. \lipsum[1]
+Two claw grippers (Figure \ref{fig:grippers}) are designed to handle various item shapes and diameters. They are constructed from 10mm HDPE for durability and aluminum for fixation, ensuring a lightweight yet sturdy design. The grippers are pneumatically actuated using a 25mm stroke piston that applies 113–135N of force in both forward and backward directions. With a maximum opening width of 70mm, they can securely grip all required competition objects.
 
 \begin{figure}[h]
     \centering
-    \rule{0.8\columnwidth}{4cm}
-    \caption{Grippers.}
+    \begin{subfigure}[b]{0.49\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/Horizontal.png}
+        \caption{Horizontal Gripper.}
+        \label{fig:horizontal_gripper}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/Vertical.png}
+        \caption{Vertical Gripper.}
+        \label{fig:vertical_gripper}
+    \end{subfigure}
+    \caption{Kamikaze Grippers.}
     \label{fig:grippers}
+\end{figure}
+
+To enhance functionality, two screw hooks were integrated, enabling the ROV to lift hooks and manipulate ropes, expanding its operational capabilities.To optimize the gripper’s design and prevent potential bending stress-induced failures, a comprehensive stress analysis was performed. This theoretical evaluation ensured the gripper’s ability to withstand the designated weight. The results \ref{fig:grippers_analysis}confirmed that:
+
+\vspace{-0.5\baselineskip}
+\begin{itemize}
+    \setlength{\itemsep}{0pt}
+    \item The horizontal gripper can hold up to 14.6 kg.
+    \item The vertical gripper can hold up to 11.8 kg.
+    \item Both with a safety factor of 2.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.49\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/Horizontal Max weight.jpg}
+        \caption{Horizontal Gripper Analysis.}
+        \label{fig:horizontal_gripper_max_weight}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/Vertical max weight.jpg}
+        \caption{Vertical Gripper Analysis.}
+        \label{fig:vertical_gripper_max_weight}
+    \end{subfigure}
+    \caption{Kamikaze Grippers Analysis.}
+    \label{fig:grippers_analysis}
 \end{figure}
