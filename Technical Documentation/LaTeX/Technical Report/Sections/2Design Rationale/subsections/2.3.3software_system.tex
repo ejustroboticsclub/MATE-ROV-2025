@@ -4,7 +4,6 @@
 \vspace{-0.5cm}
 Some communication system talk.
 
-
 \paragraph{Graphical User Interface} \ \\
 Our GUI prioritizes stability, usability, and responsiveness, balancing personalization with default configurations. Built with Python and PyQt5, it ensures a stable and efficient desktop experience.
 
@@ -42,45 +41,34 @@ The Engineer interface provides quick access to automation scripts for tasks lik
 \textbf{Float Interface}
 The Float interface enables communication with the float before vertical profiling begins and displays depth data along with additional metrics post-profile.
 
-\paragraph{Kinematics}
-The Kamikaze's movement underwater may be one of the most important aspects of
-the design. We had to ensure stability, maneuverability, and speed. We achieved
-this by focusing on two main aspects:
-\begin{itemize}
-        
-    \item \textbf{Thrusters Configuration:} We employed a seventh thruster this year to
-        improve the robot's maneuverability as shown in figure \ref{fig:thruster}. With the current vectored thrusters
-        configuration and this new thruster, we can achieve motion in 6 degrees of freedom.
-        This novel configuration may be the first of its kind to allow for such a wide range of motion while only using 7 thrusters.
-        \begin{figure}[h]
-            \centering
-            \includegraphics[width=0.3\textwidth]{Sections/2Design Rationale/images/Thrusters.png}
-            \caption{Thruster Configuration}
-            \label{fig:thruster}
-        \end{figure}
+\vspace{-0.3cm}
+\paragraph{Kinematics} \ \\
+The Kamikaze's movement underwater may be one of the most important aspects of the design. We had to ensure stability, maneuverability, and speed. We achieved this by focusing on two main aspects:
 
-        \item \textbf{PID Control:} We have implemented PID controllers for all critical movement axes, allowing for
-        precise control over the robot's movement and ensures that it remains stable in the water. We implemented an FFT (Fast Fourier Transform)
-        based auto-tuning algorithm to tune the PID parameters, as this is our first year using the new Vehicle. We also supplemented the algorithm with a live
-        plotting feature, shown in figure \ref{fig:pid_live},
-         to allow for manual adjustments to the PID parameters.
-\end{itemize}
-\begin{figure}[h]
+\vspace{-0.5\baselineskip}
+\begin{itemize}[leftmargin=0pt, itemindent=10pt]
+    \setlength{\itemsep}{0pt}   
+    \item \textbf{Thrusters Configuration:} We employed a seventh thruster this year to improve the robot's maneuverability as shown in figure \ref{fig:thruster}. With the current vectored thrusters configuration and this new thruster, we can achieve motion in 6 degrees of freedom. This novel configuration may be the first of its kind to allow for such a wide range of motion while only using 7 thrusters.
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.8\columnwidth]{Sections/2Design Rationale/images/Thrusters.png}
+        \caption{Thruster Configuration}
+        \label{fig:thruster}
+    \end{figure}
+
+    \item \textbf{PID Control:} We have implemented PID controllers for all critical movement axes, allowing for precise control over the robot's movement and ensures that it remains stable in the water. We implemented an FFT (Fast Fourier Transform) based auto-tuning algorithm to tune the PID parameters, as this is our first year using the new Vehicle. We also supplemented the algorithm with a live
+    plotting feature, shown in figure \ref{fig:pid_live}, to allow for manual adjustments to the PID parameters.
+    \begin{figure}[h]
     \centering
-    \includegraphics[width=0.5\textwidth]{Sections/2Design Rationale/images/Pid.png}
+    \includegraphics[width=\columnwidth]{Sections/2Design Rationale/images/Pid.png}
     \caption{Live Plotting of PID Parameters}
     \label{fig:pid_live}
-\end{figure}
+    \end{figure}
+\end{itemize}
 
-\paragraph{Open Sourcing the Kamikaze}
-We have all of our working code available on our GitHub repository. A lot of effort
-was made this year to maintain, document, and clean up the code, making it easier
-for future teams to understand and build upon. We believe that this is a crucial
-step in the development of the Kamikaze, as it allows for a more collaborative
-environment and ensures that the knowledge gained from each year is not lost. 
-
-
-
+\vspace{-1cm}
+\paragraph{Open Sourcing the Kamikaze} \ \\
+We have all of our working code available on our GitHub repository. A lot of effort was made this year to maintain, document, and clean up the code, making it easier for future teams to understand and build upon. We believe that this is a crucial step in the development of the Kamikaze, as it allows for a more collaborative environment and ensures that the knowledge gained from each year is not lost. 
 
 \paragraph{Some third point} \ \\
 \vspace{-0.5cm}
