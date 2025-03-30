@@ -28,3 +28,5 @@
 *.acn
 *.acr
 *.alg
+
+.DS_Store
