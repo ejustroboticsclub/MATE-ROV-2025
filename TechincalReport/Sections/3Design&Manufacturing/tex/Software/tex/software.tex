@@ -5,9 +5,15 @@ this by focusing on two main aspects:
 \begin{itemize}
         
     \item \textbf{Thrusters Configuration:} We employed a seventh thruster this year to
-        improve the robot's maneuverability. With the current vectored thrusters
+        improve the robot's maneuverability as shown in figure \ref{fig:thruster}. With the current vectored thrusters
         configuration and this new thruster, we can achieve motion in 6 degrees of freedom.
         This novel configuration may be the first of its kind to allow for such a wide range of motion while only using 7 thrusters.
+        \begin{figure}[h]
+            \centering
+            \includegraphics[width=0.3\textwidth]{Sections/3Design&Manufacturing/tex/Software/images/Thrusters.png}
+            \caption{Thruster Configuration}
+            \label{fig:thruster}
+        \end{figure}
 
         \item \textbf{PID Control:} We have implemented PID controllers for all critical movement axes, allowing for
         precise control over the robot's movement and ensures that it remains stable in the water. We implemented an FFT (Fast Fourier Transform)
