@@ -13,6 +13,10 @@
 *.synctex.gz
 *.toc
 *.vrb
+*.pdf
+*.run.xml
+*.thm
+*blx.bib
 
 # Temporary files
 *.tmp
