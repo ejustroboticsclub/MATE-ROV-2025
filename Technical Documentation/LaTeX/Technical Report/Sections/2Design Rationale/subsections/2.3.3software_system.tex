@@ -1,10 +1,9 @@
 \subsubsection{Software System}
 
 \paragraph{Communication System} \ \\
-\vspace{-0.5cm}
 The ROV's communication architecture which is illustrated in Figure 1 can be divided into two parts: the top side control unit and the ROV unit.
 
-\begin{figure}[ht]
+\begin{figure}[hb]
     \centering
     \includegraphics[width=1\linewidth]{Sections/2Design Rationale/images/rov_architecture_2.png}
     \caption{Communication architecture}
@@ -15,22 +14,21 @@ The ROV's communication architecture which is illustrated in Figure 1 can be div
 
 In last year's architecture, we utilized ROS 1 as the main framework for communication between the control unit and the ROV's micro-controllers. 
 
-Communication with MCUs was handled through \texttt{rosserial}, which introduced a critical limitation: the presence of a single point of failure—the ROS Master. Any instability or failure in the master would cause the entire system to halt, making it unreliable in underwater environments where robustness is essential.
+\hspace{10pt} Communication with MCUs was handled through \texttt{rosserial}, which introduced a critical limitation: the presence of a single point of failure—the ROS Master. Any instability or failure in the master would cause the entire system to halt, making it unreliable in underwater environments where robustness is essential.
 
-\vspace{0.5em}
-This year, we have transitioned fully to ROS 2, eliminating the dependency on a centralized master. Communication between the topside control unit and the ROV unit is now handled using ROS2 \& CAN communication, which is more reliable, scalable, and real-time capable.
-\vspace{0.5em}
+\hspace{10pt} This year, we have transitioned fully to ROS 2, eliminating the dependency on a centralized master. Communication between the topside control unit and the ROV unit is now handled using ROS2 \& CAN communication, which is more reliable, scalable, and real-time capable.
 
+\hspace{10pt} In parallel, we’ve integrated \texttt{micro-ROS} to run a debugger node on the ROV side. This node communicates with the topside unit via an Ethernet module, acting as a backup communication path. In the event of failure of our SBC—the Raspberry Pi, this channel ensures continued monitoring of the entire system's vitals which greatly facilitates debugging in case of a problem with our system.
 
-In parallel, we’ve integrated \texttt{micro-ROS} to run a debugger node on the ROV side. This node communicates with the topside unit via an Ethernet module, acting as a backup communication path. In the event of failure of our SBC—the Raspberry Pi, this channel ensures continued monitoring of the entire system's vitals which greatly facilitates debugging in case of a problem with our system.
-
-\vspace{0.5em}
-This upgraded architecture enhances reduces the risk of total system failure, making it far more suitable for mission-critical underwater operations and industrial applications.
+\hspace{10pt} This upgraded architecture enhances reduces the risk of total system failure, making it far more suitable for mission-critical underwater operations and industrial applications.
 
 \vspace{0.2cm}
 \textbf{Topside Control Unit}
+
 The topside control unit hosts the nodes and agents that work above water which includes:
+\vspace{-0.5\baselineskip}
 \begin{itemize}
+    \setlength{\itemsep}{0pt}
     \item Joystick Node
     \item Automatic Control Node
     \item Stabilization Node
@@ -39,7 +37,9 @@ The topside control unit hosts the nodes and agents that work above water which 
     \item Micro-ROS agent
 \end{itemize}
 Data is received from the following streams:
+\vspace{-0.5\baselineskip}
 \begin{itemize}
+    \setlength{\itemsep}{0pt}
     \item Camera feed from the ZED camera as well as the side-assisting cameras
     \item Readings from sensors which includes an IMU sensor and a depth sensor
     \item Readings from the joystick
@@ -47,16 +47,18 @@ Data is received from the following streams:
 \end{itemize}
 The joystick node is interfaced with the Logitech Extreme 3D Pro Joystick, capturing signals and converting them into ROS messages, which then are sent over to the motion control node in order to order to convert these signals to motion vectors and gripper operations. 
 
-For autonomous tasks, the automatic control node is pivotal. It receives commands from the joystick and autonomously sends out commands to the motion control node.
+\hspace{10pt} For autonomous tasks, the automatic control node is pivotal. It receives commands from the joystick and autonomously sends out commands to the motion control node.
 
-The motion control node converts the received messages into motion vectors that are then sent to the stabilization node.
+\hspace{10pt} The motion control node converts the received messages into motion vectors that are then sent to the stabilization node.
 
-The stabilization node is used to maintain the operational stability of the ROV by applying various PID controllers to counter any disturbances.
+\hspace{10pt} The stabilization node is used to maintain the operational stability of the ROV by applying various PID controllers to counter any disturbances.
 
-The GUI node acts as the pilot's interface, displaying camera feeds for navigation as well as displaying the ROV's vitals.
+\hspace{10pt} The GUI node acts as the pilot's interface, displaying camera feeds for navigation as well as displaying the ROV's vitals.
 
 Vitals include: 
+\vspace{-0.3\baselineskip}
 \begin{itemize}
+    \setlength{\itemsep}{0pt}
     \item IMU readings
     \item Depth readings from both the ROV unit and the Float unit
     \item Thrusters PWM values
@@ -64,6 +66,7 @@ Vitals include:
 
 \vspace{0.2cm}
 \textbf{ROV Unit}
+
 The ROV unit is where a lot of the heavy lifting happens, it executes commands received from the topside control unit, streams cameras and hosts the debugger node.
 
 The ROV unit has a Raspberry Pi 5 that's responsible for streaming cameras to the GUI node as well as it hosts a ROS 2 node that is responsible for receiving the commands from the stabilization node.
@@ -73,6 +76,7 @@ That are then published to both the topside control unit as well as the debugger
 
 \vspace{0.2cm}
 \textbf{Float Unit}
+
 The float unit hosts a depth senor that transmits it's readings using an NRF transceiver module and an RTC (Real-time Clock) to the receiver which are then displayed on the GUI in the topside control unit.
 
 \vspace{-0.3cm}
@@ -81,14 +85,17 @@ Our GUI prioritizes stability, usability, and responsiveness, balancing personal
 
 \vspace{0.2cm}
 \textbf{System Architecture}
+
 The GUI follows a modular design, dividing functionality across four interfaces: Pilot, Copilot, Engineer, and Float. This enhances maintainability while tailoring tools to each role.
 
 \vspace{0.2cm}
 \textbf{Pilot Interface}
+
 Designed for minimal clutter, the Pilot interface displays five camera feeds essential for navigation. To ensure smooth streaming, we use Python's \texttt{Multiprocessing} library, preventing latency and glitches. The Pilot can switch views and resize feeds as needed. Our redundant streaming system prevents a single point of failure—if one camera disconnects, others remain functional. 
 
 \vspace{0.2cm}
 \textbf{Copilot Interface}
+
 The Copilot interface extends camera controls, allowing real-time brightness, contrast, and backlight adjustments for varying underwater conditions. It also displays telemetry data, including six degrees of freedom (Vx, Vy, Vz, Roll, Pitch, Yaw), depth, and thruster speeds, aiding in system monitoring and troubleshooting. A screenshot of the interface is shown in Figure \ref{fig:copilot_interface}.
 
 \begin{figure}[ht]
@@ -100,6 +107,7 @@ The Copilot interface extends camera controls, allowing real-time brightness, co
 
 \vspace{0.2cm}
 \textbf{Engineer Interface}
+
 The Engineer interface provides quick access to automation scripts for tasks like invasive carp detection and depth estimation. It also facilitates seamless media capture for Photosphere documentation. All functions are integrated within the GUI, streamlining workflow without external tools. A screenshot of the interface is shown in Figure \ref{fig:Engineer_interface}.
 
 \begin{figure}[h]
@@ -111,6 +119,7 @@ The Engineer interface provides quick access to automation scripts for tasks lik
 
 \vspace{0.2cm}
 \textbf{Float Interface}
+
 The Float interface enables communication with the float before vertical profiling begins and displays depth data along with additional metrics post-profile.
 
 \vspace{-0.3cm}
@@ -140,11 +149,7 @@ The Kamikaze's movement underwater may be one of the most important aspects of t
 
 \vspace{-1cm}
 \paragraph{Open Sourcing the Kamikaze} \ \\
-We have all of our working code available on our GitHub repository. A lot of effort was made this year to maintain, document, and clean up the code, making it easier for future teams to understand and build upon. We believe that this is a crucial step in the development of the Kamikaze, as it allows for a more collaborative environment and ensures that the knowledge gained from each year is not lost. 
-
-\paragraph{Some third point} \ \\
-\vspace{-0.5cm}
-
+We have all of our working code available on our GitHub repository. A lot of effort was made this year to maintain, document, and clean up the code, making it easier for future teams to understand and build upon. We believe that this is a crucial step in the development of the Kamikaze, as it allows for a more collaborative environment and ensures that the knowledge gained from each year is not lost.
 
 
 

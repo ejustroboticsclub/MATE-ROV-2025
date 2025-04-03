@@ -63,7 +63,7 @@ Where:
 
 A CFD flow simulation was conducted to analyze water flow around Kamikaze (Figure \ref{fig:cfd}), minimizing drag and enhancing hydrodynamic efficiency.
 
-\begin{figure}[b]
+\begin{figure}[h]
     \centering
     \rule{0.8\columnwidth}{4cm}
     \caption{Flow Simulation.}
@@ -83,14 +83,92 @@ A CFD flow simulation was conducted to analyze water flow around Kamikaze (Figur
 \paragraph{Buoyancy and Stability} \ \\
 \vspace{-0.5cm}
 
-Something about buoyancy and stability. \lipsum[1]
+The ROV is designed to have positive buoyancy by carefully selecting lightweight materials and ensuring the buoyant force is slightly greater than its weight. Using Archimedes' principle (Equation \ref{eq:buoyancy}) and SolidWorks simulations (Figure \ref{fig:solidworks_buoyancy}), we confirmed that the ROV naturally surfaces while maintaining stability.
 
+\vspace{-1cm}
+\begin{equation}
+    \label{eq:buoyancy}
+    F_B = \rho_{\text{water}} \times \text{Volume Displaced} \times \text{Gravity}
+\end{equation}
+
+\vspace{-0.5cm}
 \begin{figure}[h]
     \centering
-    \rule{0.8\columnwidth}{4cm}
-    \caption{Buoyancy.}
-    \label{fig:buoyancy}
+    \begin{subfigure}[t]{0.49\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/kamikaze_model.png}
+        \caption{If an ROV displaces more water than its weight, it floats; otherwise, it sinks.}
+        \label{fig:kamikaze}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.49\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/solidworks_buoyancy.png}
+        \caption{Buoyancy model in SolidWorks.}
+        \label{fig:kamikaze_buoyancy}
+    \end{subfigure}
+    \caption{SolidWorks analysis for Kamikaze's Buoyancy.}
+    \label{fig:solidworks_buoyancy}
 \end{figure}
+
+\vspace{-0.3cm}
+
+This was achieved by positioning the center of buoyancy (Table \ref{tab:buoyancy}) above the center of gravity (Table \ref{tab:gravity}), ensuring smooth and controlled movement in the water.
+
+\vspace{-0.7cm}
+\begin{center}
+\begin{adjustbox}{width=\columnwidth}
+    \begin{minipage}[t]{0.48\columnwidth}
+    \centering
+    \begin{adjustbox}{width=\textwidth, height=0.8cm}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Parameter} & \textbf{Value} \\
+    \hline
+    Mass & 18390.88 grams \\
+    Volume & 18390882.63 mm\textsuperscript{3} \\
+    Center of Buoyancy & X=-0.05, Y=-20.00, Z=-0.10 mm \\
+    \hline
+    \end{tabular}
+    \end{adjustbox}
+    \renewcommand{\captionfont}{\footnotesize}
+    \captionof{table}{Mass properties of water displaced (buoyancy force)}
+    \renewcommand{\captionfont}{\normalsize}
+    \label{tab:buoyancy}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\columnwidth}
+    \centering
+    \begin{adjustbox}{width=\textwidth, height=0.8cm}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Parameter} & \textbf{Value} \\
+    \hline
+    Mass & 17389.17 grams \\
+    Volume & 8925547.20 mm\textsuperscript{3} \\
+    Center of Gravity & X=0.03, Y=-21.53, Z=-7.36 mm \\
+    \hline
+    \end{tabular}
+    \end{adjustbox}
+    \renewcommand{\captionfont}{\footnotesize}
+    \captionof{table}{Mass properties of the product and internal components (weight force)}
+    \renewcommand{\captionfont}{\normalsize}
+    \label{tab:gravity}
+    \end{minipage}
+\end{adjustbox}
+\end{center}
+
+Wet weight is calculated as follows:
+\vspace{-0.7\baselineskip}
+\[
+\begin{aligned}
+    Wet \, Weight &= Buoyancy \, Force - Weight \, Force \\
+    &= 18,390.88 \, grams - 17,389.17 \, grams \\
+    &= 1,001.71 \, grams
+\end{aligned}
+\]
+
+The buoyancy analysis determined that the ROV, with a mass of 18,390.88 grams, displaces 17,389.17 grams of water, resulting in a net wet weight of 1,001.71 grams. Since it is positively buoyant, the ROV will float. Therefore, after installing the electrical and other components, the buoyancy was checked again to ensure positive buoyancy was maintained. Based on these values, a flotation system was implemented to provide the ROV with a buoyant force of approximately 45 Newtons.
 
 \vspace{-0.3cm}
 \paragraph{Main Canister} \ \\
@@ -118,14 +196,14 @@ The canister serves as the primary enclosure for the ROV, protecting essential c
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{0.45\columnwidth}
-        \rule{\textwidth}{4cm}
+    \begin{subfigure}[b]{0.49\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/Top view fig stress.jpg}
         \caption{Top View Analysis.}
         \label{fig:top_fda}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.45\columnwidth}
-        \rule{\textwidth}{4cm}
+    \begin{subfigure}[b]{0.49\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/bottom view fig stress.png}
         \caption{Bottom View Analysis.}
         \label{fig:bottom_fda}
     \end{subfigure}
@@ -213,7 +291,7 @@ Something about cameras. \lipsum[1]
 \paragraph{Grippers} \ \\
 \vspace{-0.5cm}
 
-Two claw grippers (Figure \ref{fig:grippers}) are designed to handle various item shapes and diameters. They are constructed from 10mm HDPE for durability and aluminum for fixation, ensuring a lightweight yet sturdy design. The grippers are pneumatically actuated using a 25mm stroke piston that applies 113–135N of force in both forward and backward directions. With a maximum opening width of 70mm, they can securely grip all required competition objects.
+Two claw grippers (Figure \ref{fig:grippers}) are designed to handle various item shapes and diameters. They are constructed from 10mm HDPE for durability and aluminum for fixation, ensuring a lightweight yet sturdy design. The grippers are pneumatically actuated using a 25mm stroke piston that applies 113–135N of force in both forward and backward directions. With a maximum opening width of 70mm, they can securely grip all required competition objects. The fluid SID can be found in Appendix \ref{app:fluid_sid}.
 
 \begin{figure}[h]
     \centering
@@ -232,7 +310,7 @@ Two claw grippers (Figure \ref{fig:grippers}) are designed to handle various ite
     \label{fig:grippers}
 \end{figure}
 
-To enhance functionality, two screw hooks were integrated, enabling the ROV to lift hooks and manipulate ropes, expanding its operational capabilities.To optimize the gripper’s design and prevent potential bending stress-induced failures, a comprehensive stress analysis was performed. This theoretical evaluation ensured the gripper’s ability to withstand the designated weight. The results \ref{fig:grippers_analysis}confirmed that:
+To enhance functionality, two screw hooks were integrated, enabling the ROV to lift hooks and manipulate ropes, expanding its operational capabilities.To optimize the gripper’s design and prevent potential bending stress-induced failures, a comprehensive stress analysis was performed. This theoretical evaluation ensured the gripper’s ability to withstand the designated weight. The results (Figure \ref{fig:grippers_analysis}) confirmed that:
 
 \vspace{-0.5\baselineskip}
 \begin{itemize}

@@ -19,11 +19,11 @@
         colspec = {| Q[wd=0.1\textwidth, m] | X[m] |},
         hline{1,Z} = {solid},
         hline{2-Y} = {solid},
-        row{1} = {font=\bfseries},
         rows = {font=\tiny},
+        row{1} = {font=\bfseries\tiny},
         rowhead = 0
       }
-    {Station \newline Component} & {Function} \\
+    {Station Component} & {Function} \\
     {Logitech G Extreme 3D Pro Joystick} & {Used for controlling the ROV's motion.} \\
     {Laptop} & {Used for displaying all information received from the underwater unit.} \\
     {Power Source} & {Provides 48V operating voltage and a current maximum rating of 30A.} \\
@@ -44,8 +44,8 @@
         colspec = {| Q[wd=0.1\textwidth, m] | X[m] |},
         hline{1,Z} = {solid},
         hline{2-Y} = {solid},
-        row{1} = {font=\bfseries},
         rows = {font=\tiny},
+        row{1} = {font=\bfseries\tiny},
         rowhead = 0
       }
     {Vehicle \newline Component} & {Function} \\
@@ -73,8 +73,8 @@
         colspec = {| Q[wd=0.1\textwidth, m] | X[m] |},
         hline{1,Z} = {solid},
         hline{2-Y} = {solid},
-        row{1} = {font=\bfseries},
         rows = {font=\tiny},
+        row{1} = {font=\bfseries\tiny},
         rowhead = 0
       }
     {Sensor} & {Function} \\
@@ -95,8 +95,11 @@
     The ROV's electrical system is interconnected through a structured communication framework. At the top side, the joystick sends control signals to the laptop, which transmits them to the router and then down the tether via an Ethernet cable. On the ROV side, an Ethernet switch distributes the signals, directing one output to the Raspberry Pi 5 (the primary controller) and another to the W5500 Ethernet module.
     
     \vspace{-0.2cm}
-    The system is designed as an integrated network of three modular subsystems. The Power Subsystem houses Electronic Speed Controllers (ESCs) and an STM32 microcontroller. The Raspberry Pi 5 sends control signals to the STM32 board, which then controls the seven ESCs connected to their respective T200 thrusters. Additionally, the STM32 microcontroller continuously collects real-time power consumption data of the thrusters and power converters, including current and voltage readings from the ACS712 current sensor, and transmits it to Raspberry Pi 5 via the CAN bus module for monitoring and analysis. The second subsystem is The Sensor System which includes the depth sensor and an Arduino Nano RP2040 for the IMU readings, both of which are connected to an STM32 microcontroller that handles data acquisition. STM32 processes the sensor data and sends it to Raspberry Pi 5 via the CAN bus protocol, ensuring timely and reliable data transmission. Finally, the Debugging subsystem which consists of an Ethernet module connected to an STM32 microcontroller, interfaced with the network switch via an Ethernet cable. Through CAN bus integration, the Ethernet module communicates with the other subsystems. Ables real-time system debugging, allowing for troubleshooting of the entire system remotely. It also provides fault control, monitoring and managing any failures that may occur within the Power PCB or Sensor subsystem. Finally, the camera’s video feed is processed by the Raspberry Pi 5, transmitted back to the topside through the tether, and displayed on the GUI on the laptop. Additionally, all other sensor data, including depth measurements, current and voltage values from the Power PCB, and IMU from the Arduino Nano RP2040, are collected by the STM32 microcontrollers and sent to the Raspberry Pi 5 via CAN bus. The Raspberry Pi then transmits this information via ROS to the topside control station, where it is displayed on the GUI for real-time monitoring.
-
+    \hspace{10pt} The system is designed as an integrated network of three modular subsystems. The Power Subsystem houses Electronic Speed Controllers (ESCs) and an STM32 microcontroller. The Raspberry Pi 5 sends control signals to the STM32 board, which then controls the seven ESCs connected to their respective T200 thrusters. Additionally, the STM32 microcontroller continuously collects real-time power consumption data of the thrusters and power converters, including current and voltage readings from the ACS712 current sensor, and transmits it to Raspberry Pi 5 via the CAN bus module for monitoring and analysis. 
+    
+    \hspace{10pt} The second subsystem is the Sensor System which includes the depth sensor and an Arduino Nano RP2040 for the IMU readings, both of which are connected to an STM32 microcontroller that handles data acquisition. STM32 processes the sensor data and sends it to Raspberry Pi 5 via the CAN bus protocol, ensuring timely and reliable data transmission. Finally, the Debugging subsystem which consists of an Ethernet module connected to an STM32 microcontroller, interfaced with the network switch via an Ethernet cable. Through CAN bus integration, the Ethernet module communicates with the other subsystems. Ables real-time system debugging, allowing for troubleshooting of the entire system remotely. It also provides fault control, monitoring and managing any failures that may occur within the Power PCB or Sensor subsystem. 
+    
+    \hspace{10pt} Finally, the camera’s video feed is processed by the Raspberry Pi 5, transmitted back to the topside through the tether, and displayed on the GUI on the laptop. Additionally, all other sensor data, including depth measurements, current and voltage values from the Power PCB, and IMU from the Arduino Nano RP2040, are collected by the STM32 microcontrollers and sent to the Raspberry Pi 5 via CAN bus. The Raspberry Pi then transmits this information via ROS to the topside control station, where it is displayed on the GUI for real-time monitoring.
 \end{enumerate}
 
 \paragraph{Electric Power} \ \\

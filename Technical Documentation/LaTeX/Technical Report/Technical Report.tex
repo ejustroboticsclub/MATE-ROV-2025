@@ -96,22 +96,6 @@
 
 \usepackage{framed} %um Boxen zu machen
 
-\usepackage[citestyle=authoryear,
-			bibstyle=authoryear,
-			language=auto,
-			url=false,
-			backend=bibtex,
-			doi=false,
-			isbn=false]{biblatex}
-	\renewbibmacro*{volume+number+eid}{%
-  \printfield{volume}%
-%  \setunit*{\adddot}% DELETED
-  \setunit*{\addnbspace}% NEW (optional); there's also \addnbthinspace
-  \printfield{number}%
-  \setunit{\addcomma\space}%
-  \printfield{eid}}
-\DeclareFieldFormat[article]{number}{\mkbibparens{#1}}
-
 \usepackage{setspace}
 \onehalfspacing
 
@@ -148,6 +132,7 @@
 \makeatother
 
 \usepackage{titlesec}
+\usepackage{makecell}
 
 \titlespacing*{\subsection}{0pt}{5pt}{5pt}
 \titlespacing*{\subsubsection}{0pt}{5pt}{5pt}
@@ -178,6 +163,11 @@
 \setlength{\headheight}{13.6pt}
 \addtolength{\topmargin}{-1.6pt}
 \setlength{\footskip}{58.2pt}
+\usepackage{capt-of}
+\usepackage{pifont}
+
+\usepackage{biblatex}
+\addbibresource{references.bib}
 
 \begin{document}
 
