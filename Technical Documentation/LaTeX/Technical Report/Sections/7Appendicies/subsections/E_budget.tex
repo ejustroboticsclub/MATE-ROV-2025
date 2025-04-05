@@ -1,1 +1,75 @@
+\section{Budget} \label{app:budget}
 
+\subsection{Travel Estimate}
+
+\begin{longtblr}[
+  caption = {Traveling expense breakdown.},
+  label = {tab:travel_expense},
+  entry = {Table \thetable},
+  ]{
+  width = \columnwidth,
+  colspec = {| Q[c, m, wd=1.4cm] | X[l, m, wd=4.2cm] | Q[c, m, wd=1.5cm] |},
+  hline{1,Z} = {solid},
+  hline{2, 3, 4, 5, 6, 7, 8} = {solid},
+  rows = {font=\tiny,rowsep=0pt},
+  row{1} = {font=\bfseries\tiny},
+  row{4, 8} = {font=\bfseries\tiny},
+  column{1} = {font=\bfseries\tiny},
+  }
+{} & {Category} & {Expenses (USD)} \\
+\SetCell[r=2]{m} Expenses per Team & Team transportations in Alpena, Michigan & 400 \\
+{} & ROV Shipping & 650 \\
+\SetCell[c=2]{c} Total & & 1050 \\
+\SetCell[r=3]{m} Expenses per Member & Residency in Alpena, Michigan per member & 350 \\
+{} & Tickets expenses per member & 1600 \\
+{} & Visa Fees per member & 185 \\
+\SetCell[c=2]{c} Total per member & & 2205 \\
+\end{longtblr}
+
+The number of individuals traveling to the USA will be determined based on available sponsorship opportunities, which may cover some or all of the costs. We expect to have a clear understanding of these details by June 1, 2025.
+
+\subsection{Fundraising}
+\vspace{-0.6cm}
+\begin{longtblr}[
+  caption = {Income breakdown.},
+  label = {tab:income},
+  entry = {Table \thetable}
+]{
+  width = \columnwidth,
+  colspec = {| Q[c, m] | X[l, m] | Q[c, m, wd=1.4cm] |},
+  hline{1, 2, 3, 4, 5, Z} = {solid},
+  rows = {font=\tiny,rowsep=0pt},
+  row{1} = {font=\bfseries\tiny},
+  row{5} = {font=\bfseries\tiny}
+}
+{Category} & {Source} & {Cost (USD)} \\
+{Sponsorship} & {E-just University fund} & {2000} \\
+{Sponsorship} & {ISF fund} & {1000} \\
+{Self-fund} & {By Team members} & {156} \\
+\SetCell[c=2]{c} Total Income & & {3156} \\
+\end{longtblr}
+
+\vspace{-0.4cm}
+\subsection{Budget Allocation}
+\vspace{-0.6cm}
+\begin{longtblr}[
+  caption = {Budget Allocation.},
+  label = {tab:budget_allocation},
+  entry = {Table \thetable}
+]{
+  width = \columnwidth,
+  colspec = {| Q[c, m, wd=1.6cm] | X[l, m, wd=4.2cm] | Q[c, m, wd=1.3cm] |},
+  hline{1-Z} = {solid},
+  rows = {font=\tiny,rowsep=0pt},
+  row{1, 8} = {font=\bfseries\tiny},
+  column{1} = {font=\bfseries\tiny}
+}
+{Category} & {Description} & {Cost (USD)} \\
+{ROV Materials \& Machining} & {ROV tether, Cameras encapsulation, Canister} & {1080} \\
+{ROV Electronics} & {power converters, cameras, etc} & {1050} \\
+{Float} & {Its Structure, Electronics, and Sensors} & {400} \\
+{Lab Safety} & {Safety glasses, labels, ventilation, gloves, etc.} & {70} \\
+{Team Operations} & {Team branding (shirts, Logo stickers, etc)} & {275} \\
+{Competition Fees} & {Registration fees for MATE ROV Competition} & {650} \\
+\SetCell[c=2]{c} Total Expenses & & {3,525} \\
+\end{longtblr}

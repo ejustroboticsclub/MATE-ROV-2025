@@ -44,8 +44,7 @@
   <internal package="biblatex" priority="9" active="0">
     <generic>latex</generic>
     <provides type="dynamic">
-      <file>"Technical Report".aux</file>
-      <file>Technical_Report-blx.bib</file>
+      <file>"Technical Report".bcf</file>
     </provides>
     <requires type="dynamic">
       <file>"Technical Report".bbl</file>
@@ -53,24 +52,22 @@
     <requires type="static">
       <file>blx-dm.def</file>
       <file>blx-compat.def</file>
-      <file>blx-bibtex.def</file>
       <file>biblatex.def</file>
       <file>standard.bbx</file>
-      <file>authoryear.bbx</file>
-      <file>authoryear.cbx</file>
+      <file>numeric.bbx</file>
+      <file>numeric.cbx</file>
       <file>biblatex.cfg</file>
       <file>english.lbx</file>
     </requires>
   </internal>
   <external package="biblatex" priority="5" active="0">
-    <generic>bibtex</generic>
+    <generic>biber</generic>
     <cmdline>
-      <binary>bibtex</binary>
-      <option>-min-crossrefs 2</option>
+      <binary>biber</binary>
       <infile>"Technical Report"</infile>
     </cmdline>
     <input>
-      <file>"Technical Report".aux</file>
+      <file>"Technical Report".bcf</file>
     </input>
     <output>
       <file>"Technical Report".bbl</file>
@@ -79,13 +76,10 @@
       <file>"Technical Report".bbl</file>
     </provides>
     <requires type="dynamic">
-      <file>"Technical Report".aux</file>
-      <file>Technical_Report-blx.bib</file>
+      <file>"Technical Report".bcf</file>
     </requires>
     <requires type="editable">
-    </requires>
-    <requires type="static">
-      <file>biblatex.bst</file>
+      <file>references.bib</file>
     </requires>
   </external>
 </requests>

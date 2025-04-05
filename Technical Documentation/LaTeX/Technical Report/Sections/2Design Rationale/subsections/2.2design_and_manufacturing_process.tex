@@ -12,14 +12,39 @@ The design process began with a comprehensive evaluation of last year’s ROV to
 
 Once the core design concepts were defined, SolidWorks simulations were conducted to evaluate structural integrity, hydrodynamics, and thruster configurations. These data-driven insights played a critical role in optimizing component placement and material selection.
 
-\hspace{10pt} To ensure an optimal balance between performance and affordability, a trade-off matrix (Figure \ref{fig:material_selection}) was developed, comparing materials based on weight, cost, and manufacturability. Additionally, build vs. buy decisions were assessed, ensuring that in-house manufacturing was pursued where it provided a functional and economic advantage, while outsourcing was considered for components requiring specialized fabrication.
+\hspace{10pt} To ensure an optimal balance between performance and affordability, a trade-off matrix (Table \ref{tab:material_selection}) was developed, comparing materials based on weight, cost, and manufacturability. The table presents the weighted selection criteria per component according to  a weighted sum presented in Equation \ref{eq:material_selection}, where materials are chosen by maximizing the sum of weighted property scores. Additionally, build vs. buy decisions were assessed, ensuring that in-house manufacturing was pursued where it provided a functional and economic advantage, while outsourcing was considered for components requiring specialized fabrication.
 
-\begin{figure}[h]
-    \centering
-    \rule{0.8\columnwidth}{4cm}
-    \caption{Material Selection}
-    \label{fig:material_selection}
-\end{figure}
+\scriptsize
+\begin{equation}
+  \label{eq:material_selection}
+  \text{Total Score} = \sum_{\textit{Criteria}=1}^{n} (\text{component weight})_{\textit{criteria}} \times (\text{material score})_{\textit{criteria}}
+\end{equation}
+\normalsize
+
+\begin{table}[h]
+  \centering
+  \renewcommand{\arraystretch}{1.2} 
+  \begin{adjustbox}{width=\columnwidth}
+  \begin{tabular}{|cc|cccc|ccccc|c|}
+  \hline
+  \multicolumn{2}{|c|}{\multirow{2}{*}{\textbf{Criteria}}} & \multicolumn{4}{c|}{\textbf{Weight}} & \multicolumn{5}{c|}{\textbf{Materials}} & \multirow{2}{*}{Selected Material} \\ \cline{3-11}
+  & & Frame & Body & Canister & Gripper & HDPE & Acrylic & Aluminum & Stainless steel & 3D printing & \\ \hline
+  \multicolumn{1}{|c|}{1} & Transparency & 0 & 0 & 0.1 & 0 & 0 & 10 & 0 & 0 & 0 & - \\
+  \multicolumn{1}{|c|}{2} & Strength & 0.1 & 0.4 & 0.3 & 0.2 & 6 & 4 & 9 & 10 & 6 & - \\
+  \multicolumn{1}{|c|}{3} & Cost \& Availability & 0.2 & 0.2 & 0.3 & 0.4 & 8 & 6 & 7 & 5 & 8 & - \\
+  \multicolumn{1}{|c|}{4} & Fabrication (ease) & 0.5 & 0.3 & 0.2 & 0.2 & 9 & 7 & 7 & 6 & 8 & - \\
+  \multicolumn{1}{|c|}{5} & Ductility & 0.1 & 0.1 & 0.1 & 0.1 & 7 & 3 & 8 & 6 & 4 & - \\
+  \multicolumn{1}{|c|}{6} & Specific Gravity & 0.1 & 0 & 0 & 0.1 & 9 & 8 & 7 & 2 & 8 & - \\ \hline
+  \multicolumn{2}{|c|}{\multirow{4}{*}{\textbf{Total Score}}} & \multicolumn{4}{c|}{Frame} & \textbf{8.3} & 6.5 & 7.3 & 4.6 & 7.4 & HDPE \\
+  & & \multicolumn{4}{c|}{Body} & 7.7 & 5.6 & \textbf{8.1} & 6.8 & 7 & Aluminum \\
+  & & \multicolumn{4}{c|}{Canister} & 7.1 & 5.3 & 6.8 & 4.7 & \textbf{7.5} & 3D Printing \\
+  & & \multicolumn{4}{c|}{Gripper} & \textbf{7.6} & 5.2 & 6.8 & 5.6 & 7.4 & HDPE \\ \hline
+  \end{tabular}
+  \end{adjustbox}
+  \caption{Criteria and Material Selection Matrix.}
+  \label{tab:material_selection}
+  
+\end{table}
 
 \hspace{10pt} To validate these theoretical analyses, small-scale prototypes were developed for key components. The 3D-printed canister was tested for sealing effectiveness, and successful trials confirmed its reliability before moving to full-scale manufacturing. Camera housings were also prototyped to optimize field-of-view placement. This iterative process allowed for practical verification of design choices before finalizing the ROV.
 
@@ -62,9 +87,28 @@ For the electrical system, significant innovations were implemented:
 
 \begin{figure}[h]
     \centering
-    \rule{0.8\columnwidth}{4cm}
-    \caption{PCB}
+    \begin{subfigure}{0.4\columnwidth}
+      \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/Control PCB.png}
+      \caption{Control PCB.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.15\columnwidth}
+      \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/ESC PCB.png}
+      \caption{ESC PCB.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.4\columnwidth}
+      \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/Control PCB.png}
+      \caption{Control PCB.}
+    \end{subfigure}
+  
+    \vspace{10pt}
+    \begin{subfigure}{0.8\columnwidth}
+      \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/Full Stack.png}
+      \caption{Full stack of PCBs.}
+    \end{subfigure}
+    \caption{Kamikaze PCBs.}
     \label{fig:pcb}
-\end{figure}
+  \end{figure}
 
 Finally, the complete ROV assembly was tested to ensure seamless integration of mechanical, electrical, and software components.
