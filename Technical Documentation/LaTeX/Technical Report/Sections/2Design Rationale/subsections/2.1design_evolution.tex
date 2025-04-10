@@ -52,7 +52,12 @@ Shiro Kaijin faced instability in power connections due to disorganized cables, 
 \vspace{0.2cm}
 \textbf{Inadequacy of Arduino UNO}
 
-The Arduino UNO, used as the main controller, struggled to handle multiple sensors, leading to irregular data handling and performance issues. Kamikaze replaces it with an STM32 microcontroller, offering better stability, higher processing power, and improved efficiency for industrial applications. To further enhance system communication, a CAN bus was integrated, enabling reliable data exchange between multiple STM32s, reducing wiring complexity, and allowing independent node resets without affecting the overall system.
+The Arduino UNO, used as the main controller, struggled to handle multiple sensors, leading to irregular data handling and performance issues. Kamikaze replaces it with an STM32 microcontroller, offering better stability, higher processing power, and improved efficiency for industrial applications. 
+
+\vspace{0.2cm}
+\textbf{CAN Bus Integration}
+
+To further enhance system communication, a CAN bus was integrated, enabling reliable data exchange between multiple STM32s, reducing wiring complexity, and allowing independent node resets without affecting the overall system. This implementation ensures robust and efficient communication, critical for the seamless operation of Kamikaze's various subsystems.
 
 \vspace{0.2cm}
 \textbf{Limitations of MS5540 Depth Sensor}
@@ -71,11 +76,19 @@ Copper wires in high-power transmission corroded quickly, posing safety risks. K
 
 \subsubsection{Software System Evolution}
 
-Something about the software system evolution. \lipsum[1]
+\textbf{ZED Camera}
 
-\begin{figure}[h]
-    \centering
-    \rule{0.8\columnwidth}{4cm}
-    \caption{Software System Evolution.}
-    \label{fig:software_system}
-\end{figure}
+This year, we added a stereo camera to our ROV to enhance our navigation capabilities. The ZED2i camera is capable of providing depth perception and 3D mapping, which can be utilized in Task 1: Shipwreck length estimation. We exploited epipolar geometry algorithms to be able to estimate the length of the ship from the depth data provided. We believe that this addition is crucial to the development of our ROV, and it's a decent investment for the future. \\
+
+\vspace{0.2cm}
+\textbf{$\boldsymbol{\mu}$ROS}
+
+We improved our communication model even more by the integration of micro-ROS, a ROS 2 implementation for microcontrollers, on one of the STM32 we have. We used micro-ROS Ethernet to connect the STM32 to the top-side computer, which is running ROS 2, allowing for seamless integration between the microcontrollers and the main computer. Micro-ROS ensures real-time communication and efficient data exchange, enhancing the overall performance of our ROV.   
+
+% For now we don't need images - Shaheen
+% \begin{figure}[h]
+%     \centering
+%     \rule{0.8\columnwidth}{4cm}
+%     \caption{Software System Evolution.}
+%     \label{fig:software_system}
+% \end{figure}
