@@ -85,23 +85,26 @@
 
     \textbf{Implementation of a Custom-Designed Depth Sensor}
 
-    A custom-designed depth sensor was introduced to replace the previously existing board. The new sensor delivered greater accuracy, Realtime measurements, and supported a wider range of connectivity options. This upgrade significantly improved system performance and reliability, ensuring precise and efficient depth measurement.
+    A custom-designed depth sensor was introduced to replace the previously existing board. The new sensor delivered greater accuracy, real-time measurements, and supported a wider range of connectivity options. This upgrade significantly improved system performance and reliability, ensuring precise and efficient depth measurement.
 
     \item \textbf{Underwater Control Unit}
     
-    The Vehicle components are all mounted on 2 meticulously designed PCBs for maximum efficiency and low space consumption, connecting all the microcontrollers and the sensors inside the ROV.
+    The vehicle components are all mounted on 2 thoroughly designed PCBs for maximum efficiency and low space consumption, connecting all the microcontrollers and the sensors inside the ROV.
     \item \textbf{System Integration}
     
     The ROV's electrical system is interconnected through a structured communication framework. At the top side, the joystick sends control signals to the laptop, which transmits them to the router and then down the tether via an Ethernet cable. On the ROV side, an Ethernet switch distributes the signals, directing one output to the Raspberry Pi 5 (the primary controller) and another to the W5500 Ethernet module.
     
     \vspace{-0.2cm}
     \hspace{10pt} The system is designed as an integrated network of three modular subsystems. The Power Subsystem houses Electronic Speed Controllers (ESCs) and an STM32 microcontroller. The Raspberry Pi 5 sends control signals to the STM32 board, which then controls the seven ESCs connected to their respective T200 thrusters. Additionally, the STM32 microcontroller continuously collects real-time power consumption data of the thrusters and power converters, including current and voltage readings from the ACS712 current sensor, and transmits it to Raspberry Pi 5 via the CAN bus module for monitoring and analysis. 
+
+    \vspace{-0.2cm}
+    \hspace{10pt} The second subsystem is the Sensor System which includes the depth sensor and an Arduino Nano RP2040 for the IMU readings, both of which are connected to an STM32 microcontroller that handles data acquisition. STM32 processes the sensor data and sends it to Raspberry Pi 5 via the CAN bus protocol, ensuring timely and reliable data transmission. Finally, the Debugging subsystem which consists of an Ethernet module connected to an STM32 microcontroller, interfaced with the network switch via an Ethernet cable. Through CAN bus integration, the Ethernet module communicates with the other subsystems, enables real-time system debugging, allowing for troubleshooting of the entire system remotely. It also provides fault control, monitoring and managing any failures that may occur within the Power PCB or Sensor subsystem.
     
-    \hspace{10pt} The second subsystem is the Sensor System which includes the depth sensor and an Arduino Nano RP2040 for the IMU readings, both of which are connected to an STM32 microcontroller that handles data acquisition. STM32 processes the sensor data and sends it to Raspberry Pi 5 via the CAN bus protocol, ensuring timely and reliable data transmission. Finally, the Debugging subsystem which consists of an Ethernet module connected to an STM32 microcontroller, interfaced with the network switch via an Ethernet cable. Through CAN bus integration, the Ethernet module communicates with the other subsystems. Ables real-time system debugging, allowing for troubleshooting of the entire system remotely. It also provides fault control, monitoring and managing any failures that may occur within the Power PCB or Sensor subsystem. 
-    
+    \vspace{-0.2cm}
     \hspace{10pt} Finally, the camera’s video feed is processed by the Raspberry Pi 5, transmitted back to the topside through the tether, and displayed on the GUI on the laptop. Additionally, all other sensor data, including depth measurements, current and voltage values from the Power PCB, and IMU from the Arduino Nano RP2040, are collected by the STM32 microcontrollers and sent to the Raspberry Pi 5 via CAN bus. The Raspberry Pi then transmits this information via ROS to the topside control station, where it is displayed on the GUI for real-time monitoring.
 \end{enumerate}
 
+\vspace{-1cm}
 \paragraph{Electric Power} \ \\
 \vspace{-0.5cm}
 
@@ -114,9 +117,9 @@ The provided power is 48 V and with a maximum of 30 A. This power needs to be co
     
     The 48-Volt supply voltage is converted into 12 V using five different DC-DC Step down converters. Four of the converters provide a current of 30 Amps, and the fifth one provides 10 Amps. The total current is then distributed to the thrusters and the power unit PCB to supply power to the other boards inside the canister. In addition, there are Four 12V-to-5V step-down (buck) converters inside the power unit PCB, two of them provide 5 Amps for the Raspberry Pi board. The other twp provide 3 amps, one of them supplying STM32 microcontrollers and the CAN bus modules in the power PCB while the other supply the sensors and other indicators. Details of power distribution can be seen in Table \ref{tab:power_calculation}.
 
-    \begin{table}[h]
+    \begin{table}[hb!]
         \centering
-        \begin{adjustbox}{max width=\columnwidth}
+        \begin{adjustbox}{max width=0.9\columnwidth}
         \begin{tabular}{@{} l *{5}{c} @{}}
           \toprule
           \textbf{Component} & \textbf{Quantity} & \textbf{Voltage (V)} & \textbf{Current (A)} & \textbf{Power Per Unit (W)} & \textbf{Total Power (W)} \\
@@ -151,10 +154,11 @@ The provided power is 48 V and with a maximum of 30 A. This power needs to be co
     As mentioned above, two PCB containing three subsystems were designed specifically for the power conversion system inside the ROV.
 \end{enumerate}
 
+\vspace{-0.8cm}
 \paragraph{Tether} \ \\
 \vspace{-0.5cm}
 
-The tether is made of Polyethylene terephthalate (PET) light weight 15mm expandable cable sleeve which provides protection for the cables inside (Figure \ref{fig:tether}). Tether length is 25 meters long and consists of two 16mm2 cables made from Aluminum and PVC jacket material. CAT6e for ethernet communication. The 2 pneumatic hose supply is also included in the tether, one as an inlet and the other as an outlet.
+The tether is made of Polyethylene Terephthalate (PET) light weight 15mm expandable cable sleeve which provides protection for the cables inside (Figure \ref{fig:tether}). Tether length is 25 meters long and consists of two 16mm2 cables made from Aluminum and PVC jacket material. CAT6e for ethernet communication. The 2 pneumatic hose supply is also included in the tether, one as an inlet and the other as an outlet.
 
 \begin{figure}[h!]
     \centering

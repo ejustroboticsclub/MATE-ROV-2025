@@ -1,13 +1,15 @@
 \subsubsection{Software System}
 
 \paragraph{Communication System} \ \\
+\vspace{-0.5cm}
 
-The ROV's communication architecture which is illustrated in Figure 1 can be divided into two parts: the top side control unit and the ROV unit.
+The ROV's communication architecture which is illustrated in Figure \ref{fig:rov_architecture} can be divided into two parts: the top side control unit and the ROV unit.
 
-\begin{figure}[hb]
+\begin{figure}[h!]
     \centering
-    \includegraphics[width=1\linewidth]{Sections/2Design Rationale/images/rov_architecture_2.png}
+    \includegraphics[width=\columnwidth]{Sections/2Design Rationale/images/rov_architecture_2.png}
     \caption{Communication architecture}
+    \label{fig:rov_architecture}
 \end{figure}
 
 \vspace{0.2cm}
@@ -27,7 +29,7 @@ In last year's architecture, we utilized ROS 1 as the main framework for communi
 \textbf{Topside Control Unit}
 
 The topside control unit hosts the nodes and agents that work above water which includes:
-\vspace{-0.5\baselineskip}
+\vspace{-0.3\baselineskip}
 \begin{itemize}
     \setlength{\itemsep}{0pt}
     \item Joystick Node
@@ -70,9 +72,9 @@ Vitals include:
 
 The ROV unit is where a lot of the heavy lifting happens, it executes commands received from the topside control unit, streams cameras and hosts the debugger node.
 
-The ROV unit has a Raspberry Pi 5 that's responsible for streaming cameras to the GUI node as well as it hosts a ROS 2 node that is responsible for receiving the commands from the stabilization node.
+\hspace{10pt} The ROV unit has a Raspberry Pi 5 that is responsible for streaming cameras to the GUI node as well as it hosts a ROS 2 node that is responsible for receiving the commands from the stabilization node.
 
-Connected to the Raspberry Pi 5 is the CAN bus where it receives data from sensors such as current sensors, a depth sensor, an IMU and the power monitor.
+\hspace{10pt} Connected to the Raspberry Pi 5 is the CAN bus where it receives data from sensors such as current sensors, a depth sensor, an IMU and the power monitor.
 That are then published to both the topside control unit as well as the debugger node.
 
 \vspace{0.2cm}
@@ -150,7 +152,7 @@ The Kamikaze's movement underwater may be one of the most important aspects of t
 
 \vspace{-1cm}
 \paragraph{Open Sourcing the Kamikaze} \ \\
-We have all of our working code available on our GitHub repository. A lot of effort was made this year to maintain, document, and clean up the code, making it easier for future teams to understand and build upon. We believe that this is a crucial step in the development of the Kamikaze, as it allows for a more collaborative environment and ensures that the knowledge gained from each year is not lost.
+We have all of our working code available on our \href{https://github.com/ejustroboticsclub/MATE-ROV-2025}{GitHub repository}. A lot of effort was made this year to maintain, document, and clean up the code, making it easier for future teams to understand and build upon. We believe that this is a crucial step in the development of the Kamikaze, as it allows for a more collaborative environment and ensures that the knowledge gained from each year is not lost.
 
 
 

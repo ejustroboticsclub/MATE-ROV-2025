@@ -12,7 +12,7 @@ Kamikaze’s frame (Figure \ref{fig:frame}) is designed using a cuboid aluminum 
 
 \hspace{10pt} Additionally, the frame is tailored for the E-JUST Robotics team, ensuring compatibility with the mission requirements of the MATE ROV competition while balancing durability, weight efficiency, and adaptability.
 
-\begin{figure}[t]
+\begin{figure}[b]
     \centering
     \begin{subfigure}[b]{0.45\columnwidth}
         \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/side frame.png}
@@ -183,7 +183,7 @@ The canister serves as the primary enclosure for the ROV, protecting essential c
     \label{fig:canister}
 \end{figure}
 
-\hspace{10pt} PETG was chosen as a cost-effective alternative to aluminum, offering a balance between mechanical strength and manufacturability. Although PETG is inherently waterproof, Sikadur®-31 CF sealant was applied to enhance structural integrity and reliability. The 3mm-thick aluminum base provides structural support for bulkhead glands, preventing layer separation and ensuring durability. The canister dimensions are 276×276×142.59 mm, optimized for component housing and pressure resistance. A three-stage sealing process was implemented, consisting of mechanical fastening, epoxy bonding, and polyurethane sealant, to maintain a watertight enclosure. The removable PETG lid, secured with M5 screws and dual O-rings, allows for easy inspection and maintenance, while four embedded acrylic windows provide visual access without disassembly.
+PETG was chosen as a cost-effective alternative to aluminum, offering a balance between mechanical strength and manufacturability. Although PETG is inherently waterproof, Sikadur®-31 CF sealant was applied to enhance structural integrity and reliability. The 3mm-thick aluminum base provides structural support for bulkhead glands, preventing layer separation and ensuring durability. The canister dimensions are 276×276×142.59 mm, optimized for component housing and pressure resistance. A three-stage sealing process was implemented, consisting of mechanical fastening, epoxy bonding, and polyurethane sealant, to maintain a watertight enclosure. The removable PETG lid, secured with M5 screws and dual O-rings, allows for easy inspection and maintenance, while four embedded acrylic windows provide visual access without disassembly.
 
 \hspace{10pt} To evaluate structural performance, a Finite Element Analysis (FEA) was conducted:
 
@@ -229,9 +229,11 @@ Waterproofing is critical for the ROV’s performance and durability. The sealin
     \item Bolted fastening ensures long-term stability.
 \end{itemize}
 
+\break
+
 \textbf{ZED Camera Enclosure}
 
-\vspace{-0.5\baselineskip}
+\vspace{-0.7\baselineskip}
 \begin{itemize}
     \setlength{\itemsep}{0pt}
     \item O-ring in a groove forms a primary seal.
@@ -245,7 +247,7 @@ Waterproofing is critical for the ROV’s performance and durability. The sealin
 
 For other cameras, Artelon enclosures replace aluminum.
 
-\vspace{-0.5\baselineskip}
+\vspace{-0.7\baselineskip}
 \begin{itemize}
     \setlength{\itemsep}{0pt}
     \item Acrylic cover sandwiched with an O-ring seal ensures water resistance.
@@ -278,13 +280,23 @@ To ensure optimal sealing pressure and prevent gasket deformation under load, th
 \paragraph{Cameras} \ \\
 \vspace{-0.5cm}
 
-Something about cameras. \lipsum[1]
+To ensure comprehensive underwater vision and precise control of the ROV during operation, a total of six cameras have been integrated into the system. Among these, a ZED camera is strategically placed at the front of the ROV to provide stereoscopic 3D depth perception. The remaining five cameras are a mix of Webcams, Rapoo, and Life Cams, each selected for their reliability, compactness, and clarity in underwater environments. These are distributed across different key positions of the ROV as illustrated in Figure \ref{fig:cameras_enclosures}, ensuring full visual coverage around the vehicle. Their placement allows the pilot to monitor the surroundings of the ROV, including the side and rear views, the grippers, and other mission-specific components.
 
 \begin{figure}[h]
     \centering
-    \rule{0.8\columnwidth}{4cm}
-    \caption{Cameras.}
-    \label{fig:cameras}
+    \begin{subfigure}[b]{0.45\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/ZED.png}
+        \caption{ZED Camera.}
+        \label{fig:zed_camera_enclosure}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.5\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/Cameras.png}
+        \caption{Other Cameras.}
+        \label{fig:other_cameras_enclosure}
+    \end{subfigure}
+    \caption{Cameras Enclosures.}
+    \label{fig:cameras_enclosures}
 \end{figure}
 
 \vspace{-0.3cm}
@@ -310,7 +322,7 @@ Two claw grippers (Figure \ref{fig:grippers}) are designed to handle various ite
     \label{fig:grippers}
 \end{figure}
 
-To enhance functionality, two screw hooks were integrated, enabling the ROV to lift hooks and manipulate ropes, expanding its operational capabilities.To optimize the gripper’s design and prevent potential bending stress-induced failures, a comprehensive stress analysis was performed. This theoretical evaluation ensured the gripper’s ability to withstand the designated weight. The results (Figure \ref{fig:grippers_analysis}) confirmed that:
+To enhance functionality, two screw hooks were integrated, enabling the ROV to lift hooks and manipulate ropes, expanding its operational capabilities. To optimize the gripper’s design and prevent potential bending stress-induced failures, a comprehensive stress analysis was performed. This theoretical evaluation ensured the gripper’s ability to withstand the designated weight. The results (Figure \ref{fig:grippers_analysis}) confirmed that:
 
 \vspace{-0.5\baselineskip}
 \begin{itemize}

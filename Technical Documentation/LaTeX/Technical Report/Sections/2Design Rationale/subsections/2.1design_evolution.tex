@@ -18,7 +18,7 @@ Our team conducted structured brainstorming sessions to explore innovations that
 \end{figure}
 
 \subsubsection{Mechanical System Evolution}
-\vspace{0pt}
+
 \textbf{Frame and Structural Improvements}
 
 Shiro Kaijin’s frame was constructed entirely from HDPE, which posed challenges in component fixation. Drilling holes for mounting often led to overlap issues, making modifications difficult. To address this, Kamikaze features a modular aluminum extrusion body, enabling flexible component placement, quick adjustments, and easier repairs.
@@ -74,21 +74,14 @@ Shiro Kaijin used relays in the main control PCB, which affected system stabilit
 
 Copper wires in high-power transmission corroded quickly, posing safety risks. Kamikaze replaces them with aluminum wires, which are lighter, more durable, and resistant to redox reactions, ensuring safer and more efficient power transmission.
 
+\vspace{0.2cm}
 \subsubsection{Software System Evolution}
 
 \textbf{ZED Camera}
 
-This year, we added a stereo camera to our ROV to enhance our navigation capabilities. The ZED2i camera is capable of providing depth perception and 3D mapping, which can be utilized in Task 1: Shipwreck length estimation. We exploited epipolar geometry algorithms to be able to estimate the length of the ship from the depth data provided. We believe that this addition is crucial to the development of our ROV, and it's a decent investment for the future. \\
+This year, we added a stereo camera to our ROV to enhance our navigation capabilities. The ZED2i camera is capable of providing depth perception and 3D mapping, which can be utilized in Task 1: Shipwreck length estimation. We exploited epipolar geometry algorithms to be able to estimate the length of the ship from the depth data provided. We believe that this addition is crucial to the development of our ROV, and it's a decent investment for the future.
 
 \vspace{0.2cm}
 \textbf{$\boldsymbol{\mu}$ROS}
 
-We improved our communication model even more by the integration of micro-ROS, a ROS 2 implementation for microcontrollers, on one of the STM32 we have. We used micro-ROS Ethernet to connect the STM32 to the top-side computer, which is running ROS 2, allowing for seamless integration between the microcontrollers and the main computer. Micro-ROS ensures real-time communication and efficient data exchange, enhancing the overall performance of our ROV.   
-
-% For now we don't need images - Shaheen
-% \begin{figure}[h]
-%     \centering
-%     \rule{0.8\columnwidth}{4cm}
-%     \caption{Software System Evolution.}
-%     \label{fig:software_system}
-% \end{figure}
+We improved our communication model even more by the integration of micro-ROS, a ROS 2 implementation for microcontrollers, on one of the STM32 we have. We used micro-ROS Ethernet to connect the STM32 to the top-side computer, which is running ROS 2, allowing for seamless integration between the microcontrollers and the main computer. Micro-ROS ensures real-time communication and efficient data exchange, enhancing the overall performance of our ROV.
