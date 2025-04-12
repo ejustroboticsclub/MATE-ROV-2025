@@ -19,7 +19,7 @@ In last year's architecture, we utilized ROS 1 as the main framework for communi
 
 \hspace{10pt} Communication with MCUs was handled through \texttt{rosserial}, which introduced a critical limitation: the presence of a single point of failure—the ROS Master. Any instability or failure in the master would cause the entire system to halt, making it unreliable in underwater environments where robustness is essential.
 
-\hspace{10pt} This year, we have transitioned fully to ROS 2, eliminating the dependency on a centralized master. Communication between the topside control unit and the ROV unit is now handled using ROS2 \& CAN communication, which is more reliable, scalable, and real-time capable.
+\hspace{10pt} This year, we have transitioned fully to ROS 2, eliminating the centralized master dependency. Communication between the topside control unit and the ROV unit is now handled using ROS2 \& CAN communication, which is more reliable, scalable, and real-time capable.
 
 \hspace{10pt} In parallel, we’ve integrated \texttt{micro-ROS} to run a debugger node on the ROV side. This node communicates with the topside unit via an Ethernet module, acting as a backup communication path. In the event of failure of our SBC—the Raspberry Pi, this channel ensures continued monitoring of the entire system's vitals which greatly facilitates debugging in case of a problem with our system.
 
@@ -58,6 +58,7 @@ The joystick node is interfaced with the Logitech Extreme 3D Pro Joystick, captu
 
 \hspace{10pt} The GUI node acts as the pilot's interface, displaying camera feeds for navigation as well as displaying the ROV's vitals.
 
+\break
 Vitals include: 
 \vspace{-0.3\baselineskip}
 \begin{itemize}
@@ -129,7 +130,7 @@ The Float interface enables communication with the float before vertical profili
 \paragraph{Kinematics} \ \\
 The Kamikaze's movement underwater may be one of the most important aspects of the design. We had to ensure stability, maneuverability, and speed. We achieved this by focusing on two main aspects:
 
-\vspace{-0.5\baselineskip}
+\vspace{-2cm}
 \begin{itemize}[leftmargin=0pt, itemindent=10pt]
     \setlength{\itemsep}{0pt}   
     \item \textbf{Thrusters Configuration:} We employed a seventh thruster this year to improve the robot's maneuverability as shown in figure \ref{fig:thruster}. With the current vectored thrusters configuration and this new thruster, we can achieve motion in 6 degrees of freedom. This novel configuration may be the first of its kind to allow for such a wide range of motion while only using 7 thrusters.
@@ -142,7 +143,7 @@ The Kamikaze's movement underwater may be one of the most important aspects of t
 
     \item \textbf{PID Control:} We have implemented PID controllers for all critical movement axes, allowing for precise control over the robot's movement and ensures that it remains stable in the water. We implemented an FFT (Fast Fourier Transform) based auto-tuning algorithm to tune the PID parameters, as this is our first year using the new Vehicle. We also supplemented the algorithm with a live
     plotting feature, shown in figure \ref{fig:pid_live}, to allow for manual adjustments to the PID parameters.
-    \begin{figure}[h]
+    \begin{figure}[hb]
     \centering
     \includegraphics[width=\columnwidth]{Sections/2Design Rationale/images/Pid.png}
     \caption{Live Plotting of PID Parameters}
@@ -150,7 +151,6 @@ The Kamikaze's movement underwater may be one of the most important aspects of t
     \end{figure}
 \end{itemize}
 
-\vspace{-1cm}
 \paragraph{Open Sourcing the Kamikaze} \ \\
 We have all of our working code available on our \href{https://github.com/ejustroboticsclub/MATE-ROV-2025}{GitHub repository}. A lot of effort was made this year to maintain, document, and clean up the code, making it easier for future teams to understand and build upon. We believe that this is a crucial step in the development of the Kamikaze, as it allows for a more collaborative environment and ensures that the knowledge gained from each year is not lost.
 

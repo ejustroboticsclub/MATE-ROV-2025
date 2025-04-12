@@ -1,0 +1,204 @@
+\documentclass[11pt, twocolumn]{article}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{adjustbox} 
+\usepackage{enumitem}
+\usepackage{multirow}
+\usepackage{bbding,enumitem}
+\usepackage{authblk}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage[table]{xcolor}
+\setcounter{secnumdepth}{3} % for adjusting padding
+\pagestyle{fancy}
+\newcommand{\blueoval}{%
+    \begin{tikzpicture}[remember picture, overlay]
+    \shade[shading=axis, left color=blue, right color=white] (current page.north west) -- (3,0) arc (0:180:4cm) -- cycle;
+    \end{tikzpicture}%
+}
+
+\newcommand{\coloredfooter}{%
+    \begin{tikzpicture}[remember picture, overlay]
+    \shade[shading=axis, left color=teal, right color=white] (current page.south east) -- (-1,-2) arc (0:80:2cm) -- cycle;
+    \end{tikzpicture}%
+}
+
+\fancyhf{} % Clear default header and footer
+\fancyhead[L]{ \leftmark}
+% Display section title in the left header
+\fancyhead[R]{\thepage} % Display page number in the right header
+\definecolor{mypink3}{cmyk}{0, 0.7808, 0.4429, 0.1412}
+
+\makeatletter
+\renewcommand{\maketitle}{\bgroup\setlength{\parindent}{0pt}
+\begin{flushleft}
+  \textbf{\@title}
+
+  \@author
+\end{flushleft}\egroup
+}
+\makeatother
+
+\title{\Huge \color{mypink3}{ROV Document}  \vspace{0.5cm}}
+\author{\Large E-JUST Robotics Club \normalsize \hspace{0.5cm} }
+
+\setlength{\parindent}{0pt}
+\date{\today}
+
+\usepackage[showframe=false, margin=.75in]{geometry}
+
+\usepackage{abstract}
+\renewcommand{\abstractname}{}    % clear the title
+\renewcommand{\absnamepos}{empty} % originally center
+
+\usepackage{lipsum}
+
+\usepackage{afterpage}
+
+\renewenvironment{abstract}
+ {\small
+  \begin{center}
+  \bfseries \abstractname\vspace{-.5em}\vspace{0pt}
+  \end{center}
+  \list{}{%
+    \setlength{\leftmargin}{10mm}% <---------- Change margin here
+    \setlength{\rightmargin}{\leftmargin}%
+  }%
+  \item\relax}
+ {\endlist}
+
+\usepackage[utf8]{inputenc}
+
+%\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage[lofdepth,lotdepth]{subfig}
+\usepackage{booktabs}
+
+\usepackage{rotating}
+
+\usepackage{caption}
+%\usepackage{subcaption}
+
+%\usepackage[ngerman]{babel}
+
+\usepackage{csquotes}
+
+\setlength{\marginparwidth}{2cm} % Set marginparwidth to avoid todonotes issues
+\usepackage{todonotes}
+
+\usepackage{stfloats}
+
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{times}
+
+\usepackage{framed} %um Boxen zu machen
+
+\usepackage[citestyle=authoryear,
+			bibstyle=authoryear,
+			language=auto,
+			url=false,
+			backend=bibtex,
+			doi=false,
+			isbn=false]{biblatex}
+	\renewbibmacro*{volume+number+eid}{%
+  \printfield{volume}%
+%  \setunit*{\adddot}% DELETED
+  \setunit*{\addnbspace}% NEW (optional); there's also \addnbthinspace
+  \printfield{number}%
+  \setunit{\addcomma\space}%
+  \printfield{eid}}
+\DeclareFieldFormat[article]{number}{\mkbibparens{#1}}
+
+\usepackage{setspace}
+\onehalfspacing
+
+\setlength{\columnsep}{0.8cm}
+
+\setlength{\parskip}{0em}
+
+\usepackage{color}
+\definecolor{black}{gray}{0} % 10% gray
+
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black]{hyperref}
+
+\usepackage{tabularx}
+\newcolumntype{s}{>{\hsize=.5\hsize}X}
+
+\usepackage{ntheorem}
+\newtheorem*{TRQ}{Research Question}
+
+\newtheorem{Hyp}{Hypothesis} 
+
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{lipsum}
+\usepackage{geometry}
+\usepackage{changepage} % To adjust page margins locally
+\usepackage{afterpage}
+
+% Apply the custom header and footer to all pages
+\fancyfoot[L]{\hspace*{-1.9cm}{\includegraphics[width=\paperwidth,height=1.9cm]{Images/Footer.png}}} % Footer
+
+\pagestyle{fancy}
+\makeatletter
+\providecommand{\sf@counterlist}{} % Define sf@counterlist to avoid undefined control sequence
+\makeatother
+
+\usepackage{titlesec}
+
+\titlespacing*{\subsection}{0pt}{5pt}{5pt}
+\titlespacing*{\subsubsection}{0pt}{5pt}{5pt}
+
+\setcounter{secnumdepth}{4}
+\renewcommand\theparagraph{\thesubsubsection.\arabic{paragraph}}
+
+\usepackage{tabularray}
+\DefTblrTemplate{firsthead,middlehead,lasthead}{default}{}
+\DefTblrTemplate{firstfoot}{default}{
+  \UseTblrTemplate{contfoot}{default}
+  \UseTblrTemplate{caption}{default}
+}
+\DefTblrTemplate{middlefoot}{default}{
+  \UseTblrTemplate{contfoot}{default}
+  \UseTblrTemplate{capcont}{default}
+}
+\DefTblrTemplate{lastfoot}{default}{
+  \UseTblrTemplate{note}{default}
+  \UseTblrTemplate{remark}{default}
+  \UseTblrTemplate{capcont}{default}
+}
+\DefTblrTemplate{contfoot-text}{default}{Continue on the next column}
+\DefTblrTemplate{capcont}{default}{\UseTblrTemplate{caption}{default}}
+\UseTblrLibrary{booktabs}
+\captionsetup{skip=3pt}
+\SetTblrInner{rowsep=0pt, stretch=0.9}
+\setlength{\headheight}{13.6pt}
+\addtolength{\topmargin}{-1.6pt}
+\setlength{\footskip}{58.2pt}
+
+\begin{document}
+\onecolumn
+
+\section{Fluid SID}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{Images/Pneumatic SID.jpg}
+  \caption{Fluid SID.}
+  \label{fig:fluid_sid}
+\end{figure}
+
+\newpage
+\section{Electrical SID}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{Images/electrical SID.png}
+  \caption{Electrical SID.}
+  \label{fig:electrical_sid}
+\end{figure}
+
+\end{document}

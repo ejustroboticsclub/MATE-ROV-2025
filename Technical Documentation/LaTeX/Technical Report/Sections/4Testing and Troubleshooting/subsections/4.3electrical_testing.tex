@@ -1,1 +1,14 @@
 \subsection{Electrical Testing}
+
+\textbf{Testing Methodology}
+
+The aim of the electrical test was to maintain the stability of the system and ensure that no time was wasted in identifying faulty components. Initially, all components were tested individually in an isolated environment to prevent potential damage or accidents. The voltage converters were assessed to verify their ability to provide stable power under full load conditions. Before deployment, PCBs were thoroughly inspected for any short circuits to prevent escalation of damage to sensitive components. The thrusters' current consumption was carefully monitored to ensure they operated within safe power limits and received sufficient supply for proper function. The STM32 microcontrollers were tested for connection integrity and accurate readings to confirm full functionality. Similarly, each module including the CAN bus and Ethernet modules was tested independently to verify proper operation and communication. Additionally, all sensors, including the depth sensor and the Arduino Nano RP2040 handling the IMU, were tested separately to ensure accurate readings and reliable connectivity before integrating them into the Power PCB. This structured testing approach ensured that every electrical component functioned optimally before system-wide integration.
+
+\vspace{0.5cm}
+\textbf{Troubleshooting Strategies \& Techniques}
+
+To improve troubleshooting efficiency, a debugging system is integrated into the Power PCB. This system includes an Ethernet module connected to an STM32 microcontroller, which communicates with all ROV subsystems via CAN bus and connects to the station through Ethernet. This setup enables real-time monitoring of each subsystem individually, allowing for quick identification of faults without requiring a full system restart.
+
+\hspace{10pt} Another key strategy is continuous power monitoring. Current sensors are connected to each ESC to track power consumption in real time, making it easier to detect potential issues such as motor overload or failure. Additionally, voltage sensors are integrated into each power converter to monitor power stability, ensuring consistent and reliable performance. This proactive approach helps prevent unexpected failures and maintains optimal functionality throughout the mission.
+
+\hspace{10pt} If a problem arises that is not related to power monitoring or debugging, the next step is to check for short circuits. The affected PCB is inspected for any unintended connections or damaged components, which are then resolved before further testing. In cases where the issue is related to signal transmission, all signal traces are examined to verify continuity and ensure that no interference or noise is affecting data communication. Ensuring signal integrity is essential for the proper operation of the system and helps prevent miscommunication between subsystems.

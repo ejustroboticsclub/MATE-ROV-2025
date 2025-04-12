@@ -65,7 +65,7 @@ A CFD flow simulation was conducted to analyze water flow around Kamikaze (Figur
 
 \begin{figure}[h]
     \centering
-    \rule{0.8\columnwidth}{4cm}
+    \includegraphics[width=0.9\columnwidth]{Sections/2Design Rationale/images/Stream lines.png}
     \caption{Flow Simulation.}
     \label{fig:cfd}
 \end{figure}
@@ -231,7 +231,7 @@ Waterproofing is critical for the ROV’s performance and durability. The sealin
 
 \break
 
-\textbf{ZED Camera Enclosure}
+\textbf{ZED Camera Enclosure (Figure \ref{fig:zed_camera_enclosure})}
 
 \vspace{-0.7\baselineskip}
 \begin{itemize}
@@ -243,7 +243,7 @@ Waterproofing is critical for the ROV’s performance and durability. The sealin
     
 \end{itemize}
 
-\textbf{Artelon Camera Enclosures}
+\textbf{Artelon Camera Enclosures (Figure \ref{fig:other_cameras_enclosure})}
 
 For other cameras, Artelon enclosures replace aluminum.
 
@@ -253,6 +253,23 @@ For other cameras, Artelon enclosures replace aluminum.
     \item Acrylic cover sandwiched with an O-ring seal ensures water resistance.
     \item Allen bolts provide tight compression for long-term sealing.
 \end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.45\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/ZED.png}
+        \caption{ZED Camera.}
+        \label{fig:zed_camera_enclosure}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.5\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/Cameras.png}
+        \caption{Other Cameras.}
+        \label{fig:other_cameras_enclosure}
+    \end{subfigure}
+    \caption{Cameras Enclosures.}
+    \label{fig:cameras_enclosures}
+\end{figure}
 
 \textbf{Bolt Spacing Calculation for Optimal Sealing}
 
@@ -280,23 +297,19 @@ To ensure optimal sealing pressure and prevent gasket deformation under load, th
 \paragraph{Cameras} \ \\
 \vspace{-0.5cm}
 
-To ensure comprehensive underwater vision and precise control of the ROV during operation, a total of six cameras have been integrated into the system. Among these, a ZED camera is strategically placed at the front of the ROV to provide stereoscopic 3D depth perception. The remaining five cameras are a mix of Webcams, Rapoo, and Life Cams, each selected for their reliability, compactness, and clarity in underwater environments. These are distributed across different key positions of the ROV as illustrated in Figure \ref{fig:cameras_enclosures}, ensuring full visual coverage around the vehicle. Their placement allows the pilot to monitor the surroundings of the ROV, including the side and rear views, the grippers, and other mission-specific components.
+To ensure comprehensive underwater vision and precise control of the ROV during operation, a total of six cameras have been integrated into the system. Among these, a ZED camera is strategically placed at the front of the ROV to provide stereoscopic 3D depth perception. The remaining five cameras are a mix of Webcams, Rapoo, and Life Cams, each selected for their reliability, compactness, and clarity in underwater environments. These are distributed across different key positions of the ROV as illustrated in Figure \ref{fig:camera_positions}, ensuring full visual coverage around the vehicle. Their placement allows the pilot to monitor the surroundings of the ROV, including the side and rear views, the grippers, and other mission-specific components.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{0.45\columnwidth}
-        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/ZED.png}
-        \caption{ZED Camera.}
-        \label{fig:zed_camera_enclosure}
+    \begin{subfigure}[b]{0.48\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/camera_positions1.png}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.5\columnwidth}
-        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/Cameras.png}
-        \caption{Other Cameras.}
-        \label{fig:other_cameras_enclosure}
+    \begin{subfigure}[b]{0.48\columnwidth}
+        \includegraphics[width=\textwidth]{Sections/2Design Rationale/images/camera_positions2.png}
     \end{subfigure}
-    \caption{Cameras Enclosures.}
-    \label{fig:cameras_enclosures}
+    \caption{Cameras Positions.}
+    \label{fig:camera_positions}
 \end{figure}
 
 \vspace{-0.3cm}
