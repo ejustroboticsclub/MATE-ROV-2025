@@ -50,14 +50,33 @@ class VideoCaptureThread(QThread):
             self.video_writer.release()
 
 class CameraStreamer(QThread):
-    def __init__(self, ips, cols=3, rows=2, window_width=640, window_height=360):
+    def __init__(self, ips):
         super().__init__()
         self.ips = ips
-        self.cols = cols
-        self.rows = rows
-        self.window_width = window_width
-        self.window_height = window_height
-        self.shared_arrays = [Array('B', window_width * window_height * 3) for _ in range(len(ips))]
+
+        # Define the window size for the grid
+        self.grid_width = 1920
+        self.grid_height = 1080
+
+        # Define the window size for the first camera initially main camera but you change it as you wish for the station
+        self.first_cam_width = 960
+        self.first_cam_height = 720
+
+        # Define the window size for the second and third cameras (Tilt and side) Rec: you can make it for Grippers
+        self.stacked_cam_width = 960
+        self.stacked_cam_height = 360
+
+        # Define the window size for the other cameras (Gripper L, Gripper R, and Bottom) Rec: Tilt, Bottom and side
+        self.other_cam_width = 640
+        self.other_cam_height = 360
+
+        # Create shared memory arrays for each camera
+        self.shared_arrays = [
+            Array('B', self.first_cam_width * self.first_cam_height * 3),
+            Array('B', self.stacked_cam_width * self.stacked_cam_height * 3),
+            Array('B', self.stacked_cam_width * self.stacked_cam_height * 3)
+        ] + [Array('B', self.other_cam_width * self.other_cam_height * 3) for _ in range(3, len(ips))]
+
         self.processes = []
 
     def create_pipeline(self, ip):
@@ -67,7 +86,7 @@ class CameraStreamer(QThread):
             "videoconvert ! appsink sync=false"
         )
 
-    def display_camera(self, ip, index, shared_array):
+    def display_camera(self, ip, index, shared_array, width, height):
         cap = cv2.VideoCapture(self.create_pipeline(ip), cv2.CAP_GSTREAMER)
         
         if not cap.isOpened():
@@ -80,28 +99,42 @@ class CameraStreamer(QThread):
                 print(f"Connection lost for camera {index}")
                 break
             
-            frame = cv2.resize(frame, (self.window_width, self.window_height))
-            np_frame = np.frombuffer(shared_array.get_obj(), dtype=np.uint8).reshape((self.window_height, self.window_width, 3))
+            frame = cv2.resize(frame, (width, height))
+            np_frame = np.frombuffer(shared_array.get_obj(), dtype=np.uint8).reshape((height, width, 3))
             np_frame[:] = frame
 
         cap.release()
 
     def run(self):
         for i, ip in enumerate(self.ips):
-            p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i]))
+            if i == 0:
+                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.first_cam_width, self.first_cam_height))
+            elif i in [1, 2]:
+                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.stacked_cam_width, self.stacked_cam_height))
+            else:
+                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.other_cam_width, self.other_cam_height))
             p.start()
             self.processes.append(p)
 
         cv2.namedWindow("Camera Grid", cv2.WINDOW_NORMAL)
-        cv2.resizeWindow("Camera Grid", self.window_width * self.cols, self.window_height * self.rows)
+        cv2.resizeWindow("Camera Grid", self.grid_width, self.grid_height)
 
         while True:
-            grid = np.zeros((self.window_height * self.rows, self.window_width * self.cols, 3), dtype=np.uint8)
-            for i, shared_array in enumerate(self.shared_arrays):
-                row = i // self.cols
-                col = i % self.cols
-                np_frame = np.frombuffer(shared_array.get_obj(), dtype=np.uint8).reshape((self.window_height, self.window_width, 3))
-                grid[row * self.window_height:(row + 1) * self.window_height, col * self.window_width:(col + 1) * self.window_width] = np_frame
+            grid = np.zeros((self.grid_height, self.grid_width, 3), dtype=np.uint8)
+
+            # Place the first camera in the top-right quarter
+            np_frame = np.frombuffer(self.shared_arrays[0].get_obj(), dtype=np.uint8).reshape((self.first_cam_height, self.first_cam_width, 3))
+            grid[0:self.first_cam_height, self.grid_width - self.first_cam_width:self.grid_width] = np_frame
+
+            # Place the second and third cameras in the top-left quarter, stacked vertically
+            for i in range(1, 3):
+                np_frame = np.frombuffer(self.shared_arrays[i].get_obj(), dtype=np.uint8).reshape((self.stacked_cam_height, self.stacked_cam_width, 3))
+                grid[(i - 1) * self.stacked_cam_height:i * self.stacked_cam_height, 0:self.stacked_cam_width] = np_frame
+
+            # Place the remaining cameras in the bottom half, side by side
+            for i in range(3, 6):
+                np_frame = np.frombuffer(self.shared_arrays[i].get_obj(), dtype=np.uint8).reshape((self.other_cam_height, self.other_cam_width, 3))
+                grid[self.first_cam_height:self.first_cam_height + self.other_cam_height, (i - 3) * self.other_cam_width:(i - 2) * self.other_cam_width] = np_frame
 
             cv2.imshow("Camera Grid", grid)
 
@@ -125,9 +158,15 @@ def send_command(client, cam_port, property, value):
     _ = [print(i.strip()) for i in stdout]
     return stdout, stderr
 
-def reset_cameras(client, reset_command="source camera_reset.bash"):
-    stdin, stdout, stderr = client.exec_command(reset_command)
-    _ = [print(i.strip()) for i in stdout]
+def reset_cameras(client, cam_port):
+    commands = [
+        f"v4l2-ctl -d {cam_port} -c brightness=128",
+        f"v4l2-ctl -d {cam_port} -c contrast=32",
+        f"v4l2-ctl -d {cam_port} -c backlight_compensation=0"
+    ]
+    for command in commands:
+        stdin, stdout, stderr = client.exec_command(command)
+        _ = [print(i.strip()) for i in stdout]
     return stdout, stderr
 
 

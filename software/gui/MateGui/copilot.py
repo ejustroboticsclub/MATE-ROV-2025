@@ -24,7 +24,7 @@ class CopilotUi(object):
         self.ip = ip
         self.username = username
         self.password = password
-        #self.client = create_ssh_client(ip, username, password)
+        self.client = create_ssh_client(ip, username, password)
     def setupUi(self, Dialog):
         #loading font
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -219,9 +219,9 @@ class CopilotUi(object):
 
         #made the slider start at the middle to increase or decrease the brightness instead of only increasing 
 
-        self.brightness_slider.setMinimum(-100) 
-        self.brightness_slider.setMaximum(100)   
-        self.brightness_slider.setValue(0)
+        self.brightness_slider.setMinimum(0) 
+        self.brightness_slider.setMaximum(255)   
+        self.brightness_slider.setValue(128)
 
         self.apply_brightness = QPushButton(Dialog)
         self.apply_brightness.setObjectName("apply button for brightness")
@@ -242,9 +242,9 @@ class CopilotUi(object):
         self.contrast_slider.setGeometry(QRect(450, 160, 160, 25))
         self.contrast_slider.setOrientation(Qt.Orientation.Horizontal)
 
-        self.contrast_slider.setMinimum(-100)
-        self.contrast_slider.setMaximum(100)
-        self.contrast_slider.setValue(0)
+        self.contrast_slider.setMinimum(0)
+        self.contrast_slider.setMaximum(255)
+        self.contrast_slider.setValue(32)
         
         self.apply_contrast = QPushButton(Dialog)
         self.apply_contrast.setObjectName("apply button for contrast")
@@ -265,8 +265,8 @@ class CopilotUi(object):
         self.backLight_slider.setGeometry(QRect(620, 160, 160, 25))
         self.backLight_slider.setOrientation(Qt.Orientation.Horizontal)
 
-        self.backLight_slider.setMinimum(-100)
-        self.backLight_slider.setMaximum(100)
+        self.backLight_slider.setMinimum(0)
+        self.backLight_slider.setMaximum(2)
         self.backLight_slider.setValue(0)
 
         self.apply_backlight = QPushButton(Dialog)
@@ -282,6 +282,7 @@ class CopilotUi(object):
         self.reset.setGeometry(QRect(810, 110, 91, 41))
         self.reset.setStyleSheet(red_button)
         self.reset.setFont(font)
+        self.reset.clicked.connect(self.reset_clicked)
 
 
         #Select Box
@@ -321,7 +322,10 @@ class CopilotUi(object):
     def reset_clicked(self):
         cam_name = self.comboBox.currentText()
         if cam_name != "Select":
-            reset_cameras(self.client)
+            reset_cameras(self.client, CAM_PORTS[cam_name])
+        self.brightness_slider.setValue(128)
+        self.contrast_slider.setValue(32)
+        self.backLight_slider.setValue(0)
 
     def setText(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", "Dialog", None))

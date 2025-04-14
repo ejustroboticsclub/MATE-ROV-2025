@@ -72,7 +72,7 @@ class FloatUi(object):
         self.current_index = 0
         
         y_position = 110
-        for i in range(1, 6):
+        for i in range(1, 11):
             time_var=1
             
             t_label = QLabel(Dialog)
@@ -114,5 +114,5 @@ class FloatUi(object):
             
             self.depth_labels[self.current_index].setText(f"{depth_value:.2f}m")
             self.current_index += 1
-        else:
+        else:   
             print("All labels have been updated.")
