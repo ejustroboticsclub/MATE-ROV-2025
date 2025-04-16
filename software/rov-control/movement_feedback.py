@@ -12,26 +12,37 @@ from sensor_msgs.msg import Imu
 from tf_transformations import euler_from_quaternion
 from rcl_interfaces.msg import SetParametersResult
 
+
+"""
+    PID Controller Equation:
+    
+        u(t) = Kp * e(t) + Ki * ∫ e(t) dt + Kd * d(e(t))/dt
+"""
+
+"""
+list of PID parameters that is used for different control axes
+"""
+
 PARAMETERS = [
-    "x.kp",
-    "x.ki",
-    "x.kd",
-    "y.kp",
-    "y.ki",
-    "y.kd",
-    "w.kp",
-    "w.ki",
-    "w.kd",
-    "depth.kp",
-    "depth.ki",
-    "depth.kd",
-    "roll.kp",
-    "roll.ki",
-    "roll.kd",
-    "floatability",
-    "pitch.kd",
-    "pitch.ki",
-    "pitch.kp"
+    "x.kp",   # PID parameters of proportional gain for x axis
+    "x.ki",   # PID parameters of integral gain for x axis
+    "x.kd",   # PID parameters of derivative gain for x axis
+    "y.kp",   # PID parameters of proportional gain for y axis
+    "y.ki",   # PID parameters of integral gain for y axis
+    "y.kd",   # PID parameters of derivative gain for y axis
+    "w.kp",   # PID parameters of proportional gain for angular velocity (yaw)
+    "w.ki",   # PID parameters of integral gain for angular velocity (yaw)
+    "w.kd",   # PID parameters of derivative gain for angular velocity (yaw)
+    "depth.kp", # PID parameters of proportional gain for depth
+    "depth.ki", # PID parameters of integral gain for depth
+    "depth.kd", # PID parameters of derivative gain for depth
+    "roll.kp",  # PID parameters of proportional gain for roll
+    "roll.ki",  # PID parameters of integral gain for roll
+    "roll.kd",  # PID parameters of derivative gain for roll
+    "floatability", # Parameter for buoyancy adjustments
+    "pitch.kd", # PID parameters of derivative gain for pitch
+    "pitch.ki", # PID parameters of integral gain for pitch
+    "pitch.kp" # PID parameters of proportional gain for pitch
 ]
 
 
@@ -39,10 +50,10 @@ PARAMETERS = [
 class ErrorVal:
     """PID error terms"""
 
-    e_sum: float = 0
-    d_error: float = 0
-    current_error: float = 0
-    prev_error: float = 0
+    e_sum: float = 0  # Integral of error
+    d_error: float = 0    # Derivative of error
+    current_error: float = 0    # Current error
+    prev_error: float = 0       # Previous error
 
 
 class PID:
@@ -67,7 +78,7 @@ class PID:
         self.k_derivative = k_derivative
         self.pid: float = 0
         self.error = ErrorVal()
-        self.windup_val = windup_val
+        self.windup_val = windup_val  # Windup threshold for integral reset
 
     def compute(self, ref: float, measured: float) -> float:
         """Computes the PID value based on the given reference and measured output values
@@ -87,8 +98,8 @@ class PID:
             + self.k_integral * self.error.e_sum
             + self.k_derivative * self.error.d_error
         )
-        self.error.prev_error = self.error.current_error
-        if self.error.current_error <= self.windup_val:
+        self.error.prev_error = self.error.current_error  # Update previous error to the current error for the next iteration
+        if self.error.current_error <= self.windup_val: # Prevent integral windup by resetting accumulated error if it is within limits
             self.error.e_sum = 0
         return self.pid
 
@@ -130,7 +141,7 @@ def map_from_to(
 @dataclasses.dataclass
 class Param:
     """Tuning and utils params"""
-
+    # PID Gains for different axes
     kp_x: float
     ki_x: float
     kd_x: float
@@ -146,11 +157,16 @@ class Param:
     kp_roll: float
     ki_roll: float
     kd_roll: float
+    
+
+    
     kp_pitch: float
     kd_pitch: float
     ki_pitch: float
+    
     floatability: float
-
+    
+    # Windup limits for integral term in PID controllers
     windup_val_x = 0.1
     windup_val_y = 0.1
     windup_val_w = 0.1
@@ -158,12 +174,14 @@ class Param:
     windup_val_roll = 0.1
     windup_val_pitch = 0.1
 
+    # Thruster limits
     thruster_max = 1660
     thruster_min = 1310  # Changed to 1180 instead of 1160 to make sure that the center is 1485 which is a stoping value
 
     thruster_side_max = 1700
     thruster_side_min = 1300
 
+    # Velocity and angular constraints
     # corredponding to motion control node
     # TODO: adjust the PARAM.min and PARAM.max to all 3 motions
     max_vx = 3
@@ -176,6 +194,7 @@ class Param:
     max_roll = 90
     min_roll = -90
 
+  # Sensor calibration offsets for the IMU
     accel_x_offset = 0
     accel_y_offset = 0
     accel_z_offset = 0
@@ -184,15 +203,14 @@ class Param:
 
 @dataclasses.dataclass
 class Measured:
-    """Sensor measurments"""
-
-    v_x = 0
-    v_y = 0
-    w_z = 0
-    yaw = 0
-    roll = 0
-    depth = 0
-    pitch = 0
+    """Stores real-time sensor measurements of the ROV."""
+    v_x = 0  # Measured x-axis velocity
+    v_y = 0  # Measured y-axis velocity
+    w_z = 0  # Measured angular velocity (yaw)
+    yaw = 0  # Yaw angle
+    roll = 0  # Roll angle
+    depth = 0  # Current depth
+    pitch = 0 # Current pitch
 
 
 @dataclasses.dataclass
@@ -217,6 +235,7 @@ class Time:
 
 
 def create_pid_objects(parameter_object: Param):
+    """Creates and initializes PID controllers using provided parameters."""
     pid_vx = PID(
         k_proportaiol=parameter_object.kp_x,
         k_derivative=parameter_object.kd_x,
@@ -247,6 +266,7 @@ def create_pid_objects(parameter_object: Param):
         k_integral=parameter_object.ki_roll,
         windup_val=parameter_object.windup_val_roll,
     )
+
     pid_pitch = PID(
         k_proportaiol= parameter_object.kp_depth,
         k_derivative=parameter_object.kd_depth,
@@ -254,8 +274,6 @@ def create_pid_objects(parameter_object: Param):
         windup_val=parameter_object.windup_val_pitch
     )
         
-    
-
     return pid_vx, pid_vy, pid_wz, pid_depth, pid_stabilization, pid_pitch
 
 
