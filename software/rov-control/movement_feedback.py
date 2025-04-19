@@ -667,7 +667,7 @@ class CalibrationNode(Node):
         self.PARAM.kp_y = received_constants[1]
         self.PARAM.kp_w = received_constants[2]
         self.PARAM.kp_depth = received_constants[3]
-        self.Param.kp_roll = received_constants[4]
+        self.PARAM.kp_roll = received_constants[4]
         self.PARAM.kp_pitch = received_constants[5]
         
         self.get_logger().info(
