@@ -7,6 +7,7 @@ from rclpy.node import Node
 from manual_callibartion import live_queue_plotter as que
 from std_msgs.msg import Float64, Float32MultiArray
 from sensor_msgs.msg import Imu
+from scipy.spatial.transform import Rotation as R
 
 max_kp = 10
 min_kp = 0
@@ -218,14 +219,17 @@ class Calibration(Node):
             
     
     def imu_received_callback(self, msg: Imu):
+        q = msg.orientation
+        r = R.from_quat(q)
+        orien = r.as_euler("xyz", degrees=False)
         if self.current == 2:
-            new_point = msg.angular_velocity.z
+            new_point = orien[2]
             que.update(new_point)
         elif self.current == 4:
-            new_point = msg.orientation.x
+            new_point = orien[0]
             que.update(new_point)
         elif self.current == 5:
-            new_point = msg.orientation.y
+            new_point = orien[1]
             que.update(new_point)
   
         
