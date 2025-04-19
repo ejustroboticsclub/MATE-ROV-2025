@@ -407,6 +407,9 @@ class CalibrationNode(Node):
         self.pitch_subscriber = self.create_subscription(
             Float64, "ROV/pitch", self.pitch_received_callback, 10
         )
+        self.constants_subscriber = self.create_subscription(
+            Float32MultiArray, "ROV/calibration", self.constants_callback, 10
+        )
         """
             self.timer {Timer object}: timer with timer_callback as callback function that is called 
             every 0.01 sec
@@ -655,6 +658,21 @@ class CalibrationNode(Node):
             f"actual w_z: {self.actual.w_z}, roll: {self.actual.roll}, yaw: {self.actual.yaw}"
         )  # Check degree or radian
 
+    def constants_callback(self, msg: Float32MultiArray):
+        received_constants = msg.data
+        self.PARAM.kp_x = received_constants[0]
+        self.PARAM.kp_y = received_constants[1]
+        self.PARAM.kp_w = received_constants[2]
+        self.PARAM.kp_depth = received_constants[3]
+        self.Param.kp_roll = received_constants[4]
+        self.PARAM.kp_pitch = received_constants[5]
+        
+        self.get_logger().info(
+            f"""recieved proportional: open control x: {received_constants[0]}, y: {received_constants[1]},
+                kp_wz: {received_constants[2]}, kp_depth: {received_constants[3]}, kp_roll: {received_constants[4]}, 
+                kp_pitch: {received_constants[5]}"""
+        )
+        
     def stop_all(self):
         thrusters_voltages = Float32MultiArray()
         thrusters_voltages.data = [1485, 1485, 1485, 1485, 1485, 1485]
