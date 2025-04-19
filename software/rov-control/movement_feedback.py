@@ -408,7 +408,7 @@ class CalibrationNode(Node):
             Float64, "ROV/pitch", self.pitch_received_callback, 10
         )
         self.constants_subscriber = self.create_subscription(
-            Float32MultiArray, "ROV/calibration", self.constants_callback, 10
+            Float32MultiArray, "ROV/constants", self.constants_callback, 10
         )
         """
             self.timer {Timer object}: timer with timer_callback as callback function that is called 
