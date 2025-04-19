@@ -4,7 +4,7 @@ from queue import Queue
 import rclpy
 from rclpy.node import Node
 #TODO: set this import to package name
-from callibartion_node import live_queue_plotter as que
+from manual_callibartion import live_queue_plotter as que
 from std_msgs.msg import Float64, Float32MultiArray
 from sensor_msgs.msg import Imu
 
@@ -27,7 +27,8 @@ def pygame_loop():
     errors = ""
     clock = pygame.Clock()
     clock.tick(60)
-    
+    desired = -1000
+    bool_desired = False
     constants = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
     current = 0
     
@@ -49,6 +50,7 @@ def pygame_loop():
                         single = True
                         setting = False
                         input_text = ""
+                        desired = -1000
                         edit = 2
                     elif event.key == pygame.K_a:
                         input_mode = True
@@ -61,6 +63,13 @@ def pygame_loop():
                         setting = True
                         input_text = ""
                         edit = 1
+                    elif event.key == pygame.K_d:
+                        input_mode = True
+                        single = True
+                        setting = True
+                        bool_desired = True
+                        input_text = ""
+                        edit = 3
                     elif event.key == pygame.K_UP:
                         constants[current] += 0.1
                         constants[current] = min(constants[current], max_kp)
@@ -101,11 +110,21 @@ def pygame_loop():
                                     errors = "Enter a valid number"
                             else:
                                 errors = "You must enter all parameters in this mode"
-                        elif setting:
+                        elif setting and not bool_desired:
                             if len(input_text.split(" ")) == 1:
                                 try:
                                     constants[current] = float(input_text.strip())
                                     action_queue.put((edit, current, constants))
+                                except ValueError:
+                                    errors = "Enter a valid number"
+                            else:
+                                errors = "You must enter a single parameters in this mode"
+                        elif setting:
+                            if len(input_text.split(" ")) == 1:
+                                try:
+                                    desired = float(input_text.strip())
+                                    action_queue.put((edit, current, desired))
+                                    bool_desired = False
                                 except ValueError:
                                     errors = "Enter a valid number"
                             else:
@@ -131,10 +150,10 @@ def pygame_loop():
                         if event.unicode.isprintable():
                             input_text += event.unicode
                     
-        text_surface_line1 = font.render("Choose (c), All(a), Set(q), +/-0.1(up/down), +/-0.5(w/s)", True, (208,214,214))
+        text_surface_line1 = font.render("Choose (c), All(a), Set(q), set desired(d),+/-0.1(up/down), +/-0.5(w/s)", True, (208,214,214))
         text_surface_line2 = font.render(f"""kp_x: {constants[0]}, kp_y: {constants[1]}, kp_wz: {constants[2]}, kp_depth: {constants[3]}, kp_roll: {constants[4]}, kp_pitch: {constants[5]}"""
                                          , True, (208,214,214))
-        text_surface_line3 = font.render(f"Currently controling <<< index: {current} >>>", True, (208, 214, 214))
+        text_surface_line3 = font.render(f"Currently controling <<< index: {current} >>> desired: {desired}", True, (208, 214, 214))
         text_surface_line4 = font.render("input space seperated:---> " + input_text, True, (208, 214, 214))
         text_surface_line5 = font.render(errors, True, (245,25,48))
         
@@ -155,6 +174,7 @@ class Calibration(Node):
         self.depth_subscribtion
         self.imu_subscribtion
         self.constants_publisher = self.create_publisher(Float32MultiArray, "ROV/constants", 10)
+        self.desired_publisher = self.create_publisher(Float32MultiArray, "ROV/desired", 10)
         self.timer = self.create_timer(0.02, self.timer_callback)
         self.spawn_plots()
         self.constants = []
@@ -174,9 +194,19 @@ class Calibration(Node):
                 msg = Float32MultiArray()
                 msg.data = self.constants
                 self.constants_publisher.publish(msg)
-            else:
+            elif temp[0] == 2:
                 self.current = temp[1]
                 self.spawn_plots()
+            else:
+                desired = [-1000.0]*6
+                for i in range(6):
+                    if i == self.current:
+                        desired[i] = temp[2]
+                    else:
+                        desired[i] = -1000.0
+                msg = Float32MultiArray()
+                msg.data = desired
+                self.desired_publisher.publish(msg)
         que.draw()
         
         
@@ -192,10 +222,10 @@ class Calibration(Node):
             new_point = msg.angular_velocity.z
             que.update(new_point)
         elif self.current == 4:
-            new_point = msg.angular_velocity.x
+            new_point = msg.orientation.x
             que.update(new_point)
         elif self.current == 5:
-            new_point = msg.angular_velocity.y
+            new_point = msg.orientation.y
             que.update(new_point)
   
         
