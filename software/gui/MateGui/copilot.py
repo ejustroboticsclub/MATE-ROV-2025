@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QCoreApplication, QMetaObject, QRect, Qt
 from PyQt5.QtGui import QIcon, QPixmap , QFont ,QFontDatabase
 from PyQt5.QtWidgets import QLabel, QPushButton , QSlider , QComboBox
-from utils import create_ssh_client, send_command, reset_cameras
+from utils import create_ssh_client, send_command, reset_cameras, scale
 import os
 from utils import BG_path , ROV_path
 from stylesheet import Copilot_st1, Copilot_st2, apply_st , red_button , back_st, selection_st
@@ -17,14 +17,13 @@ CAM_PORTS = {
 }
 
 class CopilotUi(object):
-    
-    
+        
     #unhash line 26 here when testing on rpi 
     def __init__(self, ip, username, password):
         self.ip = ip
         self.username = username
         self.password = password
-        self.client = create_ssh_client(ip, username, password)
+        #self.client = create_ssh_client(ip, username, password)
     def setupUi(self, Dialog):
         #loading font
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -36,156 +35,157 @@ class CopilotUi(object):
         families = QFontDatabase.applicationFontFamilies(id)
         font=QFont(families[0],13)
         Afont=QFont(families[0],11)
-
-        Dialog.resize(929, 597)
+        Dialog.resize(scale(929), scale(597))
         # background label
         self.BG_label = QLabel(Dialog)
         self.BG_label.setObjectName("Background")
-        self.BG_label.setGeometry(QRect(-3, -5, 945, 607))
+        self.BG_label.setGeometry(QRect(scale(-3), scale(-5), scale(945), scale(607)))
         self.BG_label.setPixmap(QPixmap(BG_path))
         self.BG_label.setScaledContents(True)
+
+
 
         # I made these (D)labels only for design purposes, no ROS interaction here
         self.Dlabel = QLabel(Dialog)
         self.Dlabel.setObjectName("Dlabel")
-        self.Dlabel.setGeometry(QRect(20, 80, 101, 41))
+        self.Dlabel.setGeometry(QRect(scale(20), scale(80), scale(101), scale(41)))
         self.Dlabel.setStyleSheet(Copilot_st1)
         self.Dlabel.setFont(font)
 
 
         self.Dlabel_2 = QLabel(Dialog)
         self.Dlabel_2.setObjectName("Dlabel 2")
-        self.Dlabel_2.setGeometry(QRect(20, 150, 111, 41))
+        self.Dlabel_2.setGeometry(QRect(scale(20), scale(150), scale(111), scale(41)))
         self.Dlabel_2.setStyleSheet(Copilot_st1)
         self.Dlabel_2.setFont(font)
 
         self.Dlabel_3 = QLabel(Dialog)
         self.Dlabel_3.setObjectName("Dlabel 3")
-        self.Dlabel_3.setGeometry(QRect(20, 220, 111, 41))
+        self.Dlabel_3.setGeometry(QRect(scale(20), scale(220), scale(111), scale(41)))
         self.Dlabel_3.setStyleSheet(Copilot_st1)
         self.Dlabel_3.setFont(font)
 
         self.Dlabel_4 = QLabel(Dialog)
         self.Dlabel_4.setObjectName("Dlabel 4")
-        self.Dlabel_4.setGeometry(QRect(20, 290, 101, 41))
+        self.Dlabel_4.setGeometry(QRect(scale(20), scale(290), scale(101), scale(41)))
         self.Dlabel_4.setStyleSheet(Copilot_st1)
         self.Dlabel_4.setFont(font)
         
         self.Dlabel_5 = QLabel(Dialog)
         self.Dlabel_5.setObjectName("Dlabel 5")
-        self.Dlabel_5.setGeometry(QRect(20, 360, 101, 41))
+        self.Dlabel_5.setGeometry(QRect(scale(20), scale(360), scale(101), scale(41)))
         self.Dlabel_5.setStyleSheet(Copilot_st1)
         self.Dlabel_5.setFont(font)
 
         self.Dlabel_6 = QLabel(Dialog)
         self.Dlabel_6.setObjectName("Dlabel 6")
-        self.Dlabel_6.setGeometry(QRect(20, 430, 101, 41))
+        self.Dlabel_6.setGeometry(QRect(scale(20), scale(430), scale(101), scale(41)))
         self.Dlabel_6.setStyleSheet(Copilot_st1)
         self.Dlabel_6.setFont(font)
 
         self.Dlabel_7 = QLabel(Dialog)
         self.Dlabel_7.setObjectName("Dlabel 7")
-        self.Dlabel_7.setGeometry(QRect(20, 500, 121, 41))
+        self.Dlabel_7.setGeometry(QRect(scale(20), scale(500), scale(121), scale(41)))
         self.Dlabel_7.setStyleSheet(Copilot_st1)
         self.Dlabel_7.setFont(font)
 
         # main labels here
         self.vx_label = QLabel(Dialog)
         self.vx_label.setObjectName("Vx label")
-        self.vx_label.setGeometry(QRect(90, 80, 151, 41))
+        self.vx_label.setGeometry(QRect(scale(90), scale(80), scale(151), scale(41)))
         self.vx_label.setStyleSheet(Copilot_st2)
         self.vx_label.setFont(font)
 
         self.vy_label = QLabel(Dialog)
         self.vy_label.setObjectName("Vy label")
-        self.vy_label.setGeometry(QRect(90, 150, 151, 41))
+        self.vy_label.setGeometry(QRect(scale(90), scale(150), scale(151), scale(41)))
         self.vy_label.setStyleSheet(Copilot_st2)
         self.vy_label.setFont(font)
 
         self.wz_label = QLabel(Dialog)
         self.wz_label.setObjectName("Wz label")
-        self.wz_label.setGeometry(QRect(90, 220, 151, 41))
+        self.wz_label.setGeometry(QRect(scale(90), scale(220), scale(151), scale(41)))
         self.wz_label.setStyleSheet(Copilot_st2)
         self.wz_label.setFont(font)
 
         self.roll_label = QLabel(Dialog)
         self.roll_label.setObjectName("Roll label")
-        self.roll_label.setGeometry(QRect(90, 290, 151, 41))
+        self.roll_label.setGeometry(QRect(scale(90), scale(290), scale(151), scale(41)))
         self.roll_label.setStyleSheet(Copilot_st2)
         self.roll_label.setFont(font)
 
         self.pitch_label = QLabel(Dialog)
         self.pitch_label.setObjectName("Pitch Label")
-        self.pitch_label.setGeometry(QRect(90, 360, 151, 41))
+        self.pitch_label.setGeometry(QRect(scale(90), scale(360), scale(151), scale(41)))
         self.pitch_label.setStyleSheet(Copilot_st2)
         self.pitch_label.setFont(font)
 
         self.yaw_label = QLabel(Dialog)
         self.yaw_label.setObjectName("Yaw label")
-        self.yaw_label.setGeometry(QRect(90, 430, 151, 41))
+        self.yaw_label.setGeometry(QRect(scale(90), scale(430), scale(151), scale(41)))
         self.yaw_label.setStyleSheet(Copilot_st2)
         self.yaw_label.setFont(font)
 
         self.depth_label = QLabel(Dialog)
         self.depth_label.setObjectName("Depth label")
-        self.depth_label.setGeometry(QRect(90, 500, 151, 41))
+        self.depth_label.setGeometry(QRect(scale(90), scale(500), scale(151), scale(41)))
         self.depth_label.setStyleSheet(Copilot_st2)
         self.depth_label.setFont(font)
 
         # rov figure label
         self.rov_label = QLabel(Dialog)
         self.rov_label.setObjectName("Rov image label")
-        self.rov_label.setGeometry(QRect(400, 250, 421, 291))
+        self.rov_label.setGeometry(QRect(scale(400), scale(250), scale(421), scale(291)))
         self.rov_label.setPixmap(QPixmap(ROV_path))
         self.rov_label.setScaledContents(True)
 
         # thrusters labels 
         self.th1 = QLabel(Dialog)
         self.th1.setObjectName("thruster 1 label")
-        self.th1.setGeometry(QRect(420, 320, 81, 41))
+        self.th1.setGeometry(QRect(scale(420), scale(320), scale(81), scale(41)))
         self.th1.setStyleSheet(Copilot_st1)
         self.th1.setFont(font)
 
         self.th2 = QLabel(Dialog)
         self.th2.setObjectName("thruster 2 label")
-        self.th2.setGeometry(QRect(420, 410, 81, 41))
+        self.th2.setGeometry(QRect(scale(420), scale(410), scale(81), scale(41)))
         self.th2.setStyleSheet(Copilot_st1)
         self.th2.setFont(font)
 
 
         self.th3 = QLabel(Dialog)
         self.th3.setObjectName("thruster 3 label")
-        self.th3.setGeometry(QRect(500, 470, 81, 41))
+        self.th3.setGeometry(QRect(scale(500), scale(470), scale(81), scale(41)))
         self.th3.setStyleSheet(Copilot_st1)
         self.th3.setFont(font)
 
         self.th4 = QLabel(Dialog)
         self.th4.setObjectName("thruster 4 labe")
-        self.th4.setGeometry(QRect(530, 280, 81, 41))
+        self.th4.setGeometry(QRect(scale(530), scale(280), scale(81), scale(41)))
         self.th4.setStyleSheet(Copilot_st1)
         self.th4.setFont(font)
 
         self.th5 = QLabel(Dialog)
         self.th5.setObjectName("thruster 5 labe")
-        self.th5.setGeometry(QRect(650, 300, 81, 41))
+        self.th5.setGeometry(QRect(scale(650), scale(300), scale(81), scale(41)))
         self.th5.setStyleSheet(Copilot_st1)
         self.th5.setFont(font)
 
         self.th6 = QLabel(Dialog)
         self.th6.setObjectName("thruster 6 label")
-        self.th6.setGeometry(QRect(650, 470, 81, 41))
+        self.th6.setGeometry(QRect(scale(650), scale(470), scale(81), scale(41)))
         self.th6.setStyleSheet(Copilot_st1)
         self.th6.setFont(font)
 
         self.th7 = QLabel(Dialog)
         self.th7.setObjectName("thruster 7 label")
-        self.th7.setGeometry(QRect(710, 380, 81, 41))
+        self.th7.setGeometry(QRect(scale(710), scale(380), scale(81), scale(41)))
         self.th7.setStyleSheet(Copilot_st1)
         self.th7.setFont(font)
 
         self.back_button = QPushButton(Dialog)
         self.back_button.setObjectName("pushButton")
-        self.back_button.setGeometry(QRect(10, 10, 61, 41))
+        self.back_button.setGeometry(QRect(scale(10), scale(10), scale(61), scale(41)))
         icon = QIcon.fromTheme("go-previous")
         self.back_button.setIcon(icon)
         self.back_button.setStyleSheet(back_st)
@@ -196,25 +196,25 @@ class CopilotUi(object):
         #Another Dlabel for design purposes 
         self.Dlabel_8 = QLabel(Dialog)
         self.Dlabel_8.setObjectName("(Design) label")
-        self.Dlabel_8.setGeometry(QRect(260, 80, 651, 171))
+        self.Dlabel_8.setGeometry(QRect(scale(260), scale(80), scale(651), scale(171)))
         self.Dlabel_8.setStyleSheet(Copilot_st2)
 
         self.CAS = QLabel(Dialog)
         self.CAS.setObjectName("Camera Adjusting system label")
-        self.CAS.setGeometry(QRect(500, 60, 221, 41))
+        self.CAS.setGeometry(QRect(scale(500), scale(60), scale(221), scale(41)))
         self.CAS.setStyleSheet(Copilot_st1)
         self.CAS.setFont(font)
 
         #brightness adjusting 
         self.brightness = QLabel(Dialog)
         self.brightness.setObjectName("brightness label")
-        self.brightness.setGeometry(QRect(300, 110, 121, 41))
+        self.brightness.setGeometry(QRect(scale(300), scale(110), scale(121), scale(41)))
         self.brightness.setStyleSheet(Copilot_st1)
         self.brightness.setFont(font)
 
         self.brightness_slider = QSlider(Dialog)
         self.brightness_slider.setObjectName("slider for changing the brightness")
-        self.brightness_slider.setGeometry(QRect(280, 160, 160, 25))
+        self.brightness_slider.setGeometry(QRect(scale(280), scale(160), scale(160), scale(25)))
         self.brightness_slider.setOrientation(Qt.Orientation.Horizontal)
 
         #made the slider start at the middle to increase or decrease the brightness instead of only increasing 
@@ -225,7 +225,7 @@ class CopilotUi(object):
 
         self.apply_brightness = QPushButton(Dialog)
         self.apply_brightness.setObjectName("apply button for brightness")
-        self.apply_brightness.setGeometry(QRect(310, 200, 100, 32))
+        self.apply_brightness.setGeometry(QRect(scale(310), scale(200), scale(100), scale(32)))
         self.apply_brightness.setStyleSheet(apply_st)
         self.apply_brightness.setFont(Afont)
         self.apply_brightness.clicked.connect(self.apply_brightness_clicked)
@@ -233,13 +233,13 @@ class CopilotUi(object):
         #Contrast adjusting
         self.contrast = QLabel(Dialog)
         self.contrast.setObjectName("Contrast label")
-        self.contrast.setGeometry(QRect(470, 110, 121, 41))
+        self.contrast.setGeometry(QRect(scale(470), scale(110), scale(121), scale(41)))
         self.contrast.setStyleSheet(Copilot_st1)
         self.contrast.setFont(font)
 
         self.contrast_slider = QSlider(Dialog)
         self.contrast_slider.setObjectName("slider for changing the contrast")
-        self.contrast_slider.setGeometry(QRect(450, 160, 160, 25))
+        self.contrast_slider.setGeometry(QRect(scale(450), scale(160), scale(160), scale(25)))
         self.contrast_slider.setOrientation(Qt.Orientation.Horizontal)
 
         self.contrast_slider.setMinimum(0)
@@ -248,7 +248,7 @@ class CopilotUi(object):
         
         self.apply_contrast = QPushButton(Dialog)
         self.apply_contrast.setObjectName("apply button for contrast")
-        self.apply_contrast.setGeometry(QRect(480, 200, 100, 32))
+        self.apply_contrast.setGeometry(QRect(scale(480), scale(200), scale(100), scale(32)))
         self.apply_contrast.setStyleSheet(apply_st)
         self.apply_contrast.setFont(Afont)
         self.apply_contrast.clicked.connect(self.apply_contrast_clicked)
@@ -256,13 +256,13 @@ class CopilotUi(object):
         #Backlight adjusting
         self.backLight = QLabel(Dialog)
         self.backLight.setObjectName("Back light label")
-        self.backLight.setGeometry(QRect(640, 110, 121, 41))
+        self.backLight.setGeometry(QRect(scale(640), scale(110), scale(121), scale(41)))
         self.backLight.setStyleSheet(Copilot_st1)
         self.backLight.setFont(font)
 
         self.backLight_slider = QSlider(Dialog)
         self.backLight_slider.setObjectName("slider for changing the contrast")
-        self.backLight_slider.setGeometry(QRect(620, 160, 160, 25))
+        self.backLight_slider.setGeometry(QRect(scale(620), scale(160), scale(160), scale(25)))
         self.backLight_slider.setOrientation(Qt.Orientation.Horizontal)
 
         self.backLight_slider.setMinimum(0)
@@ -271,7 +271,7 @@ class CopilotUi(object):
 
         self.apply_backlight = QPushButton(Dialog)
         self.apply_backlight.setObjectName("apply button for back light")
-        self.apply_backlight.setGeometry(QRect(660, 200, 100, 32))
+        self.apply_backlight.setGeometry(QRect(scale(660), scale(200), scale(100), scale(32)))
         self.apply_backlight.setStyleSheet(apply_st)
         self.apply_backlight.setFont(Afont)
         self.apply_backlight.clicked.connect(self.apply_backlight_clicked)
@@ -279,7 +279,7 @@ class CopilotUi(object):
         #Reset button
         self.reset = QPushButton(Dialog)
         self.reset.setObjectName("reset button")
-        self.reset.setGeometry(QRect(810, 110, 91, 41))
+        self.reset.setGeometry(QRect(scale(810), scale(110), scale(91), scale(41)))
         self.reset.setStyleSheet(red_button)
         self.reset.setFont(font)
         self.reset.clicked.connect(self.reset_clicked)
@@ -295,7 +295,7 @@ class CopilotUi(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.setObjectName("selection box")
-        self.comboBox.setGeometry(QRect(800, 200, 103, 32))
+        self.comboBox.setGeometry(QRect(scale(800), scale(200), scale(103), scale(32)))
         self.comboBox.setStyleSheet(selection_st)
         self.comboBox.setFont(Afont)
         self.setText(Dialog)

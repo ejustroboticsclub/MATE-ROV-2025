@@ -6,7 +6,7 @@ from pilot import PilotUi
 from copilot import CopilotUi, CAM_PORTS
 from engineer import EngineerUi
 from Float import FloatUi
-from utils import VideoCaptureThread
+from utils import VideoCaptureThread, scale
 from gui.ros_logic import start_ros
 
 
@@ -102,6 +102,6 @@ if __name__ == "__main__":
     app.setFont = QFont()
     window = MainWindow()
     window.setWindowTitle("Mate ROV 2025")
-    window.resize(930, 600)
+    window.resize(scale(930), scale(600))
     window.show()
     sys.exit(app.exec_())

@@ -4,6 +4,9 @@ import paramiko
 import numpy as np
 import os
 from multiprocessing import Process, Array
+import math
+from screeninfo import get_monitors
+
 
 class VideoCaptureThread(QThread):
     stop_signal = pyqtSignal()
@@ -180,3 +183,51 @@ copilot_path=os.path.join(script_dir,"Visuals/copilot(final)")
 pilot_path=os.path.join(script_dir,"Visuals/pilot(final)")
 float_path=os.path.join(script_dir,"Visuals/Float(final)")
 engineer_path=os.path.join(script_dir,"Visuals/Engineer(final)")
+
+#function for getting the scale factor on each monitor
+
+def get_scaled_factor():
+    """
+    Calculate a scale factor by comparing the current monitor's DPI 
+    against a reference DPI (e.g., 110 or your MacBook's measured DPI).
+    
+    :param ref_dpi: The 'reference' DPI that your UI was designed for.
+    :return: A floating-point scale factor.
+    """
+    ref_dpi=110
+    monitors = get_monitors()
+
+    if not monitors:
+        raise RuntimeError("No monitors found using screeninfo.")
+
+    # For a MacBook, typically you'll have just one primary monitor in the list.
+    # If you have multiple monitors, you could iterate and choose the one you want.
+    m = monitors[0]
+    
+    width_px = m.width
+    height_px = m.height
+    width_mm = m.width_mm
+    height_mm = m.height_mm
+
+    if not width_mm or not height_mm or width_mm <= 0 or height_mm <= 0:
+        raise RuntimeError(
+            "screeninfo did not provide valid physical dimensions (width_mm/height_mm)."
+        )
+
+    # Convert mm to inches (1 inch = 25.4 mm)
+    width_in = width_mm / 25.4
+    height_in = height_mm / 25.4
+
+    # Calculate horizontal and vertical DPI; then take an average
+    dpi_horizontal = width_px / width_in
+    dpi_vertical   = height_px / height_in
+    current_dpi    = (dpi_horizontal + dpi_vertical) / 2.0
+
+    # Compare to your reference DPI
+    factor = current_dpi / ref_dpi
+    
+    return factor
+
+
+def scale(x):
+    return int(x*get_scaled_factor())

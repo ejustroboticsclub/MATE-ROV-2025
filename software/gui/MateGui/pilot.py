@@ -10,11 +10,11 @@ from PyQt5.QtWidgets import (QApplication, QDialog, QLabel, QPushButton,
 
 from stylesheet import Engineer_buttons_st , back_st
 import os
-from utils import CameraStreamer , BG_path
+from utils import CameraStreamer , BG_path ,scale  # Added scale import
 
 class PilotUi(object):
     def setupUi(self, Dialog):
-        #loading font
+        # Loading font
         script_dir = os.path.dirname(os.path.abspath(__file__))
         font_path = os.path.join(script_dir, "GillSans.ttf")
         id = QFontDatabase.addApplicationFont(font_path)
@@ -22,23 +22,24 @@ class PilotUi(object):
             print("Failed to load font!")
         
         families = QFontDatabase.applicationFontFamilies(id)
-        font=QFont(families[0],22)
-        Afont=QFont(families[0],11)
+        # Scaled font sizes
+        font = QFont(families[0], 22)
+        Afont = QFont(families[0], 11)
 
         Dialog.setObjectName("Dialog")
-        Dialog.resize(928, 596)
+        Dialog.resize(scale(928), scale(596))  # Scaled window size
 
         # Background
         self.Bg_label = QLabel(Dialog)
         self.Bg_label.setObjectName("Background")
-        self.Bg_label.setGeometry(QRect(-3, -5, 945, 607))
+        self.Bg_label.setGeometry(QRect(scale(-3), scale(-5), scale(945), scale(607)))
         self.Bg_label.setPixmap(QPixmap(BG_path))
         self.Bg_label.setScaledContents(True)
 
         # Back button
         self.BackButton = QPushButton(Dialog)
         self.BackButton.setObjectName("Back button")
-        self.BackButton.setGeometry(QRect(10, 10, 61, 41))
+        self.BackButton.setGeometry(QRect(scale(10), scale(10), scale(61), scale(41)))
         icon = QIcon()
         icon = QIcon.fromTheme("go-previous")  
         self.BackButton.setIcon(icon)
@@ -48,11 +49,11 @@ class PilotUi(object):
         # Camera system button
         self.CamButton = QPushButton(Dialog)
         self.CamButton.setObjectName("Launching the Camera system button")
-        self.CamButton.setGeometry(QRect(290, 240, 351, 81))
+        self.CamButton.setGeometry(QRect(scale(290), scale(240), scale(351), scale(81)))
         self.CamButton.setStyleSheet(Engineer_buttons_st)
         self.CamButton.setFont(font)
 
-        #IPs passed for cameraStreamer class
+        # IPs passed for cameraStreamer class
         IPS = [
             "rtsp://192.168.73.227:8554/camerafeed1",
             "rtsp://192.168.73.227:8554/camerafeed1",
@@ -65,9 +66,7 @@ class PilotUi(object):
         self.CamButton.clicked.connect(self.camera_6feeds.run)
 
         self.setText(Dialog)
-
         QMetaObject.connectSlotsByName(Dialog)
-    
 
     def setText(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", "Dialog", None))
