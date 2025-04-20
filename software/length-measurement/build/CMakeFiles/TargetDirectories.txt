@@ -1,0 +1,8 @@
+/home/tasbih/zed-open-capture/build/CMakeFiles/zed_open_capture.dir
+/home/tasbih/zed-open-capture/build/CMakeFiles/zed_open_capture_depth_tune_stereo.dir
+/home/tasbih/zed-open-capture/build/CMakeFiles/edit_cache.dir
+/home/tasbih/zed-open-capture/build/CMakeFiles/rebuild_cache.dir
+/home/tasbih/zed-open-capture/build/CMakeFiles/list_install_components.dir
+/home/tasbih/zed-open-capture/build/CMakeFiles/install.dir
+/home/tasbih/zed-open-capture/build/CMakeFiles/install/local.dir
+/home/tasbih/zed-open-capture/build/CMakeFiles/install/strip.dir
