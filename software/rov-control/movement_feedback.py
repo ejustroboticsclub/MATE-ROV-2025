@@ -407,6 +407,12 @@ class CalibrationNode(Node):
         self.pitch_subscriber = self.create_subscription(
             Float64, "ROV/pitch", self.pitch_received_callback, 10
         )
+        self.constants_subscriber = self.create_subscription(
+            Float32MultiArray, "ROV/constants", self.constants_callback, 10
+        )
+        self.desired_subscriber = self.create_subscription(
+            Float32MultiArray, "ROV/desired", self.received_desired_callback, 10
+        )
         """
             self.timer {Timer object}: timer with timer_callback as callback function that is called 
             every 0.01 sec
@@ -655,6 +661,41 @@ class CalibrationNode(Node):
             f"actual w_z: {self.actual.w_z}, roll: {self.actual.roll}, yaw: {self.actual.yaw}"
         )  # Check degree or radian
 
+    def constants_callback(self, msg: Float32MultiArray):
+        received_constants = msg.data
+        self.PARAM.kp_x = received_constants[0]
+        self.PARAM.kp_y = received_constants[1]
+        self.PARAM.kp_w = received_constants[2]
+        self.PARAM.kp_depth = received_constants[3]
+        self.PARAM.kp_roll = received_constants[4]
+        self.PARAM.kp_pitch = received_constants[5]
+        
+        self.get_logger().info(
+            f"""recieved proportional: open control x: {received_constants[0]}, y: {received_constants[1]},
+                kp_wz: {received_constants[2]}, kp_depth: {received_constants[3]}, kp_roll: {received_constants[4]}, 
+                kp_pitch: {received_constants[5]}"""
+        )
+    
+    def received_desired_callback(self, msg: Float32MultiArray):
+    #   desired vx, vy, w_z, depth, roll, pitch
+        received_values = msg.data
+        for i in range(4):
+            if int(received_values[i]) != -1000:
+                if i == 0:
+                    self.desired.v_x = received_values[i]
+                elif i == 1:
+                    self.desired.v_y = received_values[i]
+                elif i== 2:
+                    self.desired.w_z = received_values[i]
+                elif i==3:
+                    self.desired.depth = received_values[i]
+                elif i==4:
+                    self.desired.roll = received_values[i]
+                elif i==5:
+                    self.desired.pitch = received_values[i]
+            
+                
+    
     def stop_all(self):
         thrusters_voltages = Float32MultiArray()
         thrusters_voltages.data = [1485, 1485, 1485, 1485, 1485, 1485]
