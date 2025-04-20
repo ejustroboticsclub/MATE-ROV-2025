@@ -1,0 +1,6 @@
+[console_scripts]
+joystick = rov25.joystick:main
+manual_callibartion = rov25.manual_callibartion:main
+motion_control = rov25.motion_control:main
+movement_feedback = rov25.movement_feedback:main
+simulate_yaw = rov25.simulate_yaw:main
