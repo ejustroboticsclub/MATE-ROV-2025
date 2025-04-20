@@ -63,18 +63,10 @@ class EngineerUi(object):
         # Stop recording Button
         self.StopButton = QPushButton(Dialog)
         self.StopButton.setObjectName("Stop Recording for Photosphere Task")
-        self.StopButton.setGeometry(QRect(scale(290), scale(420), scale(181), scale(51)))
+        self.StopButton.setGeometry(QRect(scale(370), scale(420), scale(181), scale(51)))
         self.StopButton.setStyleSheet(red_button)
         self.StopButton.setFont(Afont)
 
-        # Retry Camera Button
-        self.RetryButton = QPushButton(Dialog)
-        self.RetryButton.setObjectName("Stop Recording for Photosphere Task")
-        self.RetryButton.setGeometry(QRect(scale(481), scale(420), scale(161), scale(51)))
-        self.RetryButton.setStyleSheet(red_button)
-        self.RetryButton.setFont(Afont)
-
-        
         self.setText(Dialog)
         QMetaObject.connectSlotsByName(Dialog)
 
@@ -87,4 +79,3 @@ class EngineerUi(object):
         self.IccButton.setText(QCoreApplication.translate("Dialog", "Invasive Carp Computer Model", None))
         self.RecButton.setText(QCoreApplication.translate("Dialog", "Start Recording (Photosphere)", None))
         self.StopButton.setText(QCoreApplication.translate("Dialog", "Stop Recording", None))
-        self.RetryButton.setText(QCoreApplication.translate("Dialog", "Retry Camera", None))

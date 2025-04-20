@@ -33,7 +33,7 @@ class MainWindow(QMainWindow):
         self.float_ui = FloatUi()
         self.float_ui.setupUi(self.float_page)
 
-        self.co_pilot_ui = CopilotUi("192.168.73.175","suzuki","samir2023")
+        self.co_pilot_ui = CopilotUi("192.168.191.175","suzuki","samir2023")
         self.co_pilot_ui.setupUi(self.co_pilot_page)
 
         self.engineer_ui = EngineerUi()

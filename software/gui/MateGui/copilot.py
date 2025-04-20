@@ -1,20 +1,29 @@
-from PyQt5.QtCore import QCoreApplication, QMetaObject, QRect, Qt
+from PyQt5.QtCore import QCoreApplication, QMetaObject, QRect, Qt, QThread
 from PyQt5.QtGui import QIcon, QPixmap , QFont ,QFontDatabase
 from PyQt5.QtWidgets import QLabel, QPushButton , QSlider , QComboBox
 from utils import create_ssh_client, send_command, reset_cameras, scale
 import os
 from utils import BG_path , ROV_path
 from stylesheet import Copilot_st1, Copilot_st2, apply_st , red_button , back_st, selection_st
-
+from utils import reconnect_command
 
 CAM_PORTS = {
-    "Main": "/dev/video0",
-    "Tilt": "/dev/video2",
-    "Side": "/dev/video4",
-    "Gripper L": "/dev/video6",
-    "Gripper R": "/dev/video8",
-    "Bottom": "/dev/video10"
+    "Main": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
+    "Tilt": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
+    "Side": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
+    "Gripper L": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
+    "Gripper R": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"]
 }
+
+class RestreamThread(QThread):
+    def __init__(self, client, cam_port):
+        super().__init__()
+        self.client = client
+        self.cam_port = cam_port
+
+    def run(self):
+        reconnect_command(self.client, self.cam_port)
+
 
 class CopilotUi(object):
         
@@ -23,7 +32,7 @@ class CopilotUi(object):
         self.ip = ip
         self.username = username
         self.password = password
-        #self.client = create_ssh_client(ip, username, password)
+        self.client = create_ssh_client(ip, username, password)
     def setupUi(self, Dialog):
         #loading font
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -199,6 +208,14 @@ class CopilotUi(object):
         self.Dlabel_8.setGeometry(QRect(scale(260), scale(80), scale(651), scale(171)))
         self.Dlabel_8.setStyleSheet(Copilot_st2)
 
+
+        self.StreamButton = QPushButton(Dialog)
+        self.StreamButton.setObjectName("Stop Recording for Photosphere Task")
+        self.StreamButton.setGeometry(QRect(scale(800),scale(149) ,scale(101), scale(41)))
+        self.StreamButton.setStyleSheet(red_button)
+        self.StreamButton.setFont(Afont)
+        self.StreamButton.clicked.connect(self.Stream_cam_clicked)
+
         self.CAS = QLabel(Dialog)
         self.CAS.setObjectName("Camera Adjusting system label")
         self.CAS.setGeometry(QRect(scale(500), scale(60), scale(221), scale(41)))
@@ -279,7 +296,7 @@ class CopilotUi(object):
         #Reset button
         self.reset = QPushButton(Dialog)
         self.reset.setObjectName("reset button")
-        self.reset.setGeometry(QRect(scale(810), scale(110), scale(91), scale(41)))
+        self.reset.setGeometry(QRect(scale(800), scale(100), scale(101), scale(41)))
         self.reset.setStyleSheet(red_button)
         self.reset.setFont(font)
         self.reset.clicked.connect(self.reset_clicked)
@@ -326,6 +343,12 @@ class CopilotUi(object):
         self.brightness_slider.setValue(128)
         self.contrast_slider.setValue(32)
         self.backLight_slider.setValue(0)
+    
+    def Stream_cam_clicked(self):
+        cam_name = self.comboBox.currentText()
+        if cam_name != "Select":
+            self.restream_thread = RestreamThread(self.client, CAM_PORTS[cam_name])
+            self.restream_thread.start()
 
     def setText(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", "Dialog", None))
@@ -346,6 +369,7 @@ class CopilotUi(object):
         self.pitch_label.setText(QCoreApplication.translate("Dialog", "...", None))
         self.yaw_label.setText(QCoreApplication.translate("Dialog", "...", None))
         self.depth_label.setText(QCoreApplication.translate("Dialog", "...", None))
+        self.StreamButton.setText(QCoreApplication.translate("Dialog", "Stream", None))
         self.rov_label.setText("")
 
 

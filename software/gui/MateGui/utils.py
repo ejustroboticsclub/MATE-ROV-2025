@@ -6,7 +6,7 @@ import os
 from multiprocessing import Process, Array
 import math
 from screeninfo import get_monitors
-
+import time
 
 class VideoCaptureThread(QThread):
     stop_signal = pyqtSignal()
@@ -61,24 +61,18 @@ class CameraStreamer(QThread):
         self.grid_width = 1920
         self.grid_height = 1080
 
-        # Define the window size for the first camera initially main camera but you change it as you wish for the station
-        self.first_cam_width = 960
-        self.first_cam_height = 720
+        # Define the window size for the ZED camera
+        self.zed_cam_width = 1920
+        self.zed_cam_height = 540
 
-        # Define the window size for the second and third cameras (Tilt and side) Rec: you can make it for Grippers
-        self.stacked_cam_width = 960
-        self.stacked_cam_height = 360
-
-        # Define the window size for the other cameras (Gripper L, Gripper R, and Bottom) Rec: Tilt, Bottom and side
-        self.other_cam_width = 640
-        self.other_cam_height = 360
+        # Define the window size for the top and bottom half cameras
+        self.half_cam_width = 960
+        self.half_cam_height = 270
 
         # Create shared memory arrays for each camera
         self.shared_arrays = [
-            Array('B', self.first_cam_width * self.first_cam_height * 3),
-            Array('B', self.stacked_cam_width * self.stacked_cam_height * 3),
-            Array('B', self.stacked_cam_width * self.stacked_cam_height * 3)
-        ] + [Array('B', self.other_cam_width * self.other_cam_height * 3) for _ in range(3, len(ips))]
+            Array('B', self.half_cam_width * self.half_cam_height * 3) for _ in range(4)
+        ] + [Array('B', self.zed_cam_width * self.zed_cam_height * 3)]
 
         self.processes = []
 
@@ -90,32 +84,33 @@ class CameraStreamer(QThread):
         )
 
     def display_camera(self, ip, index, shared_array, width, height):
-        cap = cv2.VideoCapture(self.create_pipeline(ip), cv2.CAP_GSTREAMER)
-        
-        if not cap.isOpened():
-            print(f"Error opening pipeline for camera {index}")
-            return
-
         while True:
-            ret, frame = cap.read()
-            if not ret:
-                print(f"Connection lost for camera {index}")
-                break
-            
-            frame = cv2.resize(frame, (width, height))
-            np_frame = np.frombuffer(shared_array.get_obj(), dtype=np.uint8).reshape((height, width, 3))
-            np_frame[:] = frame
+            cap = cv2.VideoCapture(self.create_pipeline(ip), cv2.CAP_GSTREAMER)
 
-        cap.release()
+            if not cap.isOpened():
+                print(f"Error opening pipeline for camera {index}")
+                time.sleep(5)
+                continue
+
+            while cap.isOpened():
+                ret, frame = cap.read()
+                if not ret:
+                    print(f"Connection lost for camera {index}, retrying...")
+                    cap.release()
+                    break
+
+                frame = cv2.resize(frame, (width, height))
+                np_frame = np.frombuffer(shared_array.get_obj(), dtype=np.uint8).reshape((height, width, 3))
+                np_frame[:] = frame
+
+            time.sleep(5)
 
     def run(self):
         for i, ip in enumerate(self.ips):
-            if i == 0:
-                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.first_cam_width, self.first_cam_height))
-            elif i in [1, 2]:
-                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.stacked_cam_width, self.stacked_cam_height))
+            if i < 4:
+                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.half_cam_width, self.half_cam_height))
             else:
-                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.other_cam_width, self.other_cam_height))
+                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.zed_cam_width, self.zed_cam_height))
             p.start()
             self.processes.append(p)
 
@@ -125,19 +120,19 @@ class CameraStreamer(QThread):
         while True:
             grid = np.zeros((self.grid_height, self.grid_width, 3), dtype=np.uint8)
 
-            # Place the first camera in the top-right quarter
-            np_frame = np.frombuffer(self.shared_arrays[0].get_obj(), dtype=np.uint8).reshape((self.first_cam_height, self.first_cam_width, 3))
-            grid[0:self.first_cam_height, self.grid_width - self.first_cam_width:self.grid_width] = np_frame
+            # Place the top half cameras
+            for i in range(2):
+                np_frame = np.frombuffer(self.shared_arrays[i].get_obj(), dtype=np.uint8).reshape((self.half_cam_height, self.half_cam_width, 3))
+                grid[0:self.half_cam_height, i * self.half_cam_width:(i + 1) * self.half_cam_width] = np_frame
 
-            # Place the second and third cameras in the top-left quarter, stacked vertically
-            for i in range(1, 3):
-                np_frame = np.frombuffer(self.shared_arrays[i].get_obj(), dtype=np.uint8).reshape((self.stacked_cam_height, self.stacked_cam_width, 3))
-                grid[(i - 1) * self.stacked_cam_height:i * self.stacked_cam_height, 0:self.stacked_cam_width] = np_frame
+            # Place the ZED camera in the middle
+            np_frame = np.frombuffer(self.shared_arrays[4].get_obj(), dtype=np.uint8).reshape((self.zed_cam_height, self.zed_cam_width, 3))
+            grid[self.half_cam_height:self.half_cam_height + self.zed_cam_height, 0:self.zed_cam_width] = np_frame
 
-            # Place the remaining cameras in the bottom half, side by side
-            for i in range(3, 6):
-                np_frame = np.frombuffer(self.shared_arrays[i].get_obj(), dtype=np.uint8).reshape((self.other_cam_height, self.other_cam_width, 3))
-                grid[self.first_cam_height:self.first_cam_height + self.other_cam_height, (i - 3) * self.other_cam_width:(i - 2) * self.other_cam_width] = np_frame
+            # Place the bottom half cameras
+            for i in range(2, 4):
+                np_frame = np.frombuffer(self.shared_arrays[i].get_obj(), dtype=np.uint8).reshape((self.half_cam_height, self.half_cam_width, 3))
+                grid[self.half_cam_height + self.zed_cam_height:self.grid_height, (i - 2) * self.half_cam_width:(i - 1) * self.half_cam_width] = np_frame
 
             cv2.imshow("Camera Grid", grid)
 
@@ -156,16 +151,22 @@ def create_ssh_client(ip, username, password):
     return client
 
 def send_command(client, cam_port, property, value):
-    command = f"sudo v4l2-ctl -d {cam_port} -c {property}={value}"
+    command = f"sudo v4l2-ctl -d {cam_port[0]} -c {property}={value}"
+    stdin, stdout, stderr = client.exec_command(command)
+    _ = [print(i.strip()) for i in stdout]
+    return stdout, stderr
+
+def reconnect_command(client, cam_port):
+    command = f"sudo ffmpeg -re -f v4l2 -input_format mjpeg -video_size 1280x720 -framerate 60 -i {cam_port[0]}     -c:v libx264 -preset ultrafast -tune zerolatency -b:v 4000k     -f rtsp {cam_port[1]}"
     stdin, stdout, stderr = client.exec_command(command)
     _ = [print(i.strip()) for i in stdout]
     return stdout, stderr
 
 def reset_cameras(client, cam_port):
     commands = [
-        f"v4l2-ctl -d {cam_port} -c brightness=128",
-        f"v4l2-ctl -d {cam_port} -c contrast=32",
-        f"v4l2-ctl -d {cam_port} -c backlight_compensation=0"
+        f"v4l2-ctl -d {cam_port[0]} -c brightness=128",
+        f"v4l2-ctl -d {cam_port[0]} -c contrast=32",
+        f"v4l2-ctl -d {cam_port[0]} -c backlight_compensation=0"
     ]
     for command in commands:
         stdin, stdout, stderr = client.exec_command(command)
