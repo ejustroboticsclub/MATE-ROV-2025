@@ -28,3 +28,7 @@
 *.acn
 *.acr
 *.alg
+
+software/rov_ws/build/
+software/rov_ws/install/
+software/rov_ws/log/

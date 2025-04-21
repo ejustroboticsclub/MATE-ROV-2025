@@ -220,6 +220,7 @@ class Calibration(Node):
     
     def imu_received_callback(self, msg: Imu):
         q = msg.orientation
+        q = [q.x, q.y, q.z, q.w]
         r = R.from_quat(q)
         orien = r.as_euler("xyz", degrees=False)
         if self.current == 2:
@@ -236,7 +237,7 @@ class Calibration(Node):
 def main(args = None):
     rclpy.init(args=args)
     cal_node = Calibration()
-    executer = ftu.ThreadPoolExecutor(max_workers=1)
+    executer = ftu.ThreadPoolExecutor(max_workers = 1)
     try:
         executer.submit(pygame_loop)
         rclpy.spin(cal_node)
