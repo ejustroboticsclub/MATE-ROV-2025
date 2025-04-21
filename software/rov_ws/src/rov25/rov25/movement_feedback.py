@@ -7,7 +7,7 @@ import rclpy.logging
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 import rclpy.parameter
-from std_msgs.msg import Float64, Float32MultiArray, Bool, Int32
+from std_msgs.msg import Float64, Float32MultiArray, Bool, Int32, Int32MultiArray
 from sensor_msgs.msg import Imu
 from tf_transformations import euler_from_quaternion
 from rcl_interfaces.msg import SetParametersResult
@@ -220,6 +220,7 @@ class Reference:
     v_x = 0
     v_y = 0
     w_z = 0
+    yaw = 0
     roll = 0
     depth = 0
     pitch = 0
@@ -296,8 +297,8 @@ class Robot:
             motion of the ROV
         """
         # Planer Control
-        phi_2 = pid_val_x - pid_val_y
         phi_1 = pid_val_x + pid_val_y
+        phi_2 = pid_val_x - pid_val_y
         phi_3 = pid_val_x - pid_val_y
         phi_4 = pid_val_x + pid_val_y
 
@@ -387,7 +388,6 @@ class CalibrationNode(Node):
         self.rotatin_flag = False
         ###
 
-
         super().__init__("kinematic_model")
         """
             publisher to ROV/thrusters topic
@@ -401,7 +401,7 @@ class CalibrationNode(Node):
             subscriber to ROV/pitch with pitch_received_callback callback function            
         """
         self.thrusters_voltages_publisher = self.create_publisher(
-            Float32MultiArray, "ROV/thrusters", 10
+            Int32MultiArray, "ROV/thrusters", 10
         )
         self.rotation_done_publisher = self.create_publisher(
             Bool, "ROV/rotation_done", 10
@@ -523,7 +523,7 @@ class CalibrationNode(Node):
         d_z = self.desired.depth * self.PARAM.kp_depth
         """calculates the angular velocity around the z axis (the yaw)
         """
-         ### logic for rotation
+        # Logic for rotation
         if self.is_rotating:
             self.desired.w_z = 1 
             if self.initial_press: 
@@ -543,10 +543,13 @@ class CalibrationNode(Node):
             self.initial_press = True
             self.rotatin_flag = False
 
+        if self.desired.w_z == 0:
+            w_z = self.pid_wz.compute(self.desired.yaw, self.actual.yaw)
+        else:
+            w_z = self.desired.w_z
+            self.desired.yaw = self.actual.yaw
+
         
-
-        w_z = self.pid_wz.compute(self.desired.w_z, self.actual.w_z)
-
         """
             calculate the four planner thrusters' values and  bounds them between the minimum and
             maximum value for the thrusters 
@@ -593,7 +596,11 @@ class CalibrationNode(Node):
             self.PARAM.thruster_max,
         )
 
-        planer_thrusters_list = [phi_2, phi_1, phi_3, phi_4]
+        # reverse the direction of the thrusters
+        phi_3 = (self.PARAM.thruster_max + self.PARAM.thruster_min) - phi_3
+        phi_4 = (self.PARAM.thruster_max + self.PARAM.thruster_min) - phi_4
+
+        planer_thrusters_list = [phi_1, phi_2, phi_3, phi_4]
 
         """
             initialize the distance between the actual depth value and the desired value and
@@ -601,10 +608,14 @@ class CalibrationNode(Node):
             values of the side thrusters 
         """
         depth_error = self.desired.depth - self.actual.depth
+        self.get_logger().info(f"desired depth: {self.desired.depth}")
         correction_value = depth_error * self.PARAM.kp_depth
+        
+        
+        self.get_logger().info(f"correction_value: {correction_value}")
         depth_thruster = map_from_to(
             correction_value,
-            0,
+            -2,
             2,
             self.PARAM.thruster_side_min,
             self.PARAM.thruster_side_max,
@@ -630,16 +641,17 @@ class CalibrationNode(Node):
 
         planer_thrusters_list.append(phi_5)
         planer_thrusters_list.append(phi_6)
+
         phi_7 = self.pid_pitch.compute(self.actual.pitch, self.desired.pitch)
         phi_7 = max(phi_7, self.PARAM.thruster_side_min)
         phi_7 = min(phi_7, self.PARAM.thruster_side_max)
         planer_thrusters_list.append(phi_7)
 
         # create the message instance
-        thrusters_voltages = Float32MultiArray()
+        thrusters_voltages = Int32MultiArray()
 
         # fill the message with the phi values
-        thrusters_voltages.data = planer_thrusters_list
+        thrusters_voltages.data = list(map(int,planer_thrusters_list))
 
         # publish the message
         self.get_logger().info(str(list(thrusters_voltages.data)))
@@ -671,6 +683,9 @@ class CalibrationNode(Node):
         self.desired.v_y = twist_msg.linear.y
         self.desired.depth = twist_msg.linear.z
         self.desired.w_z = twist_msg.angular.z
+        
+
+
     def pitch_received_callback(self, pitch_msg: Float64):
         """updates the target pitch
 
@@ -746,8 +761,8 @@ class CalibrationNode(Node):
                     self.desired.pitch = received_values[i]
     
     def stop_all(self):
-        thrusters_voltages = Float32MultiArray()
-        thrusters_voltages.data = [1485, 1485, 1485, 1485, 1485, 1485]
+        thrusters_voltages = Int32MultiArray()
+        thrusters_voltages.data = [int((self.PARAM.thruster_max + self.PARAM.thruster_min) / 2)] * 7
         self.thrusters_voltages_publisher.publish(thrusters_voltages)
 
 

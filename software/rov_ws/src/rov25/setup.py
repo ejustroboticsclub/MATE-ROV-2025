@@ -28,6 +28,10 @@ setup(
             "joystick = rov25.joystick:main",
             "simulate_yaw = rov25.simulate_yaw:main",
             "manual_callibartion = rov25.manual_callibartion:main",
+            "blackbox = rov25.blackbox:main",
+            "vis = rov25.vis:main"
         ],
     },
 )
+
+
