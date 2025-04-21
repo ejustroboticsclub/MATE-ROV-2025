@@ -7,7 +7,7 @@ import rclpy.logging
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 import rclpy.parameter
-from std_msgs.msg import Float64, Float32MultiArray
+from std_msgs.msg import Float64, Float32MultiArray, Bool
 from sensor_msgs.msg import Imu
 from tf_transformations import euler_from_quaternion
 from rcl_interfaces.msg import SetParametersResult
@@ -380,6 +380,14 @@ class CalibrationNode(Node):
         self.desired = Reference()
         self.t.t_prev = time()
 
+
+        ###
+        self.is_rotating = False  # Is the ROV currently rotating?
+        self.initial_press = True
+        self.rotatin_flag = False
+        ###
+
+
         super().__init__("kinematic_model")
         """
             publisher to ROV/thrusters topic
@@ -407,6 +415,10 @@ class CalibrationNode(Node):
         self.pitch_subscriber = self.create_subscription(
             Float64, "ROV/pitch", self.pitch_received_callback, 10
         )
+        self.rotating_button_subscriber = self.create_subscription(
+            Bool, "ROV/rotating", self.rotating_button_callback, 10
+        )
+        
         self.constants_subscriber = self.create_subscription(
             Float32MultiArray, "ROV/constants", self.constants_callback, 10
         )
@@ -507,6 +519,28 @@ class CalibrationNode(Node):
         d_z = self.desired.depth * self.PARAM.kp_depth
         """calculates the angular velocity around the z axis (the yaw)
         """
+         ### logic for rotation
+        if self.is_rotating:
+            self.desired.w_z = 1 
+            if self.initial_press: 
+                
+                if(self.actual.yaw == 0) : self.actual.yaw = 1
+
+                self.initial_yaw = self.actual.yaw + 186
+                self.initial_press = False
+            
+            if (self.actual.yaw + 186) - self.initial_yaw < 0:
+                self.rotatin_flag = True
+
+            if (self.rotatin_flag) and (self.actual.yaw + 186) - self.initial_yaw >= 0:
+                self.is_rotating = False
+                self.get_logger().info(f"Target 360")
+        else:
+            self.initial_press = True
+            self.rotatin_flag = False
+
+        
+
         w_z = self.pid_wz.compute(self.desired.w_z, self.actual.w_z)
 
         """
@@ -608,6 +642,19 @@ class CalibrationNode(Node):
 
         self.thrusters_voltages_publisher.publish(thrusters_voltages)
 
+
+ 
+    def rotating_button_callback(self, msg: Bool):
+        """callback function for the subscriber to the ROV/rotating topic and updates t self.actual attribute
+        Args:
+            msg (Bool): boolean sent by the button of rotating
+        """
+        self.is_rotating =  msg.data
+            
+
+    
+
+
     def cmd_vel_recieved_callback(self, twist_msg: Twist):
         """
             callback function for the subscriber to the ROV/cmd_vel topic 
@@ -693,8 +740,6 @@ class CalibrationNode(Node):
                     self.desired.roll = received_values[i]
                 elif i==5:
                     self.desired.pitch = received_values[i]
-            
-                
     
     def stop_all(self):
         thrusters_voltages = Float32MultiArray()
