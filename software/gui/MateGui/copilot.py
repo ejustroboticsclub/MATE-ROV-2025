@@ -2,10 +2,12 @@ from PyQt5.QtCore import QCoreApplication, QMetaObject, QRect, Qt, QThread
 from PyQt5.QtGui import QIcon, QPixmap , QFont ,QFontDatabase
 from PyQt5.QtWidgets import QLabel, QPushButton , QSlider , QComboBox
 from utils import create_ssh_client, send_command, reset_cameras, scale
+from sensor_msgs.msg import Imu
 import os
 from utils import BG_path , ROV_path
 from stylesheet import Copilot_st1, Copilot_st2, apply_st , red_button , back_st, selection_st
 from utils import reconnect_command
+
 
 CAM_PORTS = {
     "Main": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
@@ -32,7 +34,7 @@ class CopilotUi(object):
         self.ip = ip
         self.username = username
         self.password = password
-        self.client = create_ssh_client(ip, username, password)
+        #self.client = create_ssh_client(ip, username, password)
     def setupUi(self, Dialog):
         #loading font
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -401,32 +403,60 @@ class CopilotUi(object):
         
         self.back_button.setText(QCoreApplication.translate("Dialog","Back", None))
 
-    def update_labels(self, msg):
+    # Standalone function to update all ROV labels
+    def update_imu(self,
+        imu_msg):
         """
-        Updates the IMU and thruster labels with new data from a ROS message.
-        Expected message structure (DecodedData):
-          - msg.imu.acc_x, msg.imu.acc_y, msg.imu.acc_z
-          - msg.imu.imu_roll, msg.imu.imu_pitch, msg.imu.imu_yaw
-          - msg.rov_depth
-          - msg.thruster_current_1 ... msg.thruster_current_6
-          - msg.thruster_pwm_1 ... msg.thruster_pwm_6
+        Update IMU labels for linear acceleration and orientation.
         """
-        try:
-            # Update IMU (and depth) labels
-            self.vx_label.setText(f"{msg.imu.acc_x:.2f}")
-            self.vy_label.setText(f"{msg.imu.acc_y:.2f}")
-            self.wz_label.setText(f"{msg.imu.acc_z:.2f}")
-            self.roll_label.setText(f"{msg.imu.imu_roll:.2f}")
-            self.pitch_label.setText(f"{msg.imu.imu_pitch:.2f}")
-            self.yaw_label.setText(f"{msg.imu.imu_yaw:.2f}")
-            self.depth_label.setText(f"{msg.rov_depth:.2f}")
-    
-            # Update thruster labels
-            self.th1.setText(f"{msg.thruster_current_1:.2f}")
-            self.th2.setText(f"{msg.thruster_current_2:.2f}")
-            self.th3.setText(f"{msg.thruster_current_3:.2f}")
-            self.th4.setText(f"{msg.thruster_current_4:.2f}")
-            self.th5.setText(f"{msg.thruster_current_5:.2f}")
-            self.th6.setText(f"{msg.thruster_current_6:.2f}")
-        except Exception as e:
-            print(f"Error updating labels: {e}")
+        # Linear acceleration
+        self.vx_label.setText(f"{imu_msg.linear_acceleration.x:.2f}")
+        self.vy_label.setText(f"{imu_msg.linear_acceleration.y:.2f}")
+        self.wz_label.setText(f"{imu_msg.linear_acceleration.z:.2f}")
+        # Orientation (quaternion components)
+        self.roll_label.setText(f"{imu_msg.orientation.x:.2f}")
+        self.pitch_label.setText(f"{imu_msg.orientation.y:.2f}")
+        self.yaw_label.setText(f"{imu_msg.orientation.z:.2f}")
+
+
+
+    def update_depth(self,
+        depth
+    ):
+        """
+        Update the depth label.
+        """
+        self.depth_label.setText(f"{depth:.2f}")
+
+    def update_gripper_r(
+            self,
+            gripper_r
+        ):
+            """
+            Update the gripper right label.
+            """
+            self.th1.setText(f"{gripper_r}")
+
+    def update_gripper_l(
+            self,
+            gripper_l
+        ):
+            """
+            Update the gripper left label.
+            """
+            self.th2.setText(f"{gripper_l}")
+
+    def update_thrusters(
+            self,
+            thruster_values
+        ):
+            """
+            Update each thruster current label.
+            """
+            self.th1.setText(f"{thruster_values[0]}")
+            self.th2.setText(f"{thruster_values[1]}")
+            self.th3.setText(f"{thruster_values[2]}")
+            self.th4.setText(f"{thruster_values[3]}")
+            self.th5.setText(f"{thruster_values[4]}")
+            self.th6.setText(f"{thruster_values[5]}")
+            self.th7.setText(f"{thruster_values[6]}")

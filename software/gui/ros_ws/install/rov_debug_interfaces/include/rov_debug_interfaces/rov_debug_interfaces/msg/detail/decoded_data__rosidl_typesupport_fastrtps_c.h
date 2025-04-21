@@ -1,1 +1,0 @@
-/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/rov_debug_interfaces/rosidl_typesupport_fastrtps_c/rov_debug_interfaces/msg/detail/decoded_data__rosidl_typesupport_fastrtps_c.h

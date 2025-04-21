@@ -1,1 +1,0 @@
-/home/zainstark/MATE-ROV-2025/software/gui/ros_ws/build/rov_debug_interfaces/rosidl_generator_py/rov_debug_interfaces/_rov_debug_interfaces_s.ep.rosidl_typesupport_c.c

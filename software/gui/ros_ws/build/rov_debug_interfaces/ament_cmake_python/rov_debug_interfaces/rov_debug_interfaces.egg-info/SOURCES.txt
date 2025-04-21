@@ -1,6 +1,0 @@
-setup.py
-rov_debug_interfaces/__init__.py
-rov_debug_interfaces.egg-info/PKG-INFO
-rov_debug_interfaces.egg-info/SOURCES.txt
-rov_debug_interfaces.egg-info/dependency_links.txt
-rov_debug_interfaces.egg-info/top_level.txt

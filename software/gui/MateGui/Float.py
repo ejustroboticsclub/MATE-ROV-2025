@@ -113,7 +113,7 @@ class FloatUi(object):
         self.depth.setText(QCoreApplication.translate("Dialog","Depth ", None))
         self.back_button.setText(QCoreApplication.translate("Dialog", "Back", None))
     
-    def update_depth(self, depth_value):
+    def update_float(self, depth_value):
         
         if self.current_index < len(self.depth_labels):
             
