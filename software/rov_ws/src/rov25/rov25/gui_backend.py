@@ -1,5 +1,6 @@
 import rclpy
 from rclpy.node import Node
+import rclpy.node
 from sensor_msgs.msg import Imu
 from std_msgs.msg import Bool, Float64, Int32MultiArray 
 import threading
@@ -32,6 +33,9 @@ class ROSInterface(Node):
             Imu, 'ROV/imu', self.imu_callback, 10)
         self.float_sub = self.create_subscription(
             Float64, 'Float/depth', self.float_callback, 10)
+        print("ROS Interface initialized")
+        # Publishers
+        self.test_pub = self.create_publisher(Float64, '/ROV/test', 10)
 
     # Callbacks
     def depth_callback(self, msg):
@@ -40,9 +44,12 @@ class ROSInterface(Node):
 
     def thrusters_callback(self, msg):
         self.signal_emitter.thrusters_signal.emit(list(msg.data))
+        print(list(msg.data))
+        
 
     def gripper_r_callback(self, msg):
         self.signal_emitter.gripper_r_signal.emit(msg.data)
+
 
     def gripper_l_callback(self, msg):
         self.signal_emitter.gripper_l_signal.emit(msg.data)
@@ -69,23 +76,24 @@ class ROSThread(threading.Thread):
 def start_ros() -> ROSInterface:
     rclpy.init()
     ros_interface = ROSInterface()
+    ROSThread(ros_interface).start()
     return ros_interface
 
-if __name__ == '__main__':
-    # Initialize ROS
-    node = start_ros()
-    ros_thread = ROSThread(node)
-    ros_thread.start()
+# if __name__ == '__main__':
+#     # Initialize ROS
+#     node = start_ros()
+#     ros_thread = ROSThread(node)
+#     ros_thread.start()
 
-    try:
-        # Main thread simply waits while ROS runs in background
-        while ros_thread.is_alive():
-            time.sleep(0.1)
-    except KeyboardInterrupt:
-        print("\nShutting down...")
-    finally:
-        # Cleanup resources
-        ros_thread.stop()
-        if rclpy.ok():
-            rclpy.shutdown()
-        print("ROS node terminated cleanly")
+#     try:
+#         # Main thread simply waits while ROS runs in background
+#         while ros_thread.is_alive():
+#             time.sleep(0.1)
+#     except KeyboardInterrupt:
+#         print("\nShutting down...")
+#     finally:
+#         # Cleanup resources
+#         ros_thread.stop()
+#         if rclpy.ok():
+#             rclpy.shutdown()
+#         print("ROS node terminated cleanly")

@@ -7,7 +7,7 @@ from copilot import CopilotUi, CAM_PORTS
 from engineer import EngineerUi
 from Float import FloatUi
 from utils import VideoCaptureThread, scale
-from gui.ros_logic import start_ros
+from rov25.gui_backend import start_ros
 
 
 class MainWindow(QMainWindow):
