@@ -5,3 +5,37 @@
 __pycache__/
 
 .venv
+**/__pycache__/
+# Compiled files
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fls
+*.fdb_latexmk
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+
+# Temporary files
+*.tmp
+*.backup
+*.bak
+*.synctex
+*.lof
+*.lot
+*.glg
+*.glo
+*.gls
+*.ist
+*.acn
+*.acr
+*.alg
+
+software/rov_ws/build/
+software/rov_ws/install/
+software/rov_ws/log/
