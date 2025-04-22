@@ -98,6 +98,7 @@ class MainWindow(QMainWindow):
         self.ros_interface.signal_emitter.gripper_l_signal.connect(self.co_pilot_ui.update_gripper_l)
         self.ros_interface.signal_emitter.thrusters_signal.connect(self.co_pilot_ui.update_thrusters)
         self.ros_interface.signal_emitter.imu_signal.connect(self.co_pilot_ui.update_imu)
+        self.ros_interface.signal_emitter.angles_signal.connect(self.co_pilot_ui.update_angles)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

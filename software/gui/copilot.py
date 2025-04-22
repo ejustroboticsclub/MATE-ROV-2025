@@ -34,7 +34,7 @@ class CopilotUi(object):
         self.ip = ip
         self.username = username
         self.password = password
-        #self.client = create_ssh_client(ip, username, password)
+        self.client = create_ssh_client(ip, username, password)
         self.ros_interface = ros_interface
     def setupUi(self, Dialog):
         #loading font
@@ -449,11 +449,17 @@ class CopilotUi(object):
         self.vy_label.setText(f"{imu_msg.linear_acceleration.y:.2f}")
         self.wz_label.setText(f"{imu_msg.linear_acceleration.z:.2f}")
         # Orientation (quaternion components)
-        self.roll_label.setText(f"{imu_msg.orientation.x:.2f}")
-        self.pitch_label.setText(f"{imu_msg.orientation.y:.2f}")
-        self.yaw_label.setText(f"{imu_msg.orientation.z:.2f}")
 
 
+    def update_angles(self,
+        angles_msg
+    ):
+        """
+        Update the angles label.
+        """
+        self.roll_label.setText(f"{angles_msg.x:.2f}")
+        self.pitch_label.setText(f"{angles_msg.y:.2f}")
+        self.yaw_label.setText(f"{angles_msg.z:.2f}")
 
     def update_depth(self,
         depth
