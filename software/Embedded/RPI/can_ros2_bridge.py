@@ -3,7 +3,7 @@ import rclpy
 from rclpy.node import Node
 import can
 import struct
-from std_msgs.msg import Float64MultiArray, String, Bool, Int32, Int32MultiArray
+from std_msgs.msg import Float64MultiArray, String, Bool, Int32, Int8, Int32MultiArray
 
 # CAN IDs for devices
 THRUSTERS_ID = 0x100
@@ -36,7 +36,7 @@ class CANBridge(Node):
         self.create_subscription(Int32MultiArray, '/ROV/thrusters', self.thruster_callback, 10)
         self.create_subscription(Bool, '/ROV/gripper_l', self.gripper_l_callback, 10)
         self.create_subscription(Bool, '/ROV/gripper_r', self.gripper_r_callback, 10)
-        self.create_subscription(Int32, '/ROV/pump', self.pump_callback, 10)
+        self.create_subscription(Int8, '/ROV/pump', self.pump_callback, 10)
         self.create_subscription(String, '/Commands', self.command_callback, 10)
 
 
