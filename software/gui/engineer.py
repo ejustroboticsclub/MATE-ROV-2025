@@ -2,6 +2,7 @@ from PyQt5.QtCore import (QCoreApplication, QMetaObject, QRect)
 from PyQt5.QtGui import (QIcon, QPixmap, QFont, QFontDatabase)
 from PyQt5.QtWidgets import (QLabel, QPushButton)
 import os
+import subprocess
 from stylesheet import Engineer_buttons_st, red_button, back_st
 from utils import BG_path, scale  # Make sure scale is imported
 
@@ -52,6 +53,7 @@ class EngineerUi(object):
         self.IccButton.setGeometry(QRect(scale(290), scale(240), scale(351), scale(81)))
         self.IccButton.setStyleSheet(Engineer_buttons_st)
         self.IccButton.setFont(ICCfont)
+        self.IccButton.clicked.connect(self.openICC)
 
         # Recording Button
         self.RecButton = QPushButton(Dialog)
@@ -79,3 +81,6 @@ class EngineerUi(object):
         self.IccButton.setText(QCoreApplication.translate("Dialog", "Invasive Carp Computer Model", None))
         self.RecButton.setText(QCoreApplication.translate("Dialog", "Start Recording (Photosphere)", None))
         self.StopButton.setText(QCoreApplication.translate("Dialog", "Stop Recording", None))
+
+    def openICC(self):
+        subprocess.Popen(['python3', '/home/nadine/new/MATE-ROV-2025/software/invasive-carp-model/main.py'])

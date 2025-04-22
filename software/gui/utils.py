@@ -256,3 +256,4 @@ def get_scaled_factor():
 
 def scale(x):
     return int(x*get_scaled_factor())
+

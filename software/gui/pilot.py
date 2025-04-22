@@ -55,11 +55,11 @@ class PilotUi(object):
 
         # IPs passed for cameraStreamer class
         IPS = [
-            "rtsp://192.168.191.56:8554/camerafeed1",
-            "rtsp://192.168.191.56:8554/camerafeed1",
-            "rtsp://192.168.191.56:8554/camerafeed1",
-            "rtsp://192.168.191.56:8554/camerafeed1",
-            "rtsp://192.168.191.56:8554/camerafeed1"
+            "rtsp://10.10.225.173:8554/camerafeed2",
+            # "rtsp://192.168.1.100:8555/camerafeed1",
+            # "rtsp://192.168.1.100:8556/camerafeed1",
+            # "rtsp://192.168.1.100:8557/camerafeed1",
+            # "rtsp://192.168.1.100:8558/camerafeed1"
         ]
         self.camera_6feeds = CameraStreamer(IPS)
         self.CamButton.clicked.connect(self.camera_6feeds.run)
