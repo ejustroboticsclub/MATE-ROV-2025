@@ -2,10 +2,14 @@ import rclpy
 from rclpy.node import Node
 import rclpy.node
 from sensor_msgs.msg import Imu
-from std_msgs.msg import Bool, Float64, Int32MultiArray, Int8
+
+from std_msgs.msg import Bool, Float64, Int32MultiArray, Int8, Float32, Int8MultiArray
+from geometry_msgs.msg import Vector3, Twist
+
 import threading
 from PyQt5.QtCore import QObject, pyqtSignal
 import time
+
 
 class SignalSender(QObject):
     depth_signal = pyqtSignal(float)
@@ -14,28 +18,47 @@ class SignalSender(QObject):
     gripper_l_signal = pyqtSignal(bool)
     imu_signal = pyqtSignal(Imu)
     float_signal = pyqtSignal(float)
+    angles_signal = pyqtSignal(Vector3)
+    desired_signal = pyqtSignal(Twist)
+    indicators_signal = pyqtSignal(Int8MultiArray)
+
+
 
 class ROSInterface(Node):
     def __init__(self):
-        super().__init__('ros_interface')
+        super().__init__("ros_interface")
         self.signal_emitter = SignalSender()
-        
+
         # Subscribers
         self.depth_sub = self.create_subscription(
-            Float64, '/ROV/depth', self.depth_callback, 10)
+            Float32, "/ROV/depth", self.depth_callback, 10
+        )
         self.thrusters_sub = self.create_subscription(
-            Int32MultiArray, 'ROV/thrusters', self.thrusters_callback, 10)
+            Int32MultiArray, "ROV/thrusters", self.thrusters_callback, 10
+        )
         self.gripper_r_sub = self.create_subscription(
-            Bool, 'ROV/gripper_r', self.gripper_r_callback, 10)
+            Bool, "ROV/gripper_r", self.gripper_r_callback, 10
+        )
         self.gripper_l_sub = self.create_subscription(
-            Bool, 'ROV/gripper_l', self.gripper_l_callback, 10)
-        self.imu_sub = self.create_subscription(
-            Imu, 'ROV/imu', self.imu_callback, 10)
+            Bool, "ROV/gripper_l", self.gripper_l_callback, 10
+        )
+        self.imu_sub = self.create_subscription(Imu, "ROV/imu", self.imu_callback, 10)
+
+        self.angles_sub = self.create_subscription(
+            Vector3, "ROV/angles", self.angles_callback, 10
+        )
         self.float_sub = self.create_subscription(
-            Float64, 'Float/depth', self.float_callback, 10)
+            Float64, "Float/depth", self.float_callback, 10
+        )
+        self.desired_sub = self.create_subscription(
+            Twist, "ROV/desired", self.desired_callback, 10
+        )
+        self.indicators_sub = self.create_subscription(
+            Int8MultiArray, "ROV/indicators", self.indicators_callback, 10
+        )
         # Publishers
-        self.pumb_publisher = self.create_publisher(Int8, '/ROV/pump', 10)
-        self.test_pub = self.create_publisher(Float64, '/ROV/test', 10)
+        self.pumb_publisher = self.create_publisher(Int8, "/ROV/pump", 10)
+        self.test_pub = self.create_publisher(Float64, "/ROV/test", 10)
 
     # Callbacks
     def depth_callback(self, msg):
@@ -43,11 +66,9 @@ class ROSInterface(Node):
 
     def thrusters_callback(self, msg):
         self.signal_emitter.thrusters_signal.emit(list(msg.data))
-        
 
     def gripper_r_callback(self, msg):
         self.signal_emitter.gripper_r_signal.emit(msg.data)
-
 
     def gripper_l_callback(self, msg):
         self.signal_emitter.gripper_l_signal.emit(msg.data)
@@ -58,6 +79,15 @@ class ROSInterface(Node):
     def float_callback(self, msg):
         self.signal_emitter.float_signal.emit(msg.data)
 
+    def angles_callback(self, msg):
+        self.signal_emitter.angles_signal.emit(msg)
+    
+    def desired_callback(self, msg):
+        self.signal_emitter.desired_signal.emit(msg)
+
+    def indicators_callback(self, msg):
+        self.signal_emitter.indicators_signal.emit(msg)
+    
 class ROSThread(threading.Thread):
     def __init__(self, node):
         super().__init__()
@@ -71,11 +101,13 @@ class ROSThread(threading.Thread):
         self.node.destroy_node()
         rclpy.shutdown()
 
+
 def start_ros() -> ROSInterface:
     rclpy.init()
     ros_interface = ROSInterface()
     ROSThread(ros_interface).start()
     return ros_interface
+
 
 # if __name__ == '__main__':
 #     # Initialize ROS

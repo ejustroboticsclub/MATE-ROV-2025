@@ -7,7 +7,8 @@ import rclpy.logging
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 import rclpy.parameter
-from std_msgs.msg import Float64, Float32MultiArray, Bool, Int32, Int32MultiArray
+from std_msgs.msg import Float64, Float32, Float32MultiArray, Bool, Int32, Int32MultiArray
+from geometry_msgs.msg import Vector3
 from sensor_msgs.msg import Imu
 from tf_transformations import euler_from_quaternion
 from rcl_interfaces.msg import SetParametersResult
@@ -406,12 +407,19 @@ class CalibrationNode(Node):
         self.rotation_done_publisher = self.create_publisher(
             Bool, "ROV/rotation_done", 10
         )
+        self.angles_publisher = self.create_publisher(
+            Vector3, "ROV/angles", 10
+        )
+        self.desired_values_gui_publisher = self.create_publisher(
+            Twist, "ROV/desired_values", 10
+        )
+
 
         self.cmd_vel_subscriber = self.create_subscription(
             Twist, "ROV/cmd_vel", self.cmd_vel_recieved_callback, 10
         )
         self.depth_subscriber = self.create_subscription(
-            Float64, "ROV/depth", self.depth_recieved_callback, 10
+            Float32, "ROV/depth", self.depth_recieved_callback, 10
         )
         self.imu_subscriber = self.create_subscription(
             Imu, "ROV/imu", self.imu_recieved_callback, 10
@@ -549,7 +557,7 @@ class CalibrationNode(Node):
             w_z = self.desired.w_z
             self.desired.yaw = self.actual.yaw
 
-        
+        self.get_logger().info(f"Desired yaw: {self.desired.yaw}, Actual yaw: {self.actual.yaw}")
         """
             calculate the four planner thrusters' values and  bounds them between the minimum and
             maximum value for the thrusters 
@@ -608,11 +616,11 @@ class CalibrationNode(Node):
             values of the side thrusters 
         """
         depth_error = self.desired.depth - self.actual.depth
-        self.get_logger().info(f"desired depth: {self.desired.depth}")
+        # self.get_logger().info(f"desired depth: {self.desired.depth}")
         correction_value = depth_error * self.PARAM.kp_depth
         
         
-        self.get_logger().info(f"correction_value: {correction_value}")
+        # self.get_logger().info(f"correction_value: {correction_value}")
         depth_thruster = map_from_to(
             correction_value,
             -2,
@@ -654,7 +662,7 @@ class CalibrationNode(Node):
         thrusters_voltages.data = list(map(int,planer_thrusters_list))
 
         # publish the message
-        self.get_logger().info(str(list(thrusters_voltages.data)))
+        # self.get_logger().info(str(list(thrusters_voltages.data)))
 
         self.thrusters_voltages_publisher.publish(thrusters_voltages)
 
@@ -692,16 +700,16 @@ class CalibrationNode(Node):
         Args:
             pitch_msg (Float64): pitch in degrees
         """
-        self.get_logger().info(f"Target pitch: {pitch_msg.data}")
+        # self.get_logger().info(f"Target pitch: {pitch_msg.data}")
         self.desired.pitch = pitch_msg.data
-    def depth_recieved_callback(self, depth_msg: Float64):
+    def depth_recieved_callback(self, depth_msg: Float32):
         """callback function for the subscriber to the ROV/depth topic and updates teh self.actual attribute
 
         Args:
-            msg (Float64): depth sent by the the depth sensor
+            msg (Float32): depth sent by the the depth sensor
         """
 
-        self.get_logger().info(f"depth: {depth_msg}")
+        # self.get_logger().info(f"depth: {depth_msg}")
         self.actual.depth = depth_msg.data
 
     def imu_recieved_callback(self, imu: Imu):
@@ -718,14 +726,21 @@ class CalibrationNode(Node):
             [imu.orientation.x, imu.orientation.y, imu.orientation.z, imu.orientation.w]
         )
 
+        
+
+        
         self.actual.w_z = yaw_dot * -1
         self.actual.yaw = yaw * 180 / math.pi
         self.actual.roll = roll * 180 / math.pi
         self.actual.pitch = pitch * 180 / math.pi
-
-        self.get_logger().info(
-            f"actual w_z: {self.actual.w_z}, roll: {self.actual.roll}, yaw: {self.actual.yaw}"
-        )  # Check degree or radian
+        angles = Vector3()
+        angles.x = self.actual.roll
+        angles.y = self.actual.pitch
+        angles.z = self.actual.yaw
+        self.angles_publisher.publish(angles)
+        # self.get_logger().info(
+        #     f"actual w_z: {self.actual.w_z}, roll: {self.actual.roll}, yaw: {self.actual.yaw}"
+        # )  # Check degree or radian
 
     def constants_callback(self, msg: Float32MultiArray):
         received_constants = msg.data
@@ -736,11 +751,11 @@ class CalibrationNode(Node):
         self.PARAM.kp_roll = received_constants[4]
         self.PARAM.kp_pitch = received_constants[5]
         
-        self.get_logger().info(
-            f"""recieved proportional: open control x: {received_constants[0]}, y: {received_constants[1]},
-                kp_wz: {received_constants[2]}, kp_depth: {received_constants[3]}, kp_roll: {received_constants[4]}, 
-                kp_pitch: {received_constants[5]}"""
-        )
+        # self.get_logger().info(
+        #     f"""recieved proportional: open control x: {received_constants[0]}, y: {received_constants[1]},
+        #         kp_wz: {received_constants[2]}, kp_depth: {received_constants[3]}, kp_roll: {received_constants[4]}, 
+        #         kp_pitch: {received_constants[5]}"""
+        # )
     
     def received_desired_callback(self, msg: Float32MultiArray):
     #   desired vx, vy, w_z, depth, roll, pitch

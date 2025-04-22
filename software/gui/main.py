@@ -93,11 +93,14 @@ class MainWindow(QMainWindow):
     def _connect_ros_signals(self):
         """Connect ROS signals to UI updates"""
         self.ros_interface.signal_emitter.float_signal.connect(self.float_ui.update_float)
-        self.ros_interface.signal_emitter.depth_signal.connect(self.co_pilot_ui.update_depth)
+        self.ros_interface.signal_emitter.depth_signal.connect(self.co_pilot_ui.update_actual_depth)
         self.ros_interface.signal_emitter.gripper_r_signal.connect(self.co_pilot_ui.update_gripper_r)
         self.ros_interface.signal_emitter.gripper_l_signal.connect(self.co_pilot_ui.update_gripper_l)
         self.ros_interface.signal_emitter.thrusters_signal.connect(self.co_pilot_ui.update_thrusters)
         self.ros_interface.signal_emitter.imu_signal.connect(self.co_pilot_ui.update_imu)
+        self.ros_interface.signal_emitter.indicators_signal.connect(self.co_pilot_ui.update_indicators)
+        self.ros_interface.signal_emitter.desired_signal.connect(self.co_pilot_ui.update_desired_values)
+        self.ros_interface.signal_emitter.angles_signal.connect(self.co_pilot_ui.update_angles)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
