@@ -4,7 +4,7 @@ import rclpy.node
 from sensor_msgs.msg import Imu
 
 from std_msgs.msg import Bool, Float64, Int32MultiArray, Int8, Float32
-from geometry_msgs.msg import Vector3
+from geometry_msgs.msg import Vector3, Twist
 
 import threading
 from PyQt5.QtCore import QObject, pyqtSignal
@@ -19,6 +19,8 @@ class SignalSender(QObject):
     imu_signal = pyqtSignal(Imu)
     float_signal = pyqtSignal(float)
     angles_signal = pyqtSignal(Vector3)
+    desired_signal = pyqtSignal(Twist)
+
 
 
 class ROSInterface(Node):
@@ -47,6 +49,9 @@ class ROSInterface(Node):
         self.float_sub = self.create_subscription(
             Float64, "Float/depth", self.float_callback, 10
         )
+        self.desired_sub = self.create_subscription(
+            Twist, "ROV/desired", self.desired_callback, 10
+        )
         # Publishers
         self.pumb_publisher = self.create_publisher(Int8, "/ROV/pump", 10)
         self.test_pub = self.create_publisher(Float64, "/ROV/test", 10)
@@ -72,6 +77,9 @@ class ROSInterface(Node):
 
     def angles_callback(self, msg):
         self.signal_emitter.angles_signal.emit(msg)
+    
+    def desired_callback(self, msg):
+        self.signal_emitter.desired_signal.emit(msg)
 class ROSThread(threading.Thread):
     def __init__(self, node):
         super().__init__()

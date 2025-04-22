@@ -410,6 +410,9 @@ class CalibrationNode(Node):
         self.angles_publisher = self.create_publisher(
             Vector3, "ROV/angles", 10
         )
+        self.desired_values_gui_publisher = self.create_publisher(
+            Twist, "ROV/desired_values", 10
+        )
 
 
         self.cmd_vel_subscriber = self.create_subscription(
