@@ -6,15 +6,14 @@ from pilot import PilotUi
 from copilot import CopilotUi, CAM_PORTS
 from engineer import EngineerUi
 from Float import FloatUi
-from utils import VideoCaptureThread, scale
-from rov25.gui_backend import start_ros
-
+from utils import VideoCaptureThread, scale, ROSInterface
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         #add the ip , username,password as args in line 34 and unhash line 24 in copilot.py 
         # I Used stacked widget here for navigation between pages
+        self.ros_interface = ROSInterface().node
         self.stacked_widget = QStackedWidget()
 
         self.landing_page = QDialog()
@@ -33,7 +32,7 @@ class MainWindow(QMainWindow):
         self.float_ui = FloatUi()
         self.float_ui.setupUi(self.float_page)
 
-        self.co_pilot_ui = CopilotUi("192.168.191.175","suzuki","samir2023")
+        self.co_pilot_ui = CopilotUi("192.168.191.175","suzuki","samir2023", self.ros_interface)
         self.co_pilot_ui.setupUi(self.co_pilot_page)
 
         self.engineer_ui = EngineerUi()
@@ -67,7 +66,6 @@ class MainWindow(QMainWindow):
         self.engineer_ui.RecButton.clicked.connect(self.start_recording)
         self.engineer_ui.StopButton.clicked.connect(self.stop_recording)
 
-        self.ros_interface = start_ros()
         self._connect_ros_signals()
 
 
