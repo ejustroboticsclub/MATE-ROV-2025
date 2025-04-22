@@ -1,0 +1,13 @@
+[Unit]
+Description=Bring up CAN interface can0
+After=network.target
+
+[Service]
+ExecStart=/sbin/ip link set can0 up type can bitrate 500000
+ExecStop=/sbin/ip link set can0 down
+RemainAfterExit=yes
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
+
