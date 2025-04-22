@@ -35,14 +35,18 @@ class ROSInterface(Node):
             Float64, 'Float/depth', self.float_callback, 10)
         # Publishers
         self.pumb_publisher = self.create_publisher(Int8, '/ROV/pump', 10)
+        print("ROS Interface initialized")
+        # Publishers
         self.test_pub = self.create_publisher(Float64, '/ROV/test', 10)
 
     # Callbacks
     def depth_callback(self, msg):
+        print("Depth callback triggered")
         self.signal_emitter.depth_signal.emit(msg.data)
 
     def thrusters_callback(self, msg):
         self.signal_emitter.thrusters_signal.emit(list(msg.data))
+        print(list(msg.data))
         
 
     def gripper_r_callback(self, msg):
