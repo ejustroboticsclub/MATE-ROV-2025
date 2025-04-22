@@ -7,7 +7,7 @@ import rclpy.logging
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 import rclpy.parameter
-from std_msgs.msg import Float64, Float32MultiArray, Bool, Int32, Int32MultiArray
+from std_msgs.msg import Float64, Float32, Float32MultiArray, Bool, Int32, Int32MultiArray
 from sensor_msgs.msg import Imu
 from tf_transformations import euler_from_quaternion
 from rcl_interfaces.msg import SetParametersResult
@@ -411,7 +411,7 @@ class CalibrationNode(Node):
             Twist, "ROV/cmd_vel", self.cmd_vel_recieved_callback, 10
         )
         self.depth_subscriber = self.create_subscription(
-            Float64, "ROV/depth", self.depth_recieved_callback, 10
+            Float32, "ROV/depth", self.depth_recieved_callback, 10
         )
         self.imu_subscriber = self.create_subscription(
             Imu, "ROV/imu", self.imu_recieved_callback, 10
@@ -694,11 +694,11 @@ class CalibrationNode(Node):
         """
         self.get_logger().info(f"Target pitch: {pitch_msg.data}")
         self.desired.pitch = pitch_msg.data
-    def depth_recieved_callback(self, depth_msg: Float64):
+    def depth_recieved_callback(self, depth_msg: Float32):
         """callback function for the subscriber to the ROV/depth topic and updates teh self.actual attribute
 
         Args:
-            msg (Float64): depth sent by the the depth sensor
+            msg (Float32): depth sent by the the depth sensor
         """
 
         self.get_logger().info(f"depth: {depth_msg}")

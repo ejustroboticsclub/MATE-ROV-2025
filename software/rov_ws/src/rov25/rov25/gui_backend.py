@@ -2,7 +2,9 @@ import rclpy
 from rclpy.node import Node
 import rclpy.node
 from sensor_msgs.msg import Imu
-from std_msgs.msg import Bool, Float64, Int32MultiArray, Int8
+
+from std_msgs.msg import Bool, Float64, Int32MultiArray, Int8, Float32
+
 import threading
 from PyQt5.QtCore import QObject, pyqtSignal
 import time
@@ -22,7 +24,7 @@ class ROSInterface(Node):
         
         # Subscribers
         self.depth_sub = self.create_subscription(
-            Float64, '/ROV/depth', self.depth_callback, 10)
+            Float32, '/ROV/depth', self.depth_callback, 10)
         self.thrusters_sub = self.create_subscription(
             Int32MultiArray, 'ROV/thrusters', self.thrusters_callback, 10)
         self.gripper_r_sub = self.create_subscription(
