@@ -7,7 +7,24 @@ from multiprocessing import Process, Array
 import math
 from screeninfo import get_monitors
 import time
+from rov25.gui_backend import start_ros
 
+# Singleton Class for ROS Interface
+
+class ROSInterface:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ROSInterface, cls).__new__(cls)
+            cls._instance.init_ros()
+        return cls._instance
+
+    def init_ros(self):
+        self.node = start_ros()
+
+
+    
 class VideoCaptureThread(QThread):
     stop_signal = pyqtSignal()
 
@@ -83,9 +100,9 @@ class CameraStreamer(QThread):
             "videoconvert ! appsink sync=false"
         )
 
-    def display_camera(self, ip, index, shared_array, width, height):
+    def display_camera(self, index, shared_array, width, height, pipeline):
         while True:
-            cap = cv2.VideoCapture(self.create_pipeline(ip), cv2.CAP_GSTREAMER)
+            cap = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
 
             if not cap.isOpened():
                 print(f"Error opening pipeline for camera {index}")
@@ -108,9 +125,16 @@ class CameraStreamer(QThread):
     def run(self):
         for i, ip in enumerate(self.ips):
             if i < 4:
-                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.half_cam_width, self.half_cam_height))
+                pipeline = self.create_pipeline(ip)
+                p = Process(target=self.display_camera, args=(i, self.shared_arrays[i], self.half_cam_width, self.half_cam_height, pipeline))
             else:
-                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.zed_cam_width, self.zed_cam_height))
+                pipeline = """
+                    "udpsrc port=5000 ! "
+                    "application/x-rtp, encoding-name=H264, payload=96 ! "
+                    "rtph264depay ! avdec_h264 ! videoconvert ! appsink"
+                """
+
+                p = Process(target=self.display_camera, args=(i, self.shared_arrays[i], self.zed_cam_width, self.zed_cam_height ,pipeline))
             p.start()
             self.processes.append(p)
 
