@@ -20,8 +20,8 @@ class CANReceiverNode(Node):
         super().__init__('can_receiver_node')
 
         # Publishers
-        self.imu_publisher = self.create_publisher(Imu, 'ROV/IMU', 10)
-        self.depth_publisher = self.create_publisher(Float32, 'ROV/Depth', 10)
+        self.imu_publisher = self.create_publisher(Imu, 'ROV/imu', 10)
+        self.depth_publisher = self.create_publisher(Float32, 'ROV/depth', 10)
 
         # Set up CAN bus
         self.bus = can.interface.Bus(channel='can0', bustype='socketcan')
