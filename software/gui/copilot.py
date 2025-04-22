@@ -216,8 +216,58 @@ class CopilotUi(object):
         # Desired Depth (standard height)
         self.desired_depth_label_design.setGeometry(QRect(left_col_x, current_y, depth_design_w, std_height)) # Use std_height
         self.desired_depth_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height)) # Use std_height
-
         
+        
+        # Indicator labels and status circles
+        self.indicator1_label = QLabel(Dialog)
+        self.indicator1_label.setObjectName("Indicator 1 Label")
+        self.indicator1_label.setGeometry(QRect(scale(160), scale(400), scale(120), scale(41)))
+        self.indicator1_label.setText("STM 1")
+        self.indicator1_label.setStyleSheet(Copilot_st1)
+        self.indicator1_label.setFont(font)
+
+        self.indicator1_status = QLabel(Dialog)
+        self.indicator1_status.setObjectName("Indicator 1 Status")
+        self.indicator1_status.setGeometry(QRect(scale(290), scale(410), scale(20), scale(20)))
+        self.indicator1_status.setStyleSheet("background-color: green; border-radius: 10px; border: 2px solid white;")
+
+        self.indicator2_label = QLabel(Dialog)
+        self.indicator2_label.setObjectName("Indicator 2 Label")
+        self.indicator2_label.setGeometry(QRect(scale(160), scale(450), scale(120), scale(41)))
+        self.indicator2_label.setText("STM 2")
+        self.indicator2_label.setStyleSheet(Copilot_st1)
+        self.indicator2_label.setFont(font)
+
+        self.indicator2_status = QLabel(Dialog)
+        self.indicator2_status.setObjectName("Indicator 2 Status")
+        self.indicator2_status.setGeometry(QRect(scale(290), scale(460), scale(20), scale(20)))
+        self.indicator2_status.setStyleSheet("background-color: green; border-radius: 10px; border: 2px solid white;")
+
+        self.indicator3_label = QLabel(Dialog)
+        self.indicator3_label.setObjectName("Indicator 3 Label")
+        self.indicator3_label.setGeometry(QRect(scale(160), scale(500), scale(120), scale(41)))
+        self.indicator3_label.setText("STM 3")
+        self.indicator3_label.setStyleSheet(Copilot_st1)
+        self.indicator3_label.setFont(font)
+
+        self.indicator3_status = QLabel(Dialog)
+        self.indicator3_status.setObjectName("Indicator 3 Status")
+        self.indicator3_status.setGeometry(QRect(scale(290), scale(510), scale(20), scale(20)))
+        self.indicator3_status.setStyleSheet("background-color: green; border-radius: 10px; border: 2px solid white;")
+
+        self.indicator4_label = QLabel(Dialog)
+        self.indicator4_label.setObjectName("Indicator 4 Label")
+        self.indicator4_label.setGeometry(QRect(scale(160), scale(550), scale(120), scale(41)))
+        self.indicator4_label.setText("STM 4")
+        self.indicator4_label.setStyleSheet(Copilot_st1)
+        self.indicator4_label.setFont(font)
+
+        self.indicator4_status = QLabel(Dialog)
+        self.indicator4_status.setObjectName("Indicator 4 Status")
+        self.indicator4_status.setGeometry(QRect(scale(290), scale(560), scale(20), scale(20)))
+        self.indicator4_status.setStyleSheet("background-color: green; border-radius: 10px; border: 2px solid white;")
+
+
         # Create buttons
         self.button0 = QPushButton("Pump Off", Dialog)
         self.button1 = QPushButton("ClockWise", Dialog)
@@ -228,7 +278,7 @@ class CopilotUi(object):
         self.button0.setStyleSheet(red_button)
         self.button1.setStyleSheet(red_button)
         self.button2.setStyleSheet(red_button)
-        self.reset_button = QPushButton("Reset", Dialog)
+        self.reset_button = QPushButton("Reset System", Dialog)
         self.reset_button.setStyleSheet(red_button)
         
         self.button0.setFont(button_font)
@@ -247,6 +297,7 @@ class CopilotUi(object):
         self.button1.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=1)))
         self.button2.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=2)))
         self.reset_button.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=3))) # This actually reset the whole system not the pump
+
 
 
 
@@ -428,7 +479,7 @@ class CopilotUi(object):
 
 
 
-
+        
     def apply_brightness_clicked(self):
         cam_name = self.comboBox.currentText()
         if cam_name != "Select":
@@ -505,7 +556,7 @@ class CopilotUi(object):
         self.apply_brightness.setText(QCoreApplication.translate("Dialog", "Apply", None))
         self.apply_contrast.setText(QCoreApplication.translate("Dialog", "Apply", None))
         self.apply_backlight.setText(QCoreApplication.translate("Dialog", "Apply", None))
-        self.reset.setText(QCoreApplication.translate("Dialog", "Reset System", None))
+        self.reset.setText(QCoreApplication.translate("Dialog", "Reset", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("Dialog", "Select", None))
         self.comboBox.setItemText(1, QCoreApplication.translate("Dialog", "Main", None))
         self.comboBox.setItemText(2, QCoreApplication.translate("Dialog", "Tilt", None))
@@ -586,3 +637,16 @@ class CopilotUi(object):
             self.th5.setText(f"{thruster_values[4]}")
             self.th6.setText(f"{thruster_values[5]}")
             self.th7.setText(f"{thruster_values[6]}")
+
+
+    def update_indicators(self, statuses):
+        """
+        Update the status of the indicators.
+        :param statuses: List of booleans representing the status of each indicator.
+        """
+        colors = ["green" if status else "red" for status in statuses.data]
+        self.indicator1_status.setStyleSheet(f"background-color: {colors[0]}; border-radius: 10px;")
+        self.indicator2_status.setStyleSheet(f"background-color: {colors[1]}; border-radius: 10px;")
+        self.indicator3_status.setStyleSheet(f"background-color: {colors[2]}; border-radius: 10px;")
+        self.indicator4_status.setStyleSheet(f"background-color: {colors[3]}; border-radius: 10px;")
+
