@@ -1,11 +1,11 @@
 from PyQt5.QtCore import QCoreApplication, QMetaObject, QRect, Qt, QThread
 from PyQt5.QtGui import QIcon, QPixmap , QFont ,QFontDatabase
-from PyQt5.QtWidgets import QLabel, QPushButton , QSlider , QComboBox
+from PyQt5.QtWidgets import QLabel, QPushButton , QSlider , QComboBox, QHBoxLayout, QVBoxLayout
 from utils import create_ssh_client, send_command, reset_cameras, scale
-from sensor_msgs.msg import Imu
+from std_msgs.msg import Int8
 import os
 from utils import BG_path , ROV_path
-from stylesheet import Copilot_st1, Copilot_st2, apply_st , red_button , back_st, selection_st
+from stylesheet import Copilot_st1, Copilot_st2, apply_st , red_button , back_st, selection_st, Laning_buttons_st, Engineer_buttons_st
 from utils import reconnect_command
 
 
@@ -30,11 +30,12 @@ class RestreamThread(QThread):
 class CopilotUi(object):
         
     #unhash line 26 here when testing on rpi 
-    def __init__(self, ip, username, password):
+    def __init__(self, ip, username, password, ros_interface):
         self.ip = ip
         self.username = username
         self.password = password
         #self.client = create_ssh_client(ip, username, password)
+        self.ros_interface = ros_interface
     def setupUi(self, Dialog):
         #loading font
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -319,6 +320,40 @@ class CopilotUi(object):
         self.comboBox.setFont(Afont)
         self.setText(Dialog)
         QMetaObject.connectSlotsByName(Dialog)
+
+        # Create a horizontal layout for the buttons
+        self.button_layout = QHBoxLayout()
+
+        # Create buttons
+        self.button0 = QPushButton("Pump Off", Dialog)
+        self.button1 = QPushButton("ClockWise", Dialog)
+        self.button2 = QPushButton("CounterClockWise", Dialog)
+
+        # Add buttons to the layout
+        self.button_layout.addWidget(self.button0)
+        self.button_layout.addWidget(self.button1)
+        self.button_layout.addWidget(self.button2)
+
+        # Set button styles (adjust font size to fit)
+        button_font = QFont("Gill Sans", 10)  # Smaller font
+        self.button0.setStyleSheet(red_button)
+        self.button1.setStyleSheet(red_button)
+        self.button2.setStyleSheet(red_button)
+        self.button0.setFont(button_font)
+        self.button1.setFont(button_font)
+        self.button2.setFont(button_font)
+
+        # Create a container widget for the layout
+        self.button_container = QLabel(Dialog)
+        self.button_container.setGeometry(QRect(scale(300), scale(520), scale(400), scale(100)))  # Increased size
+        self.button_container.setLayout(self.button_layout)
+
+        # Connect buttons to ROS publishing functions
+        self.button0.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=0)))
+        self.button1.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=1)))
+        self.button2.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=2)))
+
+
 
     def apply_brightness_clicked(self):
         cam_name = self.comboBox.currentText()
