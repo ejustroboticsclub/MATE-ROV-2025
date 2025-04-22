@@ -7,7 +7,24 @@ from multiprocessing import Process, Array
 import math
 from screeninfo import get_monitors
 import time
+from rov25.gui_backend import start_ros
 
+# Singleton Class for ROS Interface
+
+class ROSInterface:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ROSInterface, cls).__new__(cls)
+            cls._instance.init_ros()
+        return cls._instance
+
+    def init_ros(self):
+        self.node = start_ros()
+
+
+    
 class VideoCaptureThread(QThread):
     stop_signal = pyqtSignal()
 
