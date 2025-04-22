@@ -3,7 +3,7 @@ import rclpy
 from rclpy.node import Node
 import can
 import struct
-from std_msgs.msg import Int32MultiArray, Int32, String, Float64MultiArray, Bool
+from std_msgs.msg import Float64MultiArray, String, Bool, Int32, Int32MultiArray
 
 # CAN IDs for devices
 THRUSTERS_ID = 0x100
@@ -36,19 +36,11 @@ class CANBridge(Node):
         self.create_subscription(Int32MultiArray, '/ROV/thrusters', self.thruster_callback, 10)
         self.create_subscription(Bool, '/ROV/gripper_l', self.gripper_l_callback, 10)
         self.create_subscription(Bool, '/ROV/gripper_r', self.gripper_r_callback, 10)
-        self.create_subscription(Int32, '/Pump', self.pump_callback, 10)
+        self.create_subscription(Int32, '/ROV/pump', self.pump_callback, 10)
         self.create_subscription(String, '/Commands', self.command_callback, 10)
 
-        # ROS 2 publishers for quaternion data
-        self.imu_publishers = {
-            IMU1_ID: self.create_publisher(Float64MultiArray, '/imu1_quat', 10),
-            IMU2_ID: self.create_publisher(Float64MultiArray, '/imu2_quat', 10),
-            IMU3_ID: self.create_publisher(Float64MultiArray, '/imu3_quat', 10),
-            IMU4_ID: self.create_publisher(Float64MultiArray, '/imu4_quat', 10),
-        }
 
         # Timer to continuously read CAN messages
-        self.create_timer(0.01, self.read_can_messages)  # 100 Hz polling rate
 
         self.get_logger().info("CAN-ROS2 Bridge Node Started.")
 
@@ -123,29 +115,6 @@ class CANBridge(Node):
                 self.get_logger().warn("Failed to send RESET.")
         else:
             self.get_logger().warn(f"Unknown command received: '{cmd}'")
-
-    def read_can_messages(self):
-        """Read incoming CAN messages and process them."""
-        try:
-            msg = self.bus.recv(timeout=0.001)  # Non-blocking with a small timeout
-            if msg is None:
-                return  # No message received
-
-            can_id = msg.arbitration_id
-            data = msg.data
-
-            # Handle quaternion data for IMUs
-            if can_id in self.imu_publishers and len(data) == 32:  # 4 doubles (32 bytes)
-                quat = struct.unpack('<dddd', data)  # Unpack 4 doubles (little-endian)
-
-                quat_msg = Float64MultiArray()
-                quat_msg.data = list(quat)
-
-                self.imu_publishers[can_id].publish(quat_msg)
-                self.get_logger().debug(f"Published quaternion for IMU {hex(can_id)}: {quat}")
-
-        except Exception as e:
-            self.get_logger().warn(f"Error reading CAN: {e}")
 
 def main(args=None):
     """Main entry point for the ROS 2 node."""
