@@ -1,0 +1,32 @@
+
+kinematic_model:
+  ros__parameters:
+    x:
+      kp: 6.0
+      ki: 0.0
+      kd: 0.0
+    y:
+      kp: 6.0
+      ki: 0.0
+      kd: 0.0
+    w:
+      kp: 6.0
+      ki: 0.0
+      kd: 0.0
+    depth:
+      kp: 1.5
+      ki: 0.0
+      kd: 0.0
+    roll:
+      kp: 7.0
+      ki: 0.0
+      kd: 0.12
+    pitch:
+      kd: 3.0
+      ki: 0.0
+      kp: 0.0
+    floatability: 0.23
+    depth_control: true
+    imu_control: true
+    
+    
