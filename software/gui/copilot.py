@@ -1,20 +1,20 @@
 from PyQt5.QtCore import QCoreApplication, QMetaObject, QRect, Qt, QThread
 from PyQt5.QtGui import QIcon, QPixmap , QFont ,QFontDatabase
-from PyQt5.QtWidgets import QLabel, QPushButton , QSlider , QComboBox, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QLabel, QPushButton , QSlider , QComboBox, QHBoxLayout, QVBoxLayout, QLineEdit
 from utils import create_ssh_client, send_command, reset_cameras, scale
 from std_msgs.msg import Int8
 import os
 from utils import BG_path , ROV_path
 from stylesheet import Copilot_st1, Copilot_st2, apply_st , red_button , back_st, selection_st, Laning_buttons_st, Engineer_buttons_st
-from utils import reconnect_command
+from utils import reconnect_command, terminal_execute
 
 
 CAM_PORTS = {
-    "Main": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
-    "Tilt": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
-    "Side": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
-    "Gripper L": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
-    "Gripper R": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"]
+    "ZED": ["/dev/video0", "rtsp://192.168.1.100:5001/unicast"],
+    "Gripper": ["/dev/video0", "rtsp://192.168.1.100:5002/unicast"],
+    "Side": ["/dev/video0", "rtsp://192.168.1.100:5002/unicast"],
+    "Net": ["/dev/video0", "rtsp://192.168.1.100:5004/unicast"],
+    "Jelly": ["/dev/video0", "rtsp://192.168.1.100:5005/unicast"]
 }
 
 class RestreamThread(QThread):
@@ -84,7 +84,7 @@ class CopilotUi(object):
         self.actual_yaw_label_design = QLabel(Dialog)
         self.actual_yaw_label_design.setObjectName("actual_yaw_label_design")
         self.actual_yaw_label_design.setStyleSheet(Copilot_st1)
-        self.actual_yaw_label_design.setFont(font)
+        self.actual_yaw_label_design.setFont(button_font)
 
         self.desired_yaw_label_design = QLabel(Dialog)
         self.desired_yaw_label_design.setObjectName("desired_yaw_label_design")
@@ -299,7 +299,26 @@ class CopilotUi(object):
         self.reset_button.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=3))) # This actually reset the whole system not the pump
 
 
+        # Command input field
+        self.command_input = QLabel(Dialog)
+        self.command_input.setObjectName("Command Input Label")
+        self.command_input.setGeometry(QRect(scale(20), scale(650), scale(120), scale(41)))
+        self.command_input.setText("Command:")
+        self.command_input.setStyleSheet(Copilot_st1)
+        self.command_input.setFont(font)
 
+        self.command_field = QLineEdit(Dialog)
+        self.command_field.setObjectName("Command Input Field")
+        self.command_field.setGeometry(QRect(scale(150), scale(650), scale(400), scale(41)))
+        self.command_field.setStyleSheet(Copilot_st2)
+        self.command_field.setFont(font)
+
+        self.execute_button = QPushButton("Execute", Dialog)
+        self.execute_button.setObjectName("Execute Button")
+        self.execute_button.setGeometry(QRect(scale(570), scale(650), scale(100), scale(41)))
+        self.execute_button.setStyleSheet(apply_st)
+        self.execute_button.setFont(font)
+        self.execute_button.clicked.connect(self.execute_command)
 
         self.rov_label = QLabel(Dialog)
         self.rov_label.setObjectName("Rov image label")
@@ -479,7 +498,16 @@ class CopilotUi(object):
 
 
 
-        
+    def execute_command(self):
+        command = self.command_field.text()
+        if command:
+            try:
+                output = terminal_execute(self.client, command)
+                print(f"Command Output: {output}")
+            except Exception as e:
+                print(f"Error executing command: {e}")
+
+
     def apply_brightness_clicked(self):
         cam_name = self.comboBox.currentText()
         if cam_name != "Select":
