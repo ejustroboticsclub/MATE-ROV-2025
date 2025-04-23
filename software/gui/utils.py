@@ -93,11 +93,13 @@ class CameraStreamer(QThread):
 
         self.processes = []
 
-    def create_pipeline(self, ip):        
-        pipeline = "rtspsrc location=" + ip + " latency=0 buffer-mode=auto ! decodebin ! videoconvert ! appsink max-buffers=1 drop=True"
-        return pipeline
-        
-    def display_camera(self, ip, index, shared_array, width, height, is_zed = False):
+    def get_pipeline(ip_url):
+        return (
+            f"rtspsrc location={ip_url} latency=0 buffer-mode=auto "
+            "! decodebin ! videoconvert ! appsink max-buffers=1 drop=True"
+        )
+
+    def display_camera(self, index, shared_array, width, height, pipeline):
         while True:
             
             if is_zed:
