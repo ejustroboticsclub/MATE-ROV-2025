@@ -59,7 +59,7 @@ class PilotUi(object):
             "rtsp://192.168.1.100:5002/unicast",
             "rtsp://192.168.1.100:5003/unicast",
             "rtsp://192.168.1.100:5004/unicast",
-            # "rtsp://192.168.1.100:5005/unicast"
+            "rtsp://192.168.1.100:5005/camera_feed"
         ]
         self.camera_6feeds = CameraStreamer(IPS)
         self.CamButton.clicked.connect(self.camera_6feeds.run)

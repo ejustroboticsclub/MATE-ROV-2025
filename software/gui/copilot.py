@@ -10,11 +10,11 @@ from utils import reconnect_command, terminal_execute
 
 
 CAM_PORTS = {
-    "ZED": ["/dev/video0", "rtsp://192.168.1.100:5001/unicast"],
+    "ZED": ["/dev/video1", "rtsp://192.168.1.100:5001/unicast"],
     "Gripper": ["/dev/video0", "rtsp://192.168.1.100:5002/unicast"],
-    "Side": ["/dev/video0", "rtsp://192.168.1.100:5002/unicast"],
-    "Net": ["/dev/video0", "rtsp://192.168.1.100:5004/unicast"],
-    "Jelly": ["/dev/video0", "rtsp://192.168.1.100:5005/unicast"]
+    "Side": ["/dev/video2", "rtsp://192.168.1.100:5002/unicast"],
+    "Net": ["/dev/video4", "rtsp://192.168.1.100:5004/unicast"],
+    "Jelly": ["/dev/video6", "rtsp://192.168.1.100:5005/unicast"]
 }
 
 class RestreamThread(QThread):
@@ -488,7 +488,6 @@ class CopilotUi(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
-        self.comboBox.addItem("")
         self.comboBox.setObjectName("selection box")
         self.comboBox.setGeometry(QRect(scale(800), scale(200), scale(103), scale(32)))
         self.comboBox.setStyleSheet(selection_st)
@@ -576,6 +575,7 @@ class CopilotUi(object):
         self.th7.setText(QCoreApplication.translate("Dialog", "Th7", None))
 
 
+
         self.Dlabel_8.setText(QCoreApplication.translate("Dialog", "", None))
         self.CAS.setText(QCoreApplication.translate("Dialog", "Camera Adjusting System", None))
         self.brightness.setText(QCoreApplication.translate("Dialog", "Brightness", None))
@@ -586,13 +586,12 @@ class CopilotUi(object):
         self.apply_backlight.setText(QCoreApplication.translate("Dialog", "Apply", None))
         self.reset.setText(QCoreApplication.translate("Dialog", "Reset", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("Dialog", "Select", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("Dialog", "Main", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("Dialog", "Tilt", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("Dialog", "ZED", None))
+        self.comboBox.setItemText(2, QCoreApplication.translate("Dialog", "Gripper", None))
         self.comboBox.setItemText(3, QCoreApplication.translate("Dialog", "Side", None))
-        self.comboBox.setItemText(4, QCoreApplication.translate("Dialog", "Gripper L", None))
-        self.comboBox.setItemText(5, QCoreApplication.translate("Dialog", "Gripper R", None))
-        self.comboBox.setItemText(6, QCoreApplication.translate("Dialog", "Bottom", None))
-        
+        self.comboBox.setItemText(4, QCoreApplication.translate("Dialog", "Net", None))
+        self.comboBox.setItemText(5, QCoreApplication.translate("Dialog", "Jelly", None))
+
         self.back_button.setText(QCoreApplication.translate("Dialog","Back", None))
 
     # Standalone function to update all ROV labels

@@ -93,13 +93,21 @@ class CameraStreamer(QThread):
 
         self.processes = []
 
-    def create_pipeline(self, ip):
+    def create_pipeline(self, ip):        
         pipeline = "rtspsrc location=" + ip + " latency=0 buffer-mode=auto ! decodebin ! videoconvert ! appsink max-buffers=1 drop=True"
         return pipeline
         
-    def display_camera(self, ip, index, shared_array, width, height):
+    def display_camera(self, ip, index, shared_array, width, height, is_zed = False):
         while True:
-            pipeline = self.create_pipeline(ip)
+            
+            if is_zed:
+                pipeline = (
+                f"rtspsrc location={ip} protocols=tcp latency=0 ! "
+                "decodebin ! videoconvert ! appsink max-buffers=1 drop=true"
+                )
+            else:
+                pipeline = self.create_pipeline(ip)
+            
             cap = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
             
             if not cap.isOpened():
@@ -123,9 +131,9 @@ class CameraStreamer(QThread):
     def run(self):
         for i, ip in enumerate(self.ips):
             if i < 4:
-                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.half_cam_width, self.half_cam_height))
+                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.half_cam_width, self.half_cam_height, False))
             else:
-                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.zed_cam_width, self.zed_cam_height))
+                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.zed_cam_width, self.zed_cam_height, True))
             p.start()
             self.processes.append(p)
 
@@ -148,7 +156,7 @@ class CameraStreamer(QThread):
             for i in range(2, 4):
                 np_frame = np.frombuffer(self.shared_arrays[i].get_obj(), dtype=np.uint8).reshape((self.half_cam_height, self.half_cam_width, 3))
                 grid[self.half_cam_height + self.zed_cam_height:self.grid_height, (i - 2) * self.half_cam_width:(i - 1) * self.half_cam_width] = np_frame
-
+        
             cv2.imshow("Camera Grid", grid)
 
             if cv2.waitKey(1) == ord('q'):
@@ -256,4 +264,4 @@ def get_scaled_factor():
 
 
 def scale(x):
-    return int(x*get_scaled_factor())
+    return int(1.35 * x * get_scaled_factor())
