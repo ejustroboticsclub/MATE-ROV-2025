@@ -2,7 +2,7 @@ from PyQt5.QtCore import QCoreApplication, QMetaObject, QRect, Qt, QThread
 from PyQt5.QtGui import QIcon, QPixmap , QFont ,QFontDatabase
 from PyQt5.QtWidgets import QLabel, QPushButton , QSlider , QComboBox, QHBoxLayout, QVBoxLayout, QLineEdit
 from utils import create_ssh_client, send_command, reset_cameras, scale
-from std_msgs.msg import Int8
+# from std_msgs.msg import Int8
 import os
 from utils import BG_path , ROV_path
 from stylesheet import Copilot_st1, Copilot_st2, apply_st , red_button , back_st, selection_st, Laning_buttons_st, Engineer_buttons_st
