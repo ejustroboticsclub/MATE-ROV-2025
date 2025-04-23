@@ -51,7 +51,7 @@ class ROSInterface(Node):
             Float64, "Float/depth", self.float_callback, 10
         )
         self.desired_sub = self.create_subscription(
-            Twist, "ROV/desired", self.desired_callback, 10
+            Twist, "ROV/desired_values", self.desired_callback, 10
         )
         self.indicators_sub = self.create_subscription(
             Int8MultiArray, "ROV/indicators", self.indicators_callback, 10
