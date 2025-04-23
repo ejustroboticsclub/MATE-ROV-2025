@@ -1,40 +1,88 @@
-# 360-panorama-python
-Stitching 360 panorama with Python
+# Video to Panorama Photosphere
 
-This project generates 360 x 180 panorama from image pieces taken by cell phone cameras. The input data should contain image meta data in JSON format. 
-This meta data is consisted of camera metrics data and image meta data.
+This project extracts frames from a video and stitches them into a feather-blended panorama, then converts the panorama into a **360° photosphere** with proper metadata.
 
-* Camera metrics: focal length and sensor size which can be retrieved by Android API.
-* Image metadata: RPY(Roll, Pitch, and Yaw) data for every image
+---
 
-This project contains `.py` files which generates panorama from image pieces. Some files are in Jupyter (IPython) notebooks (exp-*.ipynb), which describes experiments to develop this projects. You can read here how the stitching pipeline works and what ideas this project is based on.
+## Prerequisites
 
-## Requirements
-- Python >= 3.x
-- opencv-python >= 3.4
-- numpy >= 1.0.0
-- scipy >= 1.0.0
-- matplotlib >= 2.0
-- imutils >= 0.5.2
-- pandas >= 0.24.2
+Make sure the following Python libraries and tools are installed:
 
-Python and opencv-python are highly dependent on versions but others doesn't need strict version requirements.
+- Python 3.x
+- OpenCV (`cv2`)
+- NumPy
+- [ExifTool](https://exiftool.org/) (for embedding 360° metadata)
 
-## Installation
-
-Download the project and run following commands:
-
-### Linux
-```bash
-sudo bash ./install_requirements.sh
-```
-
-## Usage
+You can install Python dependencies with:
 
 ```bash
-python3 ./start.py {image folder} [--width WIDTH] [--height HEIGHT] [--output OUTPUT]
+pip install opencv-python numpy
 ```
-- {image folder}: the path of the folder containing images and the meta JSON file.
-- WIDTH: desired panorama width in pixels (default 4096)
-- HEIGHT: desired panorama height in pixels (default 2048)
-- OUTPUT: file name to store the panorama file (default panorama.jpg)
+
+---
+
+## Project Structure
+
+```
+project/
+├── video_to_frames.py     # Step 1: Extract frames from video
+├── stitch_photosphere.py # Step 2: Create panorama and add metadata
+├── video.mp4     # Input video file
+├── frames/             # Extracted frames (output of step 1)
+└── photosphere.jpg            # Final stitched photosphere image
+```
+
+---
+
+## Step 1: Extract Frames from Video
+
+`video_to_frames.py` pulls one frame every 2 seconds from a video file.
+
+### Configuration
+
+- `video_path`: Path to your input video file
+- `output_dir`: Folder to save extracted frames
+- `frame_interval`: Controls frame extraction rate (default: one every 2 seconds)
+
+### Run
+
+```bash
+python video_to_frames.py
+```
+
+Extracted frames will be saved in `frames/`.
+
+---
+
+## Step 2: Stitch Frames into Panorama
+
+`panorama.py` loads a folder of images, resizes and feather-blends them into a panorama, then embeds 360° metadata.
+
+### Configuration
+
+- `folder_path`: Folder containing input images
+- `overlap_width`: Width (in pixels) of overlap region for blending
+- `output_image`: Name of final panorama image
+
+### Run
+
+```bash
+python panorama.py
+```
+
+Outputs:
+
+- `photosphere.jpg`: Final feather-blended panorama
+- Adds 360° metadata using `exiftool` for VR/photosphere compatibility
+
+---
+
+## Result
+
+- The output `photosphere.jpg` is now viewable in 360° viewers like PTGUI Viewer.
+
+## Troubleshooting
+
+- **`exiftool` not found**→ Make sure it's installed and available in your `PATH`.
+- **FPS = 0**
+  → The video might be corrupted or improperly encoded.
