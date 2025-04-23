@@ -94,16 +94,14 @@ class CameraStreamer(QThread):
         self.processes = []
 
     def create_pipeline(self, ip):
-        return (
-            f"rtspsrc location={ip} latency=0 buffer-mode=auto ! "
-            "rtph264depay ! h264parse ! avdec_h264 ! "
-            "videoconvert ! appsink sync=false"
-        )
-
-    def display_camera(self, index, shared_array, width, height, pipeline):
+        pipeline = "rtspsrc location=" + ip + " latency=0 buffer-mode=auto ! decodebin ! videoconvert ! appsink max-buffers=1 drop=True"
+        return pipeline
+        
+    def display_camera(self, ip, index, shared_array, width, height):
         while True:
+            pipeline = self.create_pipeline(ip)
             cap = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
-
+            
             if not cap.isOpened():
                 print(f"Error opening pipeline for camera {index}")
                 time.sleep(5)
@@ -125,16 +123,9 @@ class CameraStreamer(QThread):
     def run(self):
         for i, ip in enumerate(self.ips):
             if i < 4:
-                pipeline = self.create_pipeline(ip)
-                p = Process(target=self.display_camera, args=(i, self.shared_arrays[i], self.half_cam_width, self.half_cam_height, pipeline))
+                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.half_cam_width, self.half_cam_height))
             else:
-                pipeline = """
-                    "udpsrc port=5000 ! "
-                    "application/x-rtp, encoding-name=H264, payload=96 ! "
-                    "rtph264depay ! avdec_h264 ! videoconvert ! appsink"
-                """
-
-                p = Process(target=self.display_camera, args=(i, self.shared_arrays[i], self.zed_cam_width, self.zed_cam_height ,pipeline))
+                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.zed_cam_width, self.zed_cam_height))
             p.start()
             self.processes.append(p)
 
@@ -168,15 +159,24 @@ class CameraStreamer(QThread):
         cv2.destroyAllWindows()
 
 def create_ssh_client(ip, username, password):
-
+    # return None
     client = paramiko.SSHClient()
     client.load_system_host_keys()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(ip, username=username, password=password)
+    print(f"Connected to {ip} as {username}")
     return client
+
+
+def terminal_execute(client, command):
+    stdin, stdout, stderr = client.exec_command(command)
+    _ = [print(i.strip()) for i in stdout]
+    return stdout, stderr
+
 
 def send_command(client, cam_port, property, value):
     command = f"sudo v4l2-ctl -d {cam_port[0]} -c {property}={value}"
+    print(f"Executing command: {command}")  
     stdin, stdout, stderr = client.exec_command(command)
     _ = [print(i.strip()) for i in stdout]
     return stdout, stderr
