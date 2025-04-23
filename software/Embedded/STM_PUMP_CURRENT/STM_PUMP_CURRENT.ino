@@ -1,6 +1,10 @@
 #include <SPI.h>
 #include <mcp_can.h>
 
+
+#define HEARTBEAT_LED_PIN PC13
+
+
 // ----- CONFIGURATION -----
 #define SPI_CS_PIN PB8
 
@@ -42,7 +46,9 @@ void setup() {
 
   pinMode(PUMP_CW_PIN, OUTPUT);
   pinMode(PUMP_CCW_PIN, OUTPUT);
-
+  pinMode(HEARTBEAT_LED_PIN, OUTPUT);
+  digitalWrite(HEARTBEAT_LED_PIN, LOW);
+  
   while (CAN_OK != CAN.begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ)) {
     Serial.println("CAN init failed, retrying...");
     delay(100);
@@ -66,18 +72,30 @@ void setup() {
   }
 }
 
+bool heartbeatState = false;
+unsigned long lastHeartbeat = 0;
+const unsigned long heartbeatInterval = 1000; // 1 second
+
 void loop() {
   readCurrentInputs();
   handleCANMessages();
 
   unsigned long currentMillis = millis();
+
+  // Every 10 seconds: send current data
   if (currentMillis - lastCurrentSendTime >= currentSendInterval) {
     lastCurrentSendTime = currentMillis;
-    sendCurrentDataOverCAN();  // Send current data every 10 seconds
-    sendHeartbeat();
+    sendCurrentDataOverCAN();
   }
 
-  delay(100); // Maintain decent loop speed for responsiveness
+  // Every 1 second: toggle heartbeat
+  if (currentMillis - lastHeartbeat >= heartbeatInterval) {
+    lastHeartbeat = currentMillis;
+    heartbeatState = !heartbeatState;
+    sendHeartbeat(heartbeatState);
+  }
+
+  delay(100);
 }
 
 void readCurrentInputs() {
@@ -105,9 +123,10 @@ void handleCANMessages() {
         handlePumpControl(buf[0]);
       } else if (rxId == 0x210 || rxId == 0x212 || rxId == 0x215) {
         // Ignore legacy voltage messages
-      } else {
-        sendCurrentDataOverCAN();  // Respond with latest current values
       }
+      // else if (rxId == 0x301) {
+      //   sendCurrentDataOverCAN();  // Only respond if explicitly requested
+      // }
     }
   }
 }
@@ -155,7 +174,12 @@ void sendCurrentDataOverCAN() {
   Serial.println("Current data sent over CAN.");
 }
 
-void sendHeartbeat() {
-  unsigned char hb[1] = {0xAA}; // Arbitrary heartbeat value
+
+void sendHeartbeat(bool state) {
+  unsigned char hb[1] = { state ? 0x01 : 0x00 };
   CAN.sendMsgBuf(Heartbeat_ID, 0, 1, hb);
+  Serial.print("Heartbeat: ");
+  Serial.println(hb[0]);
+
+  digitalWrite(HEARTBEAT_LED_PIN, state ? HIGH : LOW);
 }

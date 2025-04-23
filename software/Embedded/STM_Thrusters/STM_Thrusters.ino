@@ -4,6 +4,10 @@
 #include <SPI.h>
 #include <mcp_can.h>
 
+// ------------------------------
+#define HEARTBEAT_LED_PIN PC13
+// ------------------------------
+
 // ----- CONFIGURATION -----
 #define TOTAL_THRUSTER_COUNT 7
 #define SPI_CS_PIN PB8
@@ -39,12 +43,17 @@ const float dividerRatios[5] = {4.3312, 4.3439, 4.3388, 4.3877, 4.3414};
 #define Voltages_ID1 0x110
 #define Voltages_ID2 0x112
 #define Voltages_ID3 0x115
+#define Heartbeat_ID 0x120  // New heartbeat ID
 
 MCP_CAN CAN(SPI_CS_PIN);
 
 // ----- TIMING -----
 unsigned long lastVoltageSendTime = 0;
-const unsigned long voltageSendInterval = 10000; // 10 seconds (in milliseconds)
+const unsigned long voltageSendInterval = 10000; // 10 seconds
+
+unsigned long lastHeartbeatTime = 0;
+const unsigned long heartbeatInterval = 1000; // 1 second
+bool heartbeatState = false;
 
 void setup() {
   SPI.setMISO(PB4);
@@ -53,7 +62,6 @@ void setup() {
   Serial.begin(115200);
   analogReadResolution(12);
 
-  // Setup CAN
   while (CAN_OK != CAN.begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ)) {
     Serial.println("CAN init failed, retrying...");
     delay(100);
@@ -61,31 +69,34 @@ void setup() {
   CAN.setMode(MCP_NORMAL);
   Serial.println("CAN Ready!");
 
-  // Attach thruster servos
   for (int i = 0; i < TOTAL_THRUSTER_COUNT; i++) {
     thrusterServos[i].attach(thrusterPins[i]);
   }
 
-  // Gripper pins as outputs
   pinMode(GRIPPER1_OPEN_PIN, OUTPUT);
   pinMode(GRIPPER1_CLOSE_PIN, OUTPUT);
   pinMode(GRIPPER2_OPEN_PIN, OUTPUT);
   pinMode(GRIPPER2_CLOSE_PIN, OUTPUT);
+  pinMode(HEARTBEAT_LED_PIN, OUTPUT);
+  digitalWrite(HEARTBEAT_LED_PIN, LOW);
 }
 
 void loop() {
   readVoltageInputs();
   handleCANMessages();
 
-  // Send voltage data every 10 seconds
   unsigned long currentMillis = millis();
+
   if (currentMillis - lastVoltageSendTime >= voltageSendInterval) {
     lastVoltageSendTime = currentMillis;
     sendVoltageDataOverCAN();
   }
 
-  // Other non-blocking tasks
-  // You can add other tasks that need to run here, as this code won't block
+  if (currentMillis - lastHeartbeatTime >= heartbeatInterval) {
+    lastHeartbeatTime = currentMillis;
+    heartbeatState = !heartbeatState;
+    sendHeartbeat(heartbeatState);
+  }
 }
 
 void readVoltageInputs() {
@@ -93,13 +104,8 @@ void readVoltageInputs() {
     readValue[ch] = analogRead(adcPins[ch]);
     adcVoltage[ch] = readValue[ch] * adcScale;
     Converter_Voltage[ch] = adcVoltage[ch] * dividerRatios[ch];
-
-    // Serial.print("Voltage["); Serial.print(ch); Serial.print("]: ");
-    // Serial.println(Converter_Voltage[ch]);
   }
 }
-
-
 
 void handleCANMessages() {
   long unsigned int rxId;
@@ -107,9 +113,7 @@ void handleCANMessages() {
   unsigned char buf[8];
 
   while (CAN_MSGAVAIL == CAN.checkReceive()) {
-    if (CAN.readMsgBuf(&rxId, &len, buf) != CAN_OK) {
-      continue;
-    }
+    if (CAN.readMsgBuf(&rxId, &len, buf) != CAN_OK) continue;
 
     switch (rxId) {
       case Thrusters_ID:
@@ -125,52 +129,42 @@ void handleCANMessages() {
         }
         break;
 
-      case Grippers_ID_R:  // Right gripper message
-        if (len >= 1) {
-          handleGripperCAN(buf, len, "Right");
-        }
+      case Grippers_ID_R:
+        if (len >= 1) handleGripperCAN(buf, len, "Right");
         break;
 
-      case Grippers_ID_L:  // Left gripper message
-        if (len >= 1) {
-          handleGripperCAN(buf, len, "Left");
-        }
+      case Grippers_ID_L:
+        if (len >= 1) handleGripperCAN(buf, len, "Left");
         break;
 
       default:
-        break; // Ignore other IDs
+        break;
     }
   }
 }
 
 void handleGripperCAN(uint8_t *data, uint8_t len, String gripperSide) {
-  if (len < 1) {
-    Serial.print(gripperSide); Serial.println(" Gripper CAN message too short");
-    return;
-  }
+  if (len < 1) return;
 
-  // Determine action for each gripper
   if (data[0]) {
-    // Open gripper
     if (gripperSide == "Right") {
       digitalWrite(GRIPPER1_OPEN_PIN, HIGH);
       delay(50);
       digitalWrite(GRIPPER1_OPEN_PIN, LOW);
       Serial.println("Right Gripper Opened");
-    } else if (gripperSide == "Left") {
+    } else {
       digitalWrite(GRIPPER2_OPEN_PIN, HIGH);
       delay(50);
       digitalWrite(GRIPPER2_OPEN_PIN, LOW);
       Serial.println("Left Gripper Opened");
     }
   } else {
-    // Close gripper
     if (gripperSide == "Right") {
       digitalWrite(GRIPPER1_CLOSE_PIN, HIGH);
       delay(50);
       digitalWrite(GRIPPER1_CLOSE_PIN, LOW);
       Serial.println("Right Gripper Closed");
-    } else if (gripperSide == "Left") {
+    } else {
       digitalWrite(GRIPPER2_CLOSE_PIN, HIGH);
       delay(50);
       digitalWrite(GRIPPER2_CLOSE_PIN, LOW);
@@ -179,11 +173,7 @@ void handleGripperCAN(uint8_t *data, uint8_t len, String gripperSide) {
   }
 }
 
-
-
-
 void sendVoltageDataOverCAN() {
-  // Pack and send first 4 voltages
   unsigned char vbuf1[4] = {
     (uint16_t)(Converter_Voltage[0] * 100) >> 8, (uint16_t)(Converter_Voltage[0] * 100) & 0xFF,
     (uint16_t)(Converter_Voltage[1] * 100) >> 8, (uint16_t)(Converter_Voltage[1] * 100) & 0xFF
@@ -196,11 +186,17 @@ void sendVoltageDataOverCAN() {
   };
   CAN.sendMsgBuf(Voltages_ID2, 0, 4, vbuf2);
 
-  // Send last voltage
   unsigned char vbuf3[2] = {
     (uint16_t)(Converter_Voltage[4] * 100) >> 8, (uint16_t)(Converter_Voltage[4] * 100) & 0xFF
   };
   CAN.sendMsgBuf(Voltages_ID3, 0, 2, vbuf3);
+}
 
-  // Serial.println("Voltage data sent over CAN.");
+void sendHeartbeat(bool state) {
+  unsigned char hb[1] = { state ? 0x01 : 0x00 };
+  CAN.sendMsgBuf(Heartbeat_ID, 0, 1, hb);
+  Serial.print("Heartbeat: ");
+  Serial.println(hb[0]);
+
+  digitalWrite(HEARTBEAT_LED_PIN, state ? HIGH : LOW); 
 }
