@@ -53,14 +53,19 @@ class PilotUi(object):
         self.CamButton.setStyleSheet(Engineer_buttons_st)
         self.CamButton.setFont(font)
 
-        # IPs passed for cameraStreamer class
+        # Change to station's IP
+        ip_mine = "192.168.1.105"
+        # Change to PI's IP
+        ip_rasp = "192.168.1.100"
+
         IPS = [
-            "rtsp://10.10.225.173:8554/camerafeed2",
-            # "rtsp://192.168.1.100:8555/camerafeed1",
-            # "rtsp://192.168.1.100:8556/camerafeed1",
-            # "rtsp://192.168.1.100:8557/camerafeed1",
-            # "rtsp://192.168.1.100:8558/camerafeed1"
+            f"rtsp://{ip_rasp}:5004/unicast",
+            f"rtsp://{ip_rasp}:5001/unicast",
+            f"rtsp://{ip_rasp}:5002/unicast",
+            f"rtsp://{ip_mine}:8554/videofeed",
+            f"rtsp://{ip_rasp}:5003/unicast"  
         ]
+        
         self.camera_6feeds = CameraStreamer(IPS)
         self.CamButton.clicked.connect(self.camera_6feeds.run)
 
