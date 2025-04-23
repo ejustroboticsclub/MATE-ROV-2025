@@ -1,3 +1,5 @@
+# UTILS.Py
+
 import cv2
 from PyQt5.QtCore import QThread, pyqtSignal
 import paramiko
@@ -93,20 +95,16 @@ class CameraStreamer(QThread):
 
         self.processes = []
 
-    def create_pipeline(self, ip):        
-        pipeline = "rtspsrc location=" + ip + " latency=0 buffer-mode=auto ! decodebin ! videoconvert ! appsink max-buffers=1 drop=True"
-        return pipeline
-        
-    def display_camera(self, ip, index, shared_array, width, height, is_zed = False):
+    def get_pipeline(self, ip_url):
+        return (
+            f"rtspsrc location={ip_url} latency=0 buffer-mode=auto "
+            "! decodebin ! videoconvert ! appsink max-buffers=1 drop=True"
+        )
+
+    def display_camera(self, ip, index, shared_array, width, height, pipeline):
         while True:
-            
-            if is_zed:
-                pipeline = (
-                f"rtspsrc location={ip} protocols=tcp latency=0 ! "
-                "decodebin ! videoconvert ! appsink max-buffers=1 drop=true"
-                )
-            else:
-                pipeline = self.create_pipeline(ip)
+    
+            pipeline = self.get_pipeline(ip)
             
             cap = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
             
@@ -265,3 +263,4 @@ def get_scaled_factor():
 
 def scale(x):
     return int(1.35 * x * get_scaled_factor())
+

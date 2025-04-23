@@ -2,20 +2,22 @@ from PyQt5.QtCore import QCoreApplication, QMetaObject, QRect, Qt, QThread
 from PyQt5.QtGui import QIcon, QPixmap , QFont ,QFontDatabase
 from PyQt5.QtWidgets import QLabel, QPushButton , QSlider , QComboBox, QHBoxLayout, QVBoxLayout, QLineEdit
 from utils import create_ssh_client, send_command, reset_cameras, scale
-# from std_msgs.msg import Int8
+from std_msgs.msg import Int8
 import os
 from utils import BG_path , ROV_path
 from stylesheet import Copilot_st1, Copilot_st2, apply_st , red_button , back_st, selection_st, Laning_buttons_st, Engineer_buttons_st
 from utils import reconnect_command, terminal_execute
 
 
+
 CAM_PORTS = {
-    "ZED": ["/dev/video1", "rtsp://192.168.1.100:5001/unicast"],
-    "Gripper": ["/dev/video0", "rtsp://192.168.1.100:5002/unicast"],
-    "Side": ["/dev/video2", "rtsp://192.168.1.100:5002/unicast"],
-    "Net": ["/dev/video4", "rtsp://192.168.1.100:5004/unicast"],
-    "Jelly": ["/dev/video6", "rtsp://192.168.1.100:5005/unicast"]
-}
+    "Side": ["/dev/video4", "rtsp://192.168.1.100:5001/unicast"],
+    "Net": ["/dev/video0", "rtsp://192.168.1.100:5002/unicast"],
+    "Jelly": ["/dev/video6", "rtsp://192.168.1.100:5003/unicast"],
+    "Gripper": ["/dev/video2", "rtsp://192.168.1.100:5004/unicast"],
+    "ZED": ["/dev/video8", "rtsp://192.168.1.100:8554/unicast"]
+}    
+    
 
 class RestreamThread(QThread):
     def __init__(self, client, cam_port):
