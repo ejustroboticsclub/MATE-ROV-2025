@@ -1,20 +1,20 @@
 from PyQt5.QtCore import QCoreApplication, QMetaObject, QRect, Qt, QThread
 from PyQt5.QtGui import QIcon, QPixmap , QFont ,QFontDatabase
-from PyQt5.QtWidgets import QLabel, QPushButton , QSlider , QComboBox, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QLabel, QPushButton , QSlider , QComboBox, QHBoxLayout, QVBoxLayout, QLineEdit
 from utils import create_ssh_client, send_command, reset_cameras, scale
 # from std_msgs.msg import Int8
 import os
 from utils import BG_path , ROV_path
 from stylesheet import Copilot_st1, Copilot_st2, apply_st , red_button , back_st, selection_st, Laning_buttons_st, Engineer_buttons_st
-from utils import reconnect_command
+from utils import reconnect_command, terminal_execute
 
 
 CAM_PORTS = {
-    "Main": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
-    "Tilt": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
-    "Side": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
-    "Gripper L": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"],
-    "Gripper R": ["/dev/video0", "rtsp://192.168.191.56:8554/camerafeed1"]
+    "ZED": ["/dev/video1", "rtsp://192.168.1.100:5001/unicast"],
+    "Gripper": ["/dev/video0", "rtsp://192.168.1.100:5002/unicast"],
+    "Side": ["/dev/video2", "rtsp://192.168.1.100:5002/unicast"],
+    "Net": ["/dev/video4", "rtsp://192.168.1.100:5004/unicast"],
+    "Jelly": ["/dev/video6", "rtsp://192.168.1.100:5005/unicast"]
 }
 
 class RestreamThread(QThread):
@@ -34,12 +34,13 @@ class CopilotUi(object):
         self.ip = ip
         self.username = username
         self.password = password
-        #self.client = create_ssh_client(ip, username, password)
+        self.client = create_ssh_client(ip, username, password)
         self.ros_interface = ros_interface
     def setupUi(self, Dialog):
         #loading font
         script_dir = os.path.dirname(os.path.abspath(__file__))
         font_path = os.path.join(script_dir, "GillSans.ttf")
+        button_font = QFont("Gill Sans", 10)  # Smaller font
         id = QFontDatabase.addApplicationFont(font_path)
         if id == -1:
             print("Failed to load font!")
@@ -55,96 +56,270 @@ class CopilotUi(object):
         self.BG_label.setPixmap(QPixmap(BG_path))
         self.BG_label.setScaledContents(True)
 
+        self.vx_label_design = QLabel(Dialog)
+        self.vx_label_design.setObjectName("vx_label_design")
+        self.vx_label_design.setStyleSheet(Copilot_st1)
+        self.vx_label_design.setFont(font)
 
+        self.vy_label_design = QLabel(Dialog)
+        self.vy_label_design.setObjectName("vy_label_design")
+        self.vy_label_design.setStyleSheet(Copilot_st1)
+        self.vy_label_design.setFont(font)
 
-        # I made these (D)labels only for design purposes, no ROS interaction here
-        self.Dlabel = QLabel(Dialog)
-        self.Dlabel.setObjectName("Dlabel")
-        self.Dlabel.setGeometry(QRect(scale(20), scale(80), scale(101), scale(41)))
-        self.Dlabel.setStyleSheet(Copilot_st1)
-        self.Dlabel.setFont(font)
+        self.wz_label_design = QLabel(Dialog)
+        self.wz_label_design.setObjectName("wz_label_design")
+        self.wz_label_design.setStyleSheet(Copilot_st1)
+        self.wz_label_design.setFont(font)
 
+        self.roll_label_design = QLabel(Dialog)
+        self.roll_label_design.setObjectName("roll_label_design")
+        self.roll_label_design.setStyleSheet(Copilot_st1)
+        self.roll_label_design.setFont(font)
 
-        self.Dlabel_2 = QLabel(Dialog)
-        self.Dlabel_2.setObjectName("Dlabel 2")
-        self.Dlabel_2.setGeometry(QRect(scale(20), scale(150), scale(111), scale(41)))
-        self.Dlabel_2.setStyleSheet(Copilot_st1)
-        self.Dlabel_2.setFont(font)
+        self.pitch_label_design = QLabel(Dialog)
+        self.pitch_label_design.setObjectName("pitch_label_design")
+        self.pitch_label_design.setStyleSheet(Copilot_st1)
+        self.pitch_label_design.setFont(font)
 
-        self.Dlabel_3 = QLabel(Dialog)
-        self.Dlabel_3.setObjectName("Dlabel 3")
-        self.Dlabel_3.setGeometry(QRect(scale(20), scale(220), scale(111), scale(41)))
-        self.Dlabel_3.setStyleSheet(Copilot_st1)
-        self.Dlabel_3.setFont(font)
+        self.actual_yaw_label_design = QLabel(Dialog)
+        self.actual_yaw_label_design.setObjectName("actual_yaw_label_design")
+        self.actual_yaw_label_design.setStyleSheet(Copilot_st1)
+        self.actual_yaw_label_design.setFont(button_font)
 
-        self.Dlabel_4 = QLabel(Dialog)
-        self.Dlabel_4.setObjectName("Dlabel 4")
-        self.Dlabel_4.setGeometry(QRect(scale(20), scale(290), scale(101), scale(41)))
-        self.Dlabel_4.setStyleSheet(Copilot_st1)
-        self.Dlabel_4.setFont(font)
-        
-        self.Dlabel_5 = QLabel(Dialog)
-        self.Dlabel_5.setObjectName("Dlabel 5")
-        self.Dlabel_5.setGeometry(QRect(scale(20), scale(360), scale(101), scale(41)))
-        self.Dlabel_5.setStyleSheet(Copilot_st1)
-        self.Dlabel_5.setFont(font)
+        self.desired_yaw_label_design = QLabel(Dialog)
+        self.desired_yaw_label_design.setObjectName("desired_yaw_label_design")
+        self.desired_yaw_label_design.setStyleSheet(Copilot_st1)
+        self.desired_yaw_label_design.setFont(button_font)
 
-        self.Dlabel_6 = QLabel(Dialog)
-        self.Dlabel_6.setObjectName("Dlabel 6")
-        self.Dlabel_6.setGeometry(QRect(scale(20), scale(430), scale(101), scale(41)))
-        self.Dlabel_6.setStyleSheet(Copilot_st1)
-        self.Dlabel_6.setFont(font)
+        self.actual_depth_label_design = QLabel(Dialog)
+        self.actual_depth_label_design.setObjectName("actual_depth_label_design")
+        self.actual_depth_label_design.setStyleSheet(Copilot_st1)
+        self.actual_depth_label_design.setFont(button_font)
 
-        self.Dlabel_7 = QLabel(Dialog)
-        self.Dlabel_7.setObjectName("Dlabel 7")
-        self.Dlabel_7.setGeometry(QRect(scale(20), scale(500), scale(121), scale(41)))
-        self.Dlabel_7.setStyleSheet(Copilot_st1)
-        self.Dlabel_7.setFont(font)
+        self.desired_depth_label_design = QLabel(Dialog)
+        self.desired_depth_label_design.setObjectName("desired_depth_label_design")
+        self.desired_depth_label_design.setStyleSheet(Copilot_st1)
+        self.desired_depth_label_design.setFont(button_font)
+
 
         # main labels here
         self.vx_label = QLabel(Dialog)
         self.vx_label.setObjectName("Vx label")
-        self.vx_label.setGeometry(QRect(scale(90), scale(80), scale(151), scale(41)))
         self.vx_label.setStyleSheet(Copilot_st2)
         self.vx_label.setFont(font)
 
         self.vy_label = QLabel(Dialog)
         self.vy_label.setObjectName("Vy label")
-        self.vy_label.setGeometry(QRect(scale(90), scale(150), scale(151), scale(41)))
         self.vy_label.setStyleSheet(Copilot_st2)
         self.vy_label.setFont(font)
 
         self.wz_label = QLabel(Dialog)
         self.wz_label.setObjectName("Wz label")
-        self.wz_label.setGeometry(QRect(scale(90), scale(220), scale(151), scale(41)))
         self.wz_label.setStyleSheet(Copilot_st2)
         self.wz_label.setFont(font)
 
         self.roll_label = QLabel(Dialog)
         self.roll_label.setObjectName("Roll label")
-        self.roll_label.setGeometry(QRect(scale(90), scale(290), scale(151), scale(41)))
         self.roll_label.setStyleSheet(Copilot_st2)
         self.roll_label.setFont(font)
 
         self.pitch_label = QLabel(Dialog)
         self.pitch_label.setObjectName("Pitch Label")
-        self.pitch_label.setGeometry(QRect(scale(90), scale(360), scale(151), scale(41)))
         self.pitch_label.setStyleSheet(Copilot_st2)
         self.pitch_label.setFont(font)
 
-        self.yaw_label = QLabel(Dialog)
-        self.yaw_label.setObjectName("Yaw label")
-        self.yaw_label.setGeometry(QRect(scale(90), scale(430), scale(151), scale(41)))
-        self.yaw_label.setStyleSheet(Copilot_st2)
-        self.yaw_label.setFont(font)
+        self.actual_yaw_label = QLabel(Dialog)
+        self.actual_yaw_label.setObjectName("Actual yaw label")
+        self.actual_yaw_label.setStyleSheet(Copilot_st2)
+        self.actual_yaw_label.setFont(font)
 
-        self.depth_label = QLabel(Dialog)
-        self.depth_label.setObjectName("Depth label")
-        self.depth_label.setGeometry(QRect(scale(90), scale(500), scale(151), scale(41)))
-        self.depth_label.setStyleSheet(Copilot_st2)
-        self.depth_label.setFont(font)
+        self.desired_yaw_label = QLabel(Dialog)
+        self.desired_yaw_label.setObjectName("Desired Yaw label")
+        self.desired_yaw_label.setStyleSheet(Copilot_st2)
+        self.desired_yaw_label.setFont(font)
+        
+        self.actual_depth_label = QLabel(Dialog)
+        self.actual_depth_label.setObjectName("Actual depth label")
+        self.actual_depth_label.setStyleSheet(Copilot_st2)
+        self.actual_depth_label.setFont(font)
 
-        # rov figure label
+        self.desired_depth_label = QLabel(Dialog)
+        self.desired_depth_label.setObjectName("Desired depth label")
+        self.desired_depth_label.setStyleSheet(Copilot_st2)
+        self.desired_depth_label.setFont(font)
+                        # Reduced vertical spacing and thinner actual/desired labels
+        left_col_x = scale(20)
+        # Start right column slightly before the end of the widest design label (e.g., scale(121))
+        # scale(20) + scale(121) = scale(141). Let's start right column at scale(100) for overlap.
+        right_col_x = scale(100)
+
+        start_y = scale(30)  # Start a bit lower from the top
+        std_height = scale(35) # Standard label height for ALL labels
+        v_spacing_std = scale(40) # Vertical step between items (height + small gap)
+
+        # Keep original design widths where appropriate
+        vx_design_w = scale(101)
+        vy_design_w = scale(111)
+        wz_design_w = scale(111)
+        roll_design_w = scale(101)
+        pitch_design_w = scale(101)
+        yaw_design_w = scale(101) # Actual/Desired Yaw use same design label width
+        depth_design_w = scale(121) # Actual/Desired Depth use this width
+
+        # Keep original value label width
+        value_label_w = scale(151)
+
+        # --- Applying Geometry ---
+
+        current_y = start_y
+
+        # VX
+        self.vx_label_design.setGeometry(QRect(left_col_x, current_y, vx_design_w, std_height))
+        self.vx_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height))
+        current_y += v_spacing_std
+
+        # VY
+        self.vy_label_design.setGeometry(QRect(left_col_x, current_y, vy_design_w, std_height))
+        self.vy_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height))
+        current_y += v_spacing_std
+
+        # WZ
+        self.wz_label_design.setGeometry(QRect(left_col_x, current_y, wz_design_w, std_height))
+        self.wz_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height))
+        current_y += v_spacing_std
+
+        # Roll
+        self.roll_label_design.setGeometry(QRect(left_col_x, current_y, roll_design_w, std_height))
+        self.roll_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height))
+        current_y += v_spacing_std
+
+        # Pitch
+        self.pitch_label_design.setGeometry(QRect(left_col_x, current_y, pitch_design_w, std_height))
+        self.pitch_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height))
+        current_y += v_spacing_std
+
+        # Actual Yaw (standard height)
+        self.actual_yaw_label_design.setGeometry(QRect(left_col_x, current_y, yaw_design_w, std_height)) # Use std_height
+        self.actual_yaw_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height)) # Use std_height
+        current_y += v_spacing_std # Use standard spacing
+
+        # Desired Yaw (standard height)
+        self.desired_yaw_label_design.setGeometry(QRect(left_col_x, current_y, yaw_design_w, std_height)) # Use std_height
+        self.desired_yaw_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height)) # Use std_height
+        current_y += v_spacing_std # Use standard spacing
+
+        # Actual Depth (standard height)
+        self.actual_depth_label_design.setGeometry(QRect(left_col_x, current_y, depth_design_w, std_height)) # Use std_height
+        self.actual_depth_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height)) # Use std_height
+        current_y += v_spacing_std # Use standard spacing
+
+        # Desired Depth (standard height)
+        self.desired_depth_label_design.setGeometry(QRect(left_col_x, current_y, depth_design_w, std_height)) # Use std_height
+        self.desired_depth_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height)) # Use std_height
+        
+        
+        # Indicator labels and status circles
+        self.indicator1_label = QLabel(Dialog)
+        self.indicator1_label.setObjectName("Indicator 1 Label")
+        self.indicator1_label.setGeometry(QRect(scale(160), scale(400), scale(120), scale(41)))
+        self.indicator1_label.setText("STM 1")
+        self.indicator1_label.setStyleSheet(Copilot_st1)
+        self.indicator1_label.setFont(font)
+
+        self.indicator1_status = QLabel(Dialog)
+        self.indicator1_status.setObjectName("Indicator 1 Status")
+        self.indicator1_status.setGeometry(QRect(scale(290), scale(410), scale(20), scale(20)))
+        self.indicator1_status.setStyleSheet("background-color: green; border-radius: 10px; border: 2px solid white;")
+
+        self.indicator2_label = QLabel(Dialog)
+        self.indicator2_label.setObjectName("Indicator 2 Label")
+        self.indicator2_label.setGeometry(QRect(scale(160), scale(450), scale(120), scale(41)))
+        self.indicator2_label.setText("STM 2")
+        self.indicator2_label.setStyleSheet(Copilot_st1)
+        self.indicator2_label.setFont(font)
+
+        self.indicator2_status = QLabel(Dialog)
+        self.indicator2_status.setObjectName("Indicator 2 Status")
+        self.indicator2_status.setGeometry(QRect(scale(290), scale(460), scale(20), scale(20)))
+        self.indicator2_status.setStyleSheet("background-color: green; border-radius: 10px; border: 2px solid white;")
+
+        self.indicator3_label = QLabel(Dialog)
+        self.indicator3_label.setObjectName("Indicator 3 Label")
+        self.indicator3_label.setGeometry(QRect(scale(160), scale(500), scale(120), scale(41)))
+        self.indicator3_label.setText("STM 3")
+        self.indicator3_label.setStyleSheet(Copilot_st1)
+        self.indicator3_label.setFont(font)
+
+        self.indicator3_status = QLabel(Dialog)
+        self.indicator3_status.setObjectName("Indicator 3 Status")
+        self.indicator3_status.setGeometry(QRect(scale(290), scale(510), scale(20), scale(20)))
+        self.indicator3_status.setStyleSheet("background-color: green; border-radius: 10px; border: 2px solid white;")
+
+        self.indicator4_label = QLabel(Dialog)
+        self.indicator4_label.setObjectName("Indicator 4 Label")
+        self.indicator4_label.setGeometry(QRect(scale(160), scale(550), scale(120), scale(41)))
+        self.indicator4_label.setText("STM 4")
+        self.indicator4_label.setStyleSheet(Copilot_st1)
+        self.indicator4_label.setFont(font)
+
+        self.indicator4_status = QLabel(Dialog)
+        self.indicator4_status.setObjectName("Indicator 4 Status")
+        self.indicator4_status.setGeometry(QRect(scale(290), scale(560), scale(20), scale(20)))
+        self.indicator4_status.setStyleSheet("background-color: green; border-radius: 10px; border: 2px solid white;")
+
+
+        # Create buttons
+        self.button0 = QPushButton("Pump Off", Dialog)
+        self.button1 = QPushButton("ClockWise", Dialog)
+        self.button2 = QPushButton("CounterClockWise", Dialog)
+
+        # Set button styles (adjust font size to fit)
+        
+        self.button0.setStyleSheet(red_button)
+        self.button1.setStyleSheet(red_button)
+        self.button2.setStyleSheet(red_button)
+        self.reset_button = QPushButton("Reset System", Dialog)
+        self.reset_button.setStyleSheet(red_button)
+        
+        self.button0.setFont(button_font)
+        self.button1.setFont(button_font)
+        self.button2.setFont(button_font)
+        self.reset_button.setFont(button_font)
+
+        # Set button geometry after the labels
+        self.button0.setGeometry(QRect(scale(20), scale(400), scale(120), scale(41)))
+        self.button1.setGeometry(QRect(scale(20), scale(450), scale(120), scale(41)))
+        self.button2.setGeometry(QRect(scale(20), scale(500), scale(120), scale(41)))
+        self.reset_button.setGeometry(QRect(scale(20), scale(550), scale(120), scale(41)))
+
+        # Connect buttons to ROS publishing functions
+        self.button0.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=0)))
+        self.button1.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=1)))
+        self.button2.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=2)))
+        self.reset_button.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=3))) # This actually reset the whole system not the pump
+
+
+        # Command input field
+        self.command_input = QLabel(Dialog)
+        self.command_input.setObjectName("Command Input Label")
+        self.command_input.setGeometry(QRect(scale(20), scale(650), scale(120), scale(41)))
+        self.command_input.setText("Command:")
+        self.command_input.setStyleSheet(Copilot_st1)
+        self.command_input.setFont(font)
+
+        self.command_field = QLineEdit(Dialog)
+        self.command_field.setObjectName("Command Input Field")
+        self.command_field.setGeometry(QRect(scale(150), scale(650), scale(400), scale(41)))
+        self.command_field.setStyleSheet(Copilot_st2)
+        self.command_field.setFont(font)
+
+        self.execute_button = QPushButton("Execute", Dialog)
+        self.execute_button.setObjectName("Execute Button")
+        self.execute_button.setGeometry(QRect(scale(570), scale(650), scale(100), scale(41)))
+        self.execute_button.setStyleSheet(apply_st)
+        self.execute_button.setFont(font)
+        self.execute_button.clicked.connect(self.execute_command)
+
         self.rov_label = QLabel(Dialog)
         self.rov_label.setObjectName("Rov image label")
         self.rov_label.setGeometry(QRect(scale(400), scale(250), scale(421), scale(291)))
@@ -313,7 +488,6 @@ class CopilotUi(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
-        self.comboBox.addItem("")
         self.comboBox.setObjectName("selection box")
         self.comboBox.setGeometry(QRect(scale(800), scale(200), scale(103), scale(32)))
         self.comboBox.setStyleSheet(selection_st)
@@ -321,38 +495,16 @@ class CopilotUi(object):
         self.setText(Dialog)
         QMetaObject.connectSlotsByName(Dialog)
 
-        # Create a horizontal layout for the buttons
-        self.button_layout = QHBoxLayout()
 
-        # Create buttons
-        self.button0 = QPushButton("Pump Off", Dialog)
-        self.button1 = QPushButton("ClockWise", Dialog)
-        self.button2 = QPushButton("CounterClockWise", Dialog)
 
-        # Add buttons to the layout
-        self.button_layout.addWidget(self.button0)
-        self.button_layout.addWidget(self.button1)
-        self.button_layout.addWidget(self.button2)
-
-        # Set button styles (adjust font size to fit)
-        button_font = QFont("Gill Sans", 10)  # Smaller font
-        self.button0.setStyleSheet(red_button)
-        self.button1.setStyleSheet(red_button)
-        self.button2.setStyleSheet(red_button)
-        self.button0.setFont(button_font)
-        self.button1.setFont(button_font)
-        self.button2.setFont(button_font)
-
-        # Create a container widget for the layout
-        self.button_container = QLabel(Dialog)
-        self.button_container.setGeometry(QRect(scale(300), scale(520), scale(400), scale(100)))  # Increased size
-        self.button_container.setLayout(self.button_layout)
-
-        # Connect buttons to ROS publishing functions
-        self.button0.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=0)))
-        self.button1.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=1)))
-        self.button2.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=2)))
-
+    def execute_command(self):
+        command = self.command_field.text()
+        if command:
+            try:
+                output = terminal_execute(self.client, command)
+                print(f"Command Output: {output}")
+            except Exception as e:
+                print(f"Error executing command: {e}")
 
 
     def apply_brightness_clicked(self):
@@ -390,22 +542,26 @@ class CopilotUi(object):
     def setText(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", "Dialog", None))
         self.BG_label.setText("")
-        self.Dlabel.setText(QCoreApplication.translate("Dialog", "  Vx", None))
-        self.Dlabel_2.setText(QCoreApplication.translate("Dialog", "  Vy", None))
-        self.Dlabel_3.setText(QCoreApplication.translate("Dialog", " Wz", None))
-        self.Dlabel_4.setText(QCoreApplication.translate("Dialog", "Roll", None))
-        self.Dlabel_5.setText(QCoreApplication.translate("Dialog", "Pitch", None))
-        self.Dlabel_6.setText(QCoreApplication.translate("Dialog", "Yaw ", None))
-        self.Dlabel_7.setText(QCoreApplication.translate("Dialog", "Depth ", None))
-
+        self.vx_label_design.setText(QCoreApplication.translate("Dialog", "  Vx", None))
+        self.vy_label_design.setText(QCoreApplication.translate("Dialog", "  Vy", None))
+        self.wz_label_design.setText(QCoreApplication.translate("Dialog", " Wz", None))
+        self.roll_label_design.setText(QCoreApplication.translate("Dialog", "Roll", None))
+        self.pitch_label_design.setText(QCoreApplication.translate("Dialog", "Pitch", None))
+        self.actual_yaw_label_design.setText(QCoreApplication.translate("Dialog", "Actual Yaw ", None))
+        self.desired_yaw_label_design.setText(QCoreApplication.translate("Dialog", "Desired Yaw ", None))
+        self.actual_depth_label_design.setText(QCoreApplication.translate("Dialog", "Actual Depth ", None))
+        self.desired_depth_label_design.setText(QCoreApplication.translate("Dialog", "Desired Depth ", None))
 
         self.vx_label.setText(QCoreApplication.translate("Dialog", "...", None))
         self.vy_label.setText(QCoreApplication.translate("Dialog", "...", None))
         self.wz_label.setText(QCoreApplication.translate("Dialog", "...", None))
         self.roll_label.setText(QCoreApplication.translate("Dialog", "...", None))
         self.pitch_label.setText(QCoreApplication.translate("Dialog", "...", None))
-        self.yaw_label.setText(QCoreApplication.translate("Dialog", "...", None))
-        self.depth_label.setText(QCoreApplication.translate("Dialog", "...", None))
+        self.actual_yaw_label.setText(QCoreApplication.translate("Dialog", "...", None))
+        self.actual_depth_label.setText(QCoreApplication.translate("Dialog", "...", None))
+        self.desired_yaw_label.setText(QCoreApplication.translate("Dialog", "...", None))
+        self.desired_depth_label.setText(QCoreApplication.translate("Dialog", "...", None))
+        
         self.StreamButton.setText(QCoreApplication.translate("Dialog", "Stream", None))
         self.rov_label.setText("")
 
@@ -419,6 +575,7 @@ class CopilotUi(object):
         self.th7.setText(QCoreApplication.translate("Dialog", "Th7", None))
 
 
+
         self.Dlabel_8.setText(QCoreApplication.translate("Dialog", "", None))
         self.CAS.setText(QCoreApplication.translate("Dialog", "Camera Adjusting System", None))
         self.brightness.setText(QCoreApplication.translate("Dialog", "Brightness", None))
@@ -429,13 +586,12 @@ class CopilotUi(object):
         self.apply_backlight.setText(QCoreApplication.translate("Dialog", "Apply", None))
         self.reset.setText(QCoreApplication.translate("Dialog", "Reset", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("Dialog", "Select", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("Dialog", "Main", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("Dialog", "Tilt", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("Dialog", "ZED", None))
+        self.comboBox.setItemText(2, QCoreApplication.translate("Dialog", "Gripper", None))
         self.comboBox.setItemText(3, QCoreApplication.translate("Dialog", "Side", None))
-        self.comboBox.setItemText(4, QCoreApplication.translate("Dialog", "Gripper L", None))
-        self.comboBox.setItemText(5, QCoreApplication.translate("Dialog", "Gripper R", None))
-        self.comboBox.setItemText(6, QCoreApplication.translate("Dialog", "Bottom", None))
-        
+        self.comboBox.setItemText(4, QCoreApplication.translate("Dialog", "Net", None))
+        self.comboBox.setItemText(5, QCoreApplication.translate("Dialog", "Jelly", None))
+
         self.back_button.setText(QCoreApplication.translate("Dialog","Back", None))
 
     # Standalone function to update all ROV labels
@@ -449,19 +605,32 @@ class CopilotUi(object):
         self.vy_label.setText(f"{imu_msg.linear_acceleration.y:.2f}")
         self.wz_label.setText(f"{imu_msg.linear_acceleration.z:.2f}")
         # Orientation (quaternion components)
-        self.roll_label.setText(f"{imu_msg.orientation.x:.2f}")
-        self.pitch_label.setText(f"{imu_msg.orientation.y:.2f}")
-        self.yaw_label.setText(f"{imu_msg.orientation.z:.2f}")
 
 
+    def update_angles(self,
+        angles_msg
+    ):
+        """
+        Update the angles label.
+        """
+        self.roll_label.setText(f"{angles_msg.x:.2f}")
+        self.pitch_label.setText(f"{angles_msg.y:.2f}")
+        self.actual_yaw_label.setText(f"{angles_msg.z:.2f}")
 
-    def update_depth(self,
+    def update_actual_depth(self,
         depth
     ):
         """
         Update the depth label.
         """
-        self.depth_label.setText(f"{depth:.2f}")
+        self.actual_depth_label.setText(f"{depth:.2f}")
+
+    def update_desired_values(self, desired):
+        """
+        Update the desired depth and yaw labels.
+        """
+        self.desired_depth_label.setText(f"{desired.linear.z:.2f}")
+        self.desired_yaw_label.setText(f"{desired.angular.z:.2f}")
 
     def update_gripper_r(
             self,
@@ -495,3 +664,16 @@ class CopilotUi(object):
             self.th5.setText(f"{thruster_values[4]}")
             self.th6.setText(f"{thruster_values[5]}")
             self.th7.setText(f"{thruster_values[6]}")
+
+
+    def update_indicators(self, statuses):
+        """
+        Update the status of the indicators.
+        :param statuses: List of booleans representing the status of each indicator.
+        """
+        colors = ["green" if status else "red" for status in statuses.data]
+        self.indicator1_status.setStyleSheet(f"background-color: {colors[0]}; border-radius: 10px;")
+        self.indicator2_status.setStyleSheet(f"background-color: {colors[1]}; border-radius: 10px;")
+        self.indicator3_status.setStyleSheet(f"background-color: {colors[2]}; border-radius: 10px;")
+        self.indicator4_status.setStyleSheet(f"background-color: {colors[3]}; border-radius: 10px;")
+
