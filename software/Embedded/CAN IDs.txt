@@ -15,9 +15,6 @@
 #define Voltages_ID3 0x115
 #define Heartbeat_ID 0x120
 
-
-Heartbeat_ID 0x320 0x209 0x120
-
 //CAN IDs for Pump/Currents
 #define Pump_ID 0x300
 #define Currents_ID1 0x310
@@ -35,3 +32,5 @@ Heartbeat_ID 0x320 0x209 0x120
 #define Thruster6_PIN PB0
 #define Thruster7_PIN PA6
 
+// All Heartbeat_IDssf
+Heartbeat_ID 0x320 0x209 0x120
