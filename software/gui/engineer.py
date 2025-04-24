@@ -83,4 +83,4 @@ class EngineerUi(object):
         self.StopButton.setText(QCoreApplication.translate("Dialog", "Stop Recording", None))
 
     def openICC(self):
-        subprocess.Popen(['python3', '/home/nadine/new/MATE-ROV-2025/software/invasive-carp-model/main.py'])
+        subprocess.Popen(['python3', '/home/abdelrhman/MATE-ROV-2025/software/invasive-carp-model/main.py'])

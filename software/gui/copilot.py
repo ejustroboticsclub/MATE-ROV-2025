@@ -11,11 +11,11 @@ from utils import reconnect_command, terminal_execute
 
 
 CAM_PORTS = {
-    "Side": ["/dev/video4", "rtsp://192.168.1.100:5001/unicast"],
-    "Net": ["/dev/video0", "rtsp://192.168.1.100:5002/unicast"],
-    "Jelly": ["/dev/video6", "rtsp://192.168.1.100:5003/unicast"],
-    "Gripper": ["/dev/video2", "rtsp://192.168.1.100:5004/unicast"],
-    "ZED": ["/dev/video8", "rtsp://192.168.1.100:8554/unicast"]
+    "Side": ["/dev/video2", "rtsp://192.168.1.100:5001/unicast"],
+    "Net": ["/dev/video4", "rtsp://192.168.1.100:5002/unicast"],
+    "Jelly": ["/dev/video8", "rtsp://192.168.1.100:5004/unicast"],
+    "Gripper": ["/dev/video6", "rtsp://192.168.1.100:5003/unicast"],
+    "ZED": ["/dev/video0", "rtsp://192.168.1.100:8554/unicast"]
 }    
     
 

@@ -76,32 +76,32 @@ class CameraStreamer(QThread):
         super().__init__()
         self.ips = ips
 
-        # Define the window size for the grid
         self.grid_width = 1920
         self.grid_height = 1080
 
-        # Define the window size for the ZED camera
-        self.zed_cam_width = 1920
-        self.zed_cam_height = 540
+        self.zed_cam_width = 1344
+        self.zed_cam_height = 376
 
-        # Define the window size for the top and bottom half cameras
-        self.half_cam_width = 960
-        self.half_cam_height = 270
+        self.top_cam_width = 960
+        self.top_cam_height = 270
 
-        # Create shared memory arrays for each camera
+        self.bottom_cam_width = 960
+        self.bottom_cam_height = 434
+
         self.shared_arrays = [
-            Array('B', self.half_cam_width * self.half_cam_height * 3) for _ in range(4)
+            Array('B', self.top_cam_width * self.top_cam_height * 3) for _ in range(2)
+        ] + [
+            Array('B', self.bottom_cam_width * self.bottom_cam_height * 3) for _ in range(2)
         ] + [Array('B', self.zed_cam_width * self.zed_cam_height * 3)]
 
         self.processes = []
-
     def get_pipeline(self, ip_url):
         return (
             f"rtspsrc location={ip_url} latency=0 buffer-mode=auto "
             "! decodebin ! videoconvert ! appsink max-buffers=1 drop=True"
         )
 
-    def display_camera(self, ip, index, shared_array, width, height, pipeline):
+    def display_camera(self, ip, index, shared_array, width, height):
         while True:
     
             pipeline = self.get_pipeline(ip)
@@ -128,10 +128,12 @@ class CameraStreamer(QThread):
 
     def run(self):
         for i, ip in enumerate(self.ips):
-            if i < 4:
-                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.half_cam_width, self.half_cam_height, False))
+            if i < 2:
+                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.top_cam_width, self.top_cam_height))
+            elif i < 4:
+                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.bottom_cam_width, self.bottom_cam_height))
             else:
-                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.zed_cam_width, self.zed_cam_height, True))
+                p = Process(target=self.display_camera, args=(ip, i, self.shared_arrays[i], self.zed_cam_width, self.zed_cam_height))
             p.start()
             self.processes.append(p)
 
@@ -141,20 +143,18 @@ class CameraStreamer(QThread):
         while True:
             grid = np.zeros((self.grid_height, self.grid_width, 3), dtype=np.uint8)
 
-            # Place the top half cameras
             for i in range(2):
-                np_frame = np.frombuffer(self.shared_arrays[i].get_obj(), dtype=np.uint8).reshape((self.half_cam_height, self.half_cam_width, 3))
-                grid[0:self.half_cam_height, i * self.half_cam_width:(i + 1) * self.half_cam_width] = np_frame
+                np_frame = np.frombuffer(self.shared_arrays[i].get_obj(), dtype=np.uint8).reshape((self.top_cam_height, self.top_cam_width, 3))
+                grid[0:self.top_cam_height, i * self.top_cam_width:(i + 1) * self.top_cam_width] = np_frame
 
-            # Place the ZED camera in the middle
+            zed_x_offset = (self.grid_width - self.zed_cam_width) // 2
             np_frame = np.frombuffer(self.shared_arrays[4].get_obj(), dtype=np.uint8).reshape((self.zed_cam_height, self.zed_cam_width, 3))
-            grid[self.half_cam_height:self.half_cam_height + self.zed_cam_height, 0:self.zed_cam_width] = np_frame
+            grid[self.top_cam_height:self.top_cam_height + self.zed_cam_height, zed_x_offset:zed_x_offset + self.zed_cam_width] = np_frame
 
-            # Place the bottom half cameras
             for i in range(2, 4):
-                np_frame = np.frombuffer(self.shared_arrays[i].get_obj(), dtype=np.uint8).reshape((self.half_cam_height, self.half_cam_width, 3))
-                grid[self.half_cam_height + self.zed_cam_height:self.grid_height, (i - 2) * self.half_cam_width:(i - 1) * self.half_cam_width] = np_frame
-        
+                np_frame = np.frombuffer(self.shared_arrays[i].get_obj(), dtype=np.uint8).reshape((self.bottom_cam_height, self.bottom_cam_width, 3))
+                grid[self.top_cam_height + self.zed_cam_height:self.grid_height, (i - 2) * self.bottom_cam_width:(i - 1) * self.bottom_cam_width] = np_frame
+
             cv2.imshow("Camera Grid", grid)
 
             if cv2.waitKey(1) == ord('q'):
@@ -165,7 +165,7 @@ class CameraStreamer(QThread):
         cv2.destroyAllWindows()
 
 def create_ssh_client(ip, username, password):
-    # return None
+    
     client = paramiko.SSHClient()
     client.load_system_host_keys()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -181,7 +181,7 @@ def terminal_execute(client, command):
 
 
 def send_command(client, cam_port, property, value):
-    command = f"sudo v4l2-ctl -d {cam_port[0]} -c {property}={value}"
+    command = f"v4l2-ctl -d {cam_port[0]} -c {property}={value}"
     print(f"Executing command: {command}")  
     stdin, stdout, stderr = client.exec_command(command)
     _ = [print(i.strip()) for i in stdout]

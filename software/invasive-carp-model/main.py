@@ -5,14 +5,14 @@ import pandas as pd
 
 # Define the npy file paths
 # Each file contains the pixel coordinates of the corresponding region
-region1_npy = "/home/nadine/new/MATE-ROV-2025/software/invasive-carp-model/region1.npy"
-region2_npy = "/home/nadine/new/MATE-ROV-2025/software/invasive-carp-model/region2.npy"
-region3_npy = "/home/nadine/new/MATE-ROV-2025/software/invasive-carp-model/region3.npy"
-region4_npy = "/home/nadine/new/MATE-ROV-2025/software/invasive-carp-model/region4.npy"
-region5_npy = "/home/nadine/new/MATE-ROV-2025/software/invasive-carp-model/region5.npy"
+region1_npy = "/home/abdelrhman/MATE-ROV-2025/software/invasive-carp-model/region1.npy"
+region2_npy = "/home/abdelrhman/MATE-ROV-2025/software/invasive-carp-model/region2.npy"
+region3_npy = "/home/abdelrhman/MATE-ROV-2025/software/invasive-carp-model/region3.npy"
+region4_npy = "/home/abdelrhman/MATE-ROV-2025/software/invasive-carp-model/region4.npy"
+region5_npy = "/home/abdelrhman/MATE-ROV-2025/software/invasive-carp-model/region5.npy"
 
 # Define the output video path
-OUTPUT_VIDEO_PATH = "/home/nadine/new/MATE-ROV-2025/software/invasive-carp-model/output_video.mp4"
+OUTPUT_VIDEO_PATH = "/home/abdelrhman/MATE-ROV-2025/software/invasive-carp-model/output_video.mp4"
 
 # Define a unified color for all regions
 COLOR = (255, 0, 0)  # Red
@@ -65,10 +65,10 @@ def draw_region_5(image, color=(255, 0, 255)):
 
 def main():
     # Load the regions data
-    regions_data = pd.read_csv("/home/nadine/new/MATE-ROV-2025/software/invasive-carp-model/regions_data.csv")
+    regions_data = pd.read_csv("/home/abdelrhman/MATE-ROV-2025/software/invasive-carp-model/regions_data.csv")
 
     # Load the original image
-    original_image_path = "/home/nadine/new/MATE-ROV-2025/software/invasive-carp-model/image.png"
+    original_image_path = "/home/abdelrhman/MATE-ROV-2025/software/invasive-carp-model/image.png"
     original_image = cv2.imread(original_image_path)
     
     # Convert the image to RGB for Matplotlib
