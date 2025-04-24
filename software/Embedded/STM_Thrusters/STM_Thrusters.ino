@@ -1,3 +1,4 @@
+
 #include <micro_ros_arduino.h>
 #include <Servo.h>
 #include <string.h>
@@ -5,7 +6,6 @@
 #include <mcp_can.h>
 
 // ------------------------------
-#define HEARTBEAT_LED_PIN PC13
 // ------------------------------
 
 // ----- CONFIGURATION -----
@@ -35,15 +35,17 @@ const float dividerRatios[5] = {4.3312, 4.3439, 4.3388, 4.3877, 4.3414};
 #define GRIPPER1_CLOSE_PIN PB13
 #define GRIPPER2_OPEN_PIN PA10
 #define GRIPPER2_CLOSE_PIN PA9
+#define GRIPPER3_PIN PC13  // Center gripper
 
 // ----- CAN IDs -----
-#define Thrusters_ID 0x100
+#define Thrusters_ID   0x100
 #define Grippers_ID_R  0x101
 #define Grippers_ID_L  0x102
-#define Voltages_ID1 0x110
-#define Voltages_ID2 0x112
-#define Voltages_ID3 0x115
-#define Heartbeat_ID 0x120  // New heartbeat ID
+#define Grippers_ID_C  0x103  // Center gripper CAN ID
+#define Voltages_ID1   0x110
+#define Voltages_ID2   0x112
+#define Voltages_ID3   0x115
+#define Heartbeat_ID   0x120
 
 MCP_CAN CAN(SPI_CS_PIN);
 
@@ -77,8 +79,9 @@ void setup() {
   pinMode(GRIPPER1_CLOSE_PIN, OUTPUT);
   pinMode(GRIPPER2_OPEN_PIN, OUTPUT);
   pinMode(GRIPPER2_CLOSE_PIN, OUTPUT);
-  pinMode(HEARTBEAT_LED_PIN, OUTPUT);
-  digitalWrite(HEARTBEAT_LED_PIN, LOW);
+  pinMode(GRIPPER3_PIN, OUTPUT);
+  digitalWrite(GRIPPER3_PIN, LOW);
+
 }
 
 void loop() {
@@ -137,6 +140,10 @@ void handleCANMessages() {
         if (len >= 1) handleGripperCAN(buf, len, "Left");
         break;
 
+      case Grippers_ID_C:
+        if (len >= 1) handleCenterGripper(buf[0]);
+        break;
+
       default:
         break;
     }
@@ -173,6 +180,16 @@ void handleGripperCAN(uint8_t *data, uint8_t len, String gripperSide) {
   }
 }
 
+void handleCenterGripper(uint8_t command) {
+  if (command) {
+    digitalWrite(GRIPPER3_PIN, HIGH);
+    Serial.println("Center Gripper Opened");
+  } else {
+    digitalWrite(GRIPPER3_PIN, LOW);
+    Serial.println("Center Gripper Closed");
+  }
+}
+
 void sendVoltageDataOverCAN() {
   unsigned char vbuf1[4] = {
     (uint16_t)(Converter_Voltage[0] * 100) >> 8, (uint16_t)(Converter_Voltage[0] * 100) & 0xFF,
@@ -197,6 +214,4 @@ void sendHeartbeat(bool state) {
   CAN.sendMsgBuf(Heartbeat_ID, 0, 1, hb);
   Serial.print("Heartbeat: ");
   Serial.println(hb[0]);
-
-  digitalWrite(HEARTBEAT_LED_PIN, state ? HIGH : LOW); 
 }
