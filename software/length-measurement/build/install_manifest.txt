@@ -1,0 +1,8 @@
+/usr/local/lib/libzed_open_capture.so
+/usr/local/include/zed-open-capture/sensorcapture.hpp
+/usr/local/include/zed-open-capture/defines.hpp
+/usr/local/include/zed-open-capture/sensorcapture_def.hpp
+/usr/local/include/zed-open-capture/videocapture.hpp
+/usr/local/include/zed-open-capture/defines.hpp
+/usr/local/include/zed-open-capture/videocapture_def.hpp
+/usr/local/bin/zed_open_capture_depth_tune_stereo

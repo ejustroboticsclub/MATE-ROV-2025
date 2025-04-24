@@ -49,6 +49,7 @@ class EngineerUi(object):
         )
         self.DepthButton.setStyleSheet(Engineer_buttons_st + " color: white;")
         self.DepthButton.setFont(font)
+        self.DepthButton.clicked.connect(self.openDepthEstimation)
 
         # Invasive Carp Computer Model Button
         self.IccButton = QPushButton(Dialog)
@@ -128,12 +129,10 @@ class EngineerUi(object):
         )
 
     def openinvasiveDNA(self):
-        subprocess.Popen(
-            [
-                "python3",
-                "/home/abdelrhman/MATE-ROV-2025/software/invasive_dna/invasive_dna.py",
-            ]
-        )
+        subprocess.Popen(['python3', '../invasive_dna/invasive_dna.py'], cwd="../invasive_dna")
+
+    def openDepthEstimation(self):
+        subprocess.run("cd ../length-measurement/build && ./zed_open_capture_depth_tune_stereo", shell=True, check=True)
 
     def makePhotosphere(self):
         try:
