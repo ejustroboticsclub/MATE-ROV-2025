@@ -95,4 +95,4 @@ class EngineerUi(object):
         subprocess.Popen(['python3', '/home/abdelrhman/MATE-ROV-2025/software/invasive-carp-model/main.py'])
 
     def openinvasiveDNA(self):
-        subprocess.Popen(['python3', '/home/abdelrhman/MATE-ROV-2025/software/invasive_dna/invasive_dna.py'])
+        subprocess.Popen(['python3', '../invasive_dna/invasive_dna.py'], cwd="../invasive_dna")
