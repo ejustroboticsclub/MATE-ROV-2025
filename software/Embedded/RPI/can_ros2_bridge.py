@@ -36,7 +36,8 @@ class CANBridge(Node):
         self.voltage_pub = self.create_publisher(Float32MultiArray, '/ROV/voltage', 10)
         self.current_pub = self.create_publisher(Float32MultiArray, '/ROV/current', 10)
         self.indicator_pub = self.create_publisher(Int8MultiArray, '/ROV/indicators', 10)
-
+        self.jelly_pub = self.create_publisher(Bool, '/ROV/jelly_indicators', 10)
+        self.jelly_pub.publish(Bool(data=False)) 
         # ROS2 Subscribers
         self.create_subscription(Int32MultiArray, '/ROV/thrusters', self.thruster_callback, 10)
         self.create_subscription(Bool, '/ROV/gripper_l', self.gripper_l_callback, 10)
@@ -45,6 +46,7 @@ class CANBridge(Node):
         self.create_subscription(String, '/Commands', self.command_callback, 10)
 
         self.center_gripper_state = 0
+        self.jelly_indicator_state = False
 
         # Start CAN listener
         self.listener_thread = Thread(target=self.listen_to_can)
@@ -79,8 +81,13 @@ class CANBridge(Node):
     def pump_callback(self, msg):
         val = msg.data
         if val == 4:
+            # Toggle center gripper state
             self.center_gripper_state ^= 1
             self.send_msg(GRIPPERS_ID_C, [self.center_gripper_state])
+
+            # Toggle jelly indicator state and publish
+            self.jelly_indicator_state = not self.jelly_indicator_state
+            self.jelly_pub.publish(Bool(data=self.jelly_indicator_state))
         else:
             self.send_msg(PUMP_ID, [val & 0x03])
 
