@@ -227,6 +227,12 @@ class CopilotUi(object):
         self.jellyfish_button.setFont(button_font)
         self.jellyfish_button.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=4)))
         
+
+        self.jellyfish_indicator_status = QLabel(Dialog)
+        self.jellyfish_indicator_status.setObjectName("Jellyfish Indicator Status")
+        self.jellyfish_indicator_status.setGeometry(QRect(scale(852), scale(450), scale(20), scale(20)))
+        self.jellyfish_indicator_status.setStyleSheet("background-color: red; border-radius: 10px; border: 2px solid white;")
+
         # Indicator labels and status circles
         self.indicator1_label = QLabel(Dialog)
         self.indicator1_label.setObjectName("Indicator 1 Label")
@@ -686,3 +692,11 @@ class CopilotUi(object):
         self.indicator3_status.setStyleSheet(f"background-color: {colors[2]}; border-radius: 10px;")
         self.indicator4_status.setStyleSheet(f"background-color: {colors[3]}; border-radius: 10px;")
 
+
+    def update_jellyfish_status(self, status):
+        """
+        Update the status of the jellyfish indicator.
+        :param status: Boolean representing the status of the jellyfish indicator.
+        """
+        color = "green" if status.data else "red"
+        self.jellyfish_indicator_status.setStyleSheet(f"background-color: {color}; border-radius: 10px;")

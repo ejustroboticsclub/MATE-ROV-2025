@@ -12,7 +12,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         #add the ip , username,password as args in line 34 and unhash line 24 in copilot.py 
-        # I Used stacked widget here for navigation between pages
+        # I Used stacked widget here for navigatROSInterface()ion between pages
         self.ros_interface = ROSInterface().node
         self.stacked_widget = QStackedWidget()
 
@@ -99,6 +99,7 @@ class MainWindow(QMainWindow):
         self.ros_interface.signal_emitter.thrusters_signal.connect(self.co_pilot_ui.update_thrusters)
         self.ros_interface.signal_emitter.imu_signal.connect(self.co_pilot_ui.update_imu)
         self.ros_interface.signal_emitter.indicators_signal.connect(self.co_pilot_ui.update_indicators)
+        self.ros_interface.signal_emitter.jellyfish_signal.connect(self.co_pilot_ui.update_jellyfish_status)
         self.ros_interface.signal_emitter.desired_signal.connect(self.co_pilot_ui.update_desired_values)
         self.ros_interface.signal_emitter.angles_signal.connect(self.co_pilot_ui.update_angles)
 

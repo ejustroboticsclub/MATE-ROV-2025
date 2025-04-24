@@ -21,7 +21,7 @@ class SignalSender(QObject):
     angles_signal = pyqtSignal(Vector3)
     desired_signal = pyqtSignal(Twist)
     indicators_signal = pyqtSignal(Int8MultiArray)
-
+    jellyfish_signal = pyqtSignal(Bool)
 
 
 class ROSInterface(Node):
@@ -56,9 +56,14 @@ class ROSInterface(Node):
         self.indicators_sub = self.create_subscription(
             Int8MultiArray, "ROV/indicators", self.indicators_callback, 10
         )
+        self.jellyfish_indicator_sub = self.create_subscription(
+            Bool, "ROV/jellyfish_indicators", self.jellyfish_callback, 10
+        )
+
         # Publishers
         self.pumb_publisher = self.create_publisher(Int8, "/ROV/pump", 10)
         self.test_pub = self.create_publisher(Float64, "/ROV/test", 10)
+
 
     # Callbacks
     def depth_callback(self, msg):
@@ -88,6 +93,9 @@ class ROSInterface(Node):
     def indicators_callback(self, msg):
         self.signal_emitter.indicators_signal.emit(msg)
     
+    def jellyfish_callback(self, msg):
+        self.signal_emitter.jellyfish_signal.emit(msg)
+            
 class ROSThread(threading.Thread):
     def __init__(self, node):
         super().__init__()
