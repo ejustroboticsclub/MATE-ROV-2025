@@ -279,7 +279,7 @@ class CopilotUi(object):
 
         # Create buttons
         self.button0 = QPushButton("Pump Off", Dialog)
-        self.button1 = QPushButton("ClockWise", Dialog)
+        self.button1 = QPushButton("DONT TOUCH", Dialog)
         self.button2 = QPushButton("CounterClockWise", Dialog)
 
         # Set button styles (adjust font size to fit)
@@ -622,9 +622,9 @@ class CopilotUi(object):
         """
         Update the angles label.
         """
-        self.roll_label.setText(f"{angles_msg.x:.2f}")
+        self.roll_label.setText(f"{angles_msg.z:.2f}")
         self.pitch_label.setText(f"{angles_msg.y:.2f}")
-        self.actual_yaw_label.setText(f"{angles_msg.z:.2f}")
+        self.actual_yaw_label.setText(f"{angles_msg.x:.2f}")
 
     def update_actual_depth(self,
         depth

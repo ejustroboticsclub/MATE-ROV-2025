@@ -55,7 +55,7 @@ class PilotUi(object):
 
 
         # Change to station's IP
-        ip_pilot = "192.168.1.110"
+        ip_pilot = "192.168.1.101"
 
         # Change to PI's IP
         ip_rasp = "192.168.1.100"
