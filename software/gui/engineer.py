@@ -46,6 +46,7 @@ class EngineerUi(object):
         self.DepthButton.setGeometry(QRect(scale(290), scale(100), scale(351), scale(81)))
         self.DepthButton.setStyleSheet(Engineer_buttons_st)
         self.DepthButton.setFont(font)
+        self.DepthButton.clicked.connect(self.openDepthEstimation)
 
         # Invasive Carp Computer Model
         self.IccButton = QPushButton(Dialog)
@@ -96,3 +97,7 @@ class EngineerUi(object):
 
     def openinvasiveDNA(self):
         subprocess.Popen(['python3', '../invasive_dna/invasive_dna.py'], cwd="../invasive_dna")
+
+    def openDepthEstimation(self):
+        subprocess.run("cd ../length-measurement/build && ./zed_open_capture_depth_tune_stereo", shell=True, check=True)
+
