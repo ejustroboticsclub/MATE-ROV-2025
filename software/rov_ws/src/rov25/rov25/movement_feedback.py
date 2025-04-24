@@ -12,7 +12,7 @@ from geometry_msgs.msg import Vector3
 from sensor_msgs.msg import Imu
 from tf_transformations import euler_from_quaternion
 from rcl_interfaces.msg import SetParametersResult
-
+import live_queue_plotter 
 
 """
     PID Controller Equation:
@@ -382,7 +382,8 @@ class CalibrationNode(Node):
         self.desired = Reference()
         self.t.t_prev = time()
 
-
+        self.queue = live_queue_plotter.initialize_queue(1000, 10)
+        
         ###
         self.is_rotating = False  # Is the ROV currently rotating?
         self.initial_press = True
@@ -608,7 +609,7 @@ class CalibrationNode(Node):
         phi_3 = (self.PARAM.thruster_max + self.PARAM.thruster_min) - phi_3
         phi_4 = (self.PARAM.thruster_max + self.PARAM.thruster_min) - phi_4
 
-        planer_thrusters_list = [phi_1, phi_2, phi_3, phi_4]
+        
 
         """
             initialize the distance between the actual depth value and the desired value and
@@ -647,14 +648,13 @@ class CalibrationNode(Node):
         phi_5 = min(phi_5, self.PARAM.thruster_side_max)
         phi_6 = min(phi_6, self.PARAM.thruster_side_max)
 
-        planer_thrusters_list.append(phi_5)
-        planer_thrusters_list.append(phi_6)
-
+    
         phi_7 = self.pid_pitch.compute(self.actual.pitch, self.desired.pitch)
         phi_7 = max(phi_7, self.PARAM.thruster_side_min)
         phi_7 = min(phi_7, self.PARAM.thruster_side_max)
-        planer_thrusters_list.append(phi_7)
+        
 
+        planer_thrusters_list = [phi_2, phi_5, phi_4, phi_3, phi_1, phi_6, phi_7]
         # create the message instance
         thrusters_voltages = Int32MultiArray()
 
@@ -675,9 +675,6 @@ class CalibrationNode(Node):
         """
         self.is_rotating =  msg.data
             
-
-    
-
 
     def cmd_vel_recieved_callback(self, twist_msg: Twist):
         """
@@ -710,6 +707,7 @@ class CalibrationNode(Node):
         """
 
         # self.get_logger().info(f"depth: {depth_msg}")
+        live_queue_plotter.update(depth_msg.data)
         self.actual.depth = depth_msg.data
 
     def imu_recieved_callback(self, imu: Imu):

@@ -9,13 +9,15 @@ from stylesheet import Copilot_st1, Copilot_st2, apply_st , red_button , back_st
 from utils import reconnect_command, terminal_execute
 
 
+
 CAM_PORTS = {
-    "ZED": ["/dev/video0", "rtsp://192.168.1.100:5001/unicast"],
-    "Gripper": ["/dev/video0", "rtsp://192.168.1.100:5002/unicast"],
-    "Side": ["/dev/video0", "rtsp://192.168.1.100:5002/unicast"],
-    "Net": ["/dev/video0", "rtsp://192.168.1.100:5004/unicast"],
-    "Jelly": ["/dev/video0", "rtsp://192.168.1.100:5005/unicast"]
-}
+    "Side": ["/dev/video2", "rtsp://192.168.1.100:5001/unicast"],
+    "Net": ["/dev/video4", "rtsp://192.168.1.100:5002/unicast"],
+    "Jelly": ["/dev/video8", "rtsp://192.168.1.100:5004/unicast"],
+    "Gripper": ["/dev/video6", "rtsp://192.168.1.100:5003/unicast"],
+    "ZED": ["/dev/video0", "rtsp://192.168.1.100:8554/unicast"]
+}    
+    
 
 class RestreamThread(QThread):
     def __init__(self, client, cam_port):
@@ -34,7 +36,7 @@ class CopilotUi(object):
         self.ip = ip
         self.username = username
         self.password = password
-        self.client = create_ssh_client(ip, username, password)
+        # self.client = create_ssh_client(ip, username, password)
         self.ros_interface = ros_interface
     def setupUi(self, Dialog):
         #loading font
@@ -218,6 +220,13 @@ class CopilotUi(object):
         self.desired_depth_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height)) # Use std_height
         
         
+        self.jellyfish_button = QPushButton("Jellyfish", Dialog)
+        self.jellyfish_button.setObjectName("Jellyfish Button")
+        self.jellyfish_button.setGeometry(QRect(scale(800), scale(400), scale(120), scale(41)))
+        self.jellyfish_button.setStyleSheet(red_button)
+        self.jellyfish_button.setFont(button_font)
+        self.jellyfish_button.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=4)))
+        
         # Indicator labels and status circles
         self.indicator1_label = QLabel(Dialog)
         self.indicator1_label.setObjectName("Indicator 1 Label")
@@ -270,7 +279,7 @@ class CopilotUi(object):
 
         # Create buttons
         self.button0 = QPushButton("Pump Off", Dialog)
-        self.button1 = QPushButton("ClockWise", Dialog)
+        self.button1 = QPushButton("DONT TOUCH", Dialog)
         self.button2 = QPushButton("CounterClockWise", Dialog)
 
         # Set button styles (adjust font size to fit)
@@ -488,7 +497,6 @@ class CopilotUi(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
-        self.comboBox.addItem("")
         self.comboBox.setObjectName("selection box")
         self.comboBox.setGeometry(QRect(scale(800), scale(200), scale(103), scale(32)))
         self.comboBox.setStyleSheet(selection_st)
@@ -576,6 +584,7 @@ class CopilotUi(object):
         self.th7.setText(QCoreApplication.translate("Dialog", "Th7", None))
 
 
+
         self.Dlabel_8.setText(QCoreApplication.translate("Dialog", "", None))
         self.CAS.setText(QCoreApplication.translate("Dialog", "Camera Adjusting System", None))
         self.brightness.setText(QCoreApplication.translate("Dialog", "Brightness", None))
@@ -586,13 +595,12 @@ class CopilotUi(object):
         self.apply_backlight.setText(QCoreApplication.translate("Dialog", "Apply", None))
         self.reset.setText(QCoreApplication.translate("Dialog", "Reset", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("Dialog", "Select", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("Dialog", "Main", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("Dialog", "Tilt", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("Dialog", "ZED", None))
+        self.comboBox.setItemText(2, QCoreApplication.translate("Dialog", "Gripper", None))
         self.comboBox.setItemText(3, QCoreApplication.translate("Dialog", "Side", None))
-        self.comboBox.setItemText(4, QCoreApplication.translate("Dialog", "Gripper L", None))
-        self.comboBox.setItemText(5, QCoreApplication.translate("Dialog", "Gripper R", None))
-        self.comboBox.setItemText(6, QCoreApplication.translate("Dialog", "Bottom", None))
-        
+        self.comboBox.setItemText(4, QCoreApplication.translate("Dialog", "Net", None))
+        self.comboBox.setItemText(5, QCoreApplication.translate("Dialog", "Jelly", None))
+
         self.back_button.setText(QCoreApplication.translate("Dialog","Back", None))
 
     # Standalone function to update all ROV labels
@@ -614,9 +622,9 @@ class CopilotUi(object):
         """
         Update the angles label.
         """
-        self.roll_label.setText(f"{angles_msg.x:.2f}")
+        self.roll_label.setText(f"{angles_msg.z:.2f}")
         self.pitch_label.setText(f"{angles_msg.y:.2f}")
-        self.actual_yaw_label.setText(f"{angles_msg.z:.2f}")
+        self.actual_yaw_label.setText(f"{angles_msg.x:.2f}")
 
     def update_actual_depth(self,
         depth

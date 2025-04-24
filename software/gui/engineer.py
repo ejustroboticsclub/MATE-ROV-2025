@@ -2,6 +2,7 @@ from PyQt5.QtCore import (QCoreApplication, QMetaObject, QRect)
 from PyQt5.QtGui import (QIcon, QPixmap, QFont, QFontDatabase)
 from PyQt5.QtWidgets import (QLabel, QPushButton)
 import os
+import subprocess
 from stylesheet import Engineer_buttons_st, red_button, back_st
 from utils import BG_path, scale  # Make sure scale is imported
 
@@ -42,28 +43,37 @@ class EngineerUi(object):
         # Depth Estimation
         self.DepthButton = QPushButton(Dialog)
         self.DepthButton.setObjectName("Depth Estimation Button")
-        self.DepthButton.setGeometry(QRect(scale(290), scale(150), scale(351), scale(81)))
+        self.DepthButton.setGeometry(QRect(scale(290), scale(100), scale(351), scale(81)))
         self.DepthButton.setStyleSheet(Engineer_buttons_st)
         self.DepthButton.setFont(font)
 
         # Invasive Carp Computer Model
         self.IccButton = QPushButton(Dialog)
         self.IccButton.setObjectName("Invasive Carp Computer Model Button")
-        self.IccButton.setGeometry(QRect(scale(290), scale(240), scale(351), scale(81)))
+        self.IccButton.setGeometry(QRect(scale(290), scale(190), scale(351), scale(81)))
         self.IccButton.setStyleSheet(Engineer_buttons_st)
         self.IccButton.setFont(ICCfont)
+        self.IccButton.clicked.connect(self.openICC)
+
+        #Invasive DNA Task
+        self.InvasiveButton = QPushButton(Dialog)
+        self.InvasiveButton.setObjectName("Invasive DNA Task Button")
+        self.InvasiveButton.setGeometry(QRect(scale(290), scale(280), scale(351), scale(81)))
+        self.InvasiveButton.setStyleSheet(Engineer_buttons_st)
+        self.InvasiveButton.setFont(ICCfont)
+        self.InvasiveButton.clicked.connect(self.openinvasiveDNA)
 
         # Recording Button
         self.RecButton = QPushButton(Dialog)
         self.RecButton.setObjectName("Start Recording for Photosphere Task")
-        self.RecButton.setGeometry(QRect(scale(290), scale(330), scale(351), scale(81)))
+        self.RecButton.setGeometry(QRect(scale(290), scale(370), scale(351), scale(81)))
         self.RecButton.setStyleSheet(Engineer_buttons_st)
         self.RecButton.setFont(font)
 
         # Stop recording Button
         self.StopButton = QPushButton(Dialog)
         self.StopButton.setObjectName("Stop Recording for Photosphere Task")
-        self.StopButton.setGeometry(QRect(scale(370), scale(420), scale(181), scale(51)))
+        self.StopButton.setGeometry(QRect(scale(370), scale(460), scale(181), scale(51)))
         self.StopButton.setStyleSheet(red_button)
         self.StopButton.setFont(Afont)
 
@@ -77,5 +87,12 @@ class EngineerUi(object):
         self.BackButton.setText(QCoreApplication.translate("Dialog", "Back", None))
         self.DepthButton.setText(QCoreApplication.translate("Dialog", "Depth Estimation", None))
         self.IccButton.setText(QCoreApplication.translate("Dialog", "Invasive Carp Computer Model", None))
+        self.InvasiveButton.setText(QCoreApplication.translate("Dialog", "Invasive DNA Task", None))
         self.RecButton.setText(QCoreApplication.translate("Dialog", "Start Recording (Photosphere)", None))
         self.StopButton.setText(QCoreApplication.translate("Dialog", "Stop Recording", None))
+
+    def openICC(self):
+        subprocess.Popen(['python3', '/home/abdelrhman/MATE-ROV-2025/software/invasive-carp-model/main.py'])
+
+    def openinvasiveDNA(self):
+        subprocess.Popen(['python3', '../invasive_dna/invasive_dna.py'], cwd="../invasive_dna")
