@@ -5,7 +5,7 @@ import os
 import subprocess
 
 # --- CONFIG ---
-folder_path = "/home/ahmed/pano/enhanced"  # Your folder of input images
+folder_path = "new_frames"  # Your folder of input images
 output_image = "photosphere.jpg"  # Final output filename
 overlap_width = 50  # Width of overlap region for feather blending
 
