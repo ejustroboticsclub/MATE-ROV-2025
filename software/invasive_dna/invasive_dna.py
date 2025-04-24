@@ -63,7 +63,7 @@ AGCCCACCACATGTTTACTGTCGGAATAGACGTAGACACTCGTGCATACTTTACATCCGCAACAATAA
 TTATTGCTATCCCAACAGGTGTAAAAGTGTTTAGCTGACTAGCC"""#Black Carp
 ]
 
-# ✅ Set your service account key
+#  Set your service account key
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 key_path = os.path.join(BASE_DIR, "mate-rov-41442644ab80.json")
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
@@ -72,20 +72,24 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
 species_names = ["Bighead Carp", "Silver Carp", "Grass Carp", "Black Carp"]
 invasive_carps = [''.join(seq.split()) for seq in invasive_carps]
 
-print("🧬 DNA Analysis Started")
+print("DNA Analysis Started")
 
-# ✅ Load images from folder
+# Load images from folder
 
 # Construct the full path to the samples directory
-samples_path = os.path.join(BASE_DIR, "samples", "sample*.jpeg")
-sample_images = sorted(glob.glob(samples_path))
-
-# ✅ Create Vision API client
+samples_dir = os.path.join(BASE_DIR, "samples")
+valid_exts = {".jpeg", ".jpg", ".png", ".webp"}
+sample_images = sorted([
+    os.path.join(samples_dir, f)
+    for f in os.listdir(samples_dir)
+    if os.path.splitext(f)[1].lower() in valid_exts
+])
+# Create Vision API client
 client = vision.ImageAnnotatorClient()
 
-# 🔁 Process each image
+# Process each image
 for i, image_path in enumerate(sample_images, start=1):
-    print(f"\n📸 Sample {i}: {image_path}")
+    print(f"\n📸 Sample {i}:")
 
     with open(image_path, "rb") as img_file:
         content = img_file.read()
@@ -95,16 +99,16 @@ for i, image_path in enumerate(sample_images, start=1):
     texts = response.text_annotations
 
     if not texts:
-        print("⚠️ No text detected.")
+        print("No text detected.")
         continue
 
-    # 🧹 Clean the extracted DNA (keep only CGAT)
+    # Clean the extracted DNA (keep only CGAT)
     extracted_raw = texts[0].description.upper()
     extracted_dna = ''.join(c for c in extracted_raw if c in "CGAT")
 
     
 
-    # 🧠 Match against known DNA
+    # Match against known DNA
     best_score = 0.0
     best_match = None
 
@@ -114,10 +118,10 @@ for i, image_path in enumerate(sample_images, start=1):
             best_score = score
             best_match = species_names[j]
 
-    # ✅ Output result
-    if best_score >= 0.90:
-        print(f"✅ INVASIVE! Match: {best_match} ({best_score:.2%})")
+    # Output result
+    if best_score >= 0.80:
+        print(f"INVASIVE! Match: {best_match} ({best_score:.2%})")
     else:
-        print(f"❌ Not invasive. Closest: {best_match} ({best_score:.2%})")
+        print(f"Not invasive. Closest: {best_match} ({best_score:.2%})")
 
-print("\n✅ Analysis Complete")
+print("\n Analysis Complete")
