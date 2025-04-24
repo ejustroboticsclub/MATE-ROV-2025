@@ -36,7 +36,7 @@ class CopilotUi(object):
         self.ip = ip
         self.username = username
         self.password = password
-        self.client = create_ssh_client(ip, username, password)
+        # self.client = create_ssh_client(ip, username, password)
         self.ros_interface = ros_interface
     def setupUi(self, Dialog):
         #loading font
@@ -220,6 +220,13 @@ class CopilotUi(object):
         self.desired_depth_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height)) # Use std_height
         
         
+        self.jellyfish_button = QPushButton("Jellyfish", Dialog)
+        self.jellyfish_button.setObjectName("Jellyfish Button")
+        self.jellyfish_button.setGeometry(QRect(scale(800), scale(400), scale(120), scale(41)))
+        self.jellyfish_button.setStyleSheet(red_button)
+        self.jellyfish_button.setFont(button_font)
+        self.jellyfish_button.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=4)))
+        
         # Indicator labels and status circles
         self.indicator1_label = QLabel(Dialog)
         self.indicator1_label.setObjectName("Indicator 1 Label")
@@ -272,7 +279,7 @@ class CopilotUi(object):
 
         # Create buttons
         self.button0 = QPushButton("Pump Off", Dialog)
-        self.button1 = QPushButton("ClockWise", Dialog)
+        self.button1 = QPushButton("DONT TOUCH", Dialog)
         self.button2 = QPushButton("CounterClockWise", Dialog)
 
         # Set button styles (adjust font size to fit)
@@ -615,9 +622,9 @@ class CopilotUi(object):
         """
         Update the angles label.
         """
-        self.roll_label.setText(f"{angles_msg.x:.2f}")
+        self.roll_label.setText(f"{angles_msg.z:.2f}")
         self.pitch_label.setText(f"{angles_msg.y:.2f}")
-        self.actual_yaw_label.setText(f"{angles_msg.z:.2f}")
+        self.actual_yaw_label.setText(f"{angles_msg.x:.2f}")
 
     def update_actual_depth(self,
         depth

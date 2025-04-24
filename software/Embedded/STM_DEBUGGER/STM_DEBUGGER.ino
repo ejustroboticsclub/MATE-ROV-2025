@@ -68,7 +68,7 @@ void pump_callback(const void * msgin) {
     Serial.println("Pump command: 3 received. Resetting PB7 and PB9...");
     digitalWrite(RESET_PIN_1, LOW);
     digitalWrite(RESET_PIN_2, LOW);
-    delay(100);  // Pulse width
+    delay(250);  // Pulse width
     digitalWrite(RESET_PIN_1, HIGH);
     digitalWrite(RESET_PIN_2, HIGH);
   }

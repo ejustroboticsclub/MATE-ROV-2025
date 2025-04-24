@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
+
 import rclpy
 from rclpy.node import Node
 import can
-import struct
-from std_msgs.msg import Float64MultiArray, String, Bool, Int32, Int8, Int32MultiArray
+from threading import Thread
+from std_msgs.msg import Float32MultiArray, Int8MultiArray, Int32MultiArray, String, Bool, Int8
 
-# CAN IDs for devices
+# CAN IDs
 THRUSTERS_ID = 0x100
-GRIPPERS_ID_L = 0x101  # Left Gripper CAN ID
-GRIPPERS_ID_R = 0x102  # Right Gripper CAN ID
+GRIPPERS_ID_L = 0x101
+GRIPPERS_ID_R = 0x102
+GRIPPERS_ID_C = 0x103
 PUMP_ID = 0x300
-QUAT_COMMAND_ID = 0x200  # for calibration/reset commands
+QUAT_COMMAND_ID = 0x200
 
-# IMU CAN IDs
-IMU1_ID = 0x201
-IMU2_ID = 0x202
-IMU3_ID = 0x203
-IMU4_ID = 0x204
+# Custom incoming CAN IDs
+CURRENTS_IDS = [0x310, 0x312, 0x315, 0x317]
+VOLTAGES_IDS = [0x110, 0x112, 0x115]
+HEARTBEAT_IDS = [0x320, 0x209, 0x120]
 
 THRUSTER_COUNT = 7
 
@@ -24,7 +25,6 @@ class CANBridge(Node):
     def __init__(self):
         super().__init__('can_ros2_bridge')
 
-        # Initialize CAN bus
         try:
             self.bus = can.interface.Bus(channel='can0', bustype='socketcan')
             self.get_logger().info("CAN interface initialized on can0")
@@ -32,25 +32,31 @@ class CANBridge(Node):
             self.get_logger().error(f"Failed to initialize CAN interface: {e}")
             raise
 
-        # ROS 2 subscriptions
+        # ROS2 Publishers
+        self.voltage_pub = self.create_publisher(Float32MultiArray, '/ROV/voltage', 10)
+        self.current_pub = self.create_publisher(Float32MultiArray, '/ROV/current', 10)
+        self.indicator_pub = self.create_publisher(Int8MultiArray, '/ROV/indicators', 10)
+        self.jelly_pub = self.create_publisher(Bool, '/ROV/jelly_indicators', 10)
+        self.jelly_pub.publish(Bool(data=False)) 
+        # ROS2 Subscribers
         self.create_subscription(Int32MultiArray, '/ROV/thrusters', self.thruster_callback, 10)
         self.create_subscription(Bool, '/ROV/gripper_l', self.gripper_l_callback, 10)
         self.create_subscription(Bool, '/ROV/gripper_r', self.gripper_r_callback, 10)
         self.create_subscription(Int8, '/ROV/pump', self.pump_callback, 10)
         self.create_subscription(String, '/Commands', self.command_callback, 10)
 
+        self.center_gripper_state = 0
+        self.jelly_indicator_state = False
 
-        # Timer to continuously read CAN messages
+        # Start CAN listener
+        self.listener_thread = Thread(target=self.listen_to_can)
+        self.listener_thread.daemon = True
+        self.listener_thread.start()
 
         self.get_logger().info("CAN-ROS2 Bridge Node Started.")
 
     def send_msg(self, can_id, data):
-        """Helper function to send CAN messages."""
-        msg = can.Message(
-            arbitration_id=can_id,
-            is_extended_id=False,
-            data=bytes(data)
-        )
+        msg = can.Message(arbitration_id=can_id, is_extended_id=False, data=bytes(data))
         try:
             self.bus.send(msg)
             return True
@@ -59,65 +65,74 @@ class CANBridge(Node):
             return False
 
     def thruster_callback(self, msg):
-        """Handle thruster PWM control."""
         vals = msg.data
         if len(vals) != THRUSTER_COUNT:
             self.get_logger().warn("Thruster array must contain 7 values.")
             return
-
-        thruster_bytes = []
-        for pwm in vals:
-            p = max(1000, min(2000, pwm))  # Clamp PWM between 1000 and 2000
-            thruster_bytes.append(p // 10)  # Map 1000–2000 PWM to 100–200
-
-        if self.send_msg(THRUSTERS_ID, thruster_bytes):
-            self.get_logger().info("Sent Thruster PWM values.")
-        else:
-            self.get_logger().warn("Failed to send Thruster values.")
+        thruster_bytes = [max(100, min(200, pwm // 10)) for pwm in vals]
+        self.send_msg(THRUSTERS_ID, thruster_bytes)
 
     def gripper_l_callback(self, msg):
-        """Handle left gripper state (open/close)."""
-        gripper_l_state = 1 if msg.data else 0  # Convert bool to int (True -> 1, False -> 0)
-        if self.send_msg(GRIPPERS_ID_L, [gripper_l_state]):  # Send to left gripper's CAN ID
-            self.get_logger().info(f"Sent Left Gripper state: {gripper_l_state}")
-        else:
-            self.get_logger().warn("Failed to send Left Gripper state.")
+        self.send_msg(GRIPPERS_ID_L, [1 if msg.data else 0])
 
     def gripper_r_callback(self, msg):
-        """Handle right gripper state (open/close)."""
-        gripper_r_state = 1 if msg.data else 0  # Convert bool to int (True -> 1, False -> 0)
-        if self.send_msg(GRIPPERS_ID_R, [gripper_r_state]):  # Send to right gripper's CAN ID
-            self.get_logger().info(f"Sent Right Gripper state: {gripper_r_state}")
-        else:
-            self.get_logger().warn("Failed to send Right Gripper state.")
+        self.send_msg(GRIPPERS_ID_R, [1 if msg.data else 0])
 
     def pump_callback(self, msg):
-        """Handle pump control (clockwise/counter-clockwise/stop)."""
-        val = msg.data & 0x03  # Mask to only keep the lower 2 bits (stop/clockwise/counter-clockwise)
-        if self.send_msg(PUMP_ID, [val]):
-            state = {0: "Stop", 1: "Clockwise", 2: "Counter-Clockwise"}.get(val, "Unknown")
-            self.get_logger().info(f"Sent Pump Direction: {state}")
+        val = msg.data
+        if val == 4:
+            # Toggle center gripper state
+            self.center_gripper_state ^= 1
+            self.send_msg(GRIPPERS_ID_C, [self.center_gripper_state])
+
+            # Toggle jelly indicator state and publish
+            self.jelly_indicator_state = not self.jelly_indicator_state
+            self.jelly_pub.publish(Bool(data=self.jelly_indicator_state))
         else:
-            self.get_logger().warn("Failed to send pump direction.")
+            self.send_msg(PUMP_ID, [val & 0x03])
 
     def command_callback(self, msg):
-        """Handle special commands like calibration and reset."""
         cmd = msg.data.strip().upper()
         if cmd == "CALIBRATE":
-            if self.send_msg(QUAT_COMMAND_ID, [0x01]):
-                self.get_logger().info("Sent CALIBRATE command.")
-            else:
-                self.get_logger().warn("Failed to send CALIBRATE.")
+            self.send_msg(QUAT_COMMAND_ID, [0x01])
         elif cmd == "RESET":
-            if self.send_msg(QUAT_COMMAND_ID, [0x02]):
-                self.get_logger().info("Sent RESET command.")
-            else:
-                self.get_logger().warn("Failed to send RESET.")
+            self.send_msg(QUAT_COMMAND_ID, [0x02])
         else:
             self.get_logger().warn(f"Unknown command received: '{cmd}'")
 
+    def listen_to_can(self):
+        while rclpy.ok():
+            msg = self.bus.recv()
+            if msg is None:
+                continue
+
+            can_id = msg.arbitration_id
+            data = msg.data
+
+            if can_id in VOLTAGES_IDS:
+                voltages = []
+                for i in range(0, len(data), 2):
+                    if i + 1 < len(data):
+                        raw = (data[i] << 8) | data[i + 1]
+                        voltage = raw / 100.0
+                        voltages.append(voltage)
+                self.voltage_pub.publish(Float32MultiArray(data=voltages))
+
+            elif can_id in CURRENTS_IDS:
+                currents = []
+                for i in range(0, len(data), 2):
+                    if i + 1 < len(data):
+                        raw = (data[i] << 8) | data[i + 1]
+                        current = raw / 100.0
+                        currents.append(current)
+                self.current_pub.publish(Float32MultiArray(data=currents))
+
+            elif can_id in HEARTBEAT_IDS:
+                indicators_array = Int8MultiArray()
+                indicators_array.data = list(data)
+                self.indicator_pub.publish(indicators_array)
+
 def main(args=None):
-    """Main entry point for the ROS 2 node."""
     rclpy.init(args=args)
     node = CANBridge()
     try:
