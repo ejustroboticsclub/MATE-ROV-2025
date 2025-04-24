@@ -36,7 +36,7 @@ class CopilotUi(object):
         self.ip = ip
         self.username = username
         self.password = password
-        self.client = create_ssh_client(ip, username, password)
+        # self.client = create_ssh_client(ip, username, password)
         self.ros_interface = ros_interface
     def setupUi(self, Dialog):
         #loading font
