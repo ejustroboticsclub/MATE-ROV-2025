@@ -137,7 +137,9 @@ class EngineerUi(object):
 
     def makePhotosphere(self):
         try:
-            subprocess.run(["python3", "video_to_frames.py"], check=True)
-            subprocess.run(["python3", "panorama.py"], check=True)
+            subprocess.run(
+                ["python3", "software/photosphere/video_to_frames.py"], check=True
+            )
+            subprocess.run(["python3", "software/photosphere/panorama.py"], check=True)
         except subprocess.CalledProcessError as e:
             print("Error during photosphere creation:", e)
