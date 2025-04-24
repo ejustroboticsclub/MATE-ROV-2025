@@ -1,0 +1,38 @@
+//CAN IDs for Sensors
+#define QUAT_COMMAND_ID 0x200
+#define IMU1_ID 0x201
+#define IMU2_ID 0x202
+#define IMU3_ID 0x203
+#define IMU4_ID 0x204
+#define Depth 0x205
+#define Heartbeat_ID 0x206
+
+//CAN IDs for Thrusters Main
+#define Thrusters_ID 0x100
+#define Grippers_ID_1 0x101
+#define Grippers_ID_2 0x102
+#define Grippers_ID_3  0x103 
+#define Voltages_ID1 0x110
+#define Voltages_ID2 0x112
+#define Voltages_ID3 0x115
+#define Heartbeat_ID 0x120
+
+//CAN IDs for Pump/Currents
+#define Pump_ID 0x300
+#define Currents_ID1 0x310
+#define Currents_ID2 0x312
+#define Currents_ID3 0x315
+#define Currents_ID3 0x317
+#define Heartbeat_ID 0x320
+
+// Thruster pins
+#define Thruster1_PIN PB1
+#define Thruster2_PIN PB7
+#define Thruster3_PIN PA7
+#define Thruster4_PIN PA8
+#define Thruster5_PIN PB6
+#define Thruster6_PIN PB0
+#define Thruster7_PIN PA6
+
+// All Heartbeat_IDssf
+Heartbeat_ID 0x320 0x209 0x120
