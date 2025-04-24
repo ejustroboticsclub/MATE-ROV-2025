@@ -220,6 +220,13 @@ class CopilotUi(object):
         self.desired_depth_label.setGeometry(QRect(right_col_x, current_y, value_label_w, std_height)) # Use std_height
         
         
+        self.jellyfish_button = QPushButton("Jellyfish", Dialog)
+        self.jellyfish_button.setObjectName("Jellyfish Button")
+        self.jellyfish_button.setGeometry(QRect(scale(800), scale(400), scale(120), scale(41)))
+        self.jellyfish_button.setStyleSheet(red_button)
+        self.jellyfish_button.setFont(button_font)
+        self.jellyfish_button.clicked.connect(lambda: self.ros_interface.pumb_publisher.publish(Int8(data=4)))
+        
         # Indicator labels and status circles
         self.indicator1_label = QLabel(Dialog)
         self.indicator1_label.setObjectName("Indicator 1 Label")
