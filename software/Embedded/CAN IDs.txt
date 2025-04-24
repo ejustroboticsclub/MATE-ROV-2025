@@ -9,7 +9,9 @@
 
 //CAN IDs for Thrusters Main
 #define Thrusters_ID 0x100
-#define Grippers_ID 0x101
+#define Grippers_ID_1 0x101
+#define Grippers_ID_2 0x102
+#define Grippers_ID_3  0x103 
 #define Voltages_ID1 0x110
 #define Voltages_ID2 0x112
 #define Voltages_ID3 0x115
