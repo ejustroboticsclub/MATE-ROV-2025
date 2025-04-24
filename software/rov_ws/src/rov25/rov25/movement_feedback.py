@@ -12,7 +12,7 @@ from geometry_msgs.msg import Vector3
 from sensor_msgs.msg import Imu
 from tf_transformations import euler_from_quaternion
 from rcl_interfaces.msg import SetParametersResult
-import live_queue_plotter 
+from rov25 import live_queue_plotter 
 
 """
     PID Controller Equation:
