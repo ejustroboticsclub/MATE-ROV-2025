@@ -102,7 +102,7 @@ for i, image_path in enumerate(sample_images, start=1):
     extracted_raw = texts[0].description.upper()
     extracted_dna = ''.join(c for c in extracted_raw if c in "CGAT")
 
-    print(f"🧬 Extracted (preview): {extracted_dna[:60]}...")
+    
 
     # 🧠 Match against known DNA
     best_score = 0.0
