@@ -1,11 +1,10 @@
-import os
-import glob
-import google.generativeai as genai
 import Levenshtein
 from PIL import Image
+from google.cloud import vision
+import os
+import glob
 
-#  Authenticate with Gemini API
-genai.configure(api_key="AIzaSyDvFcmpQIASuu_rRxkIiOkdCW5iaJMP2fM")  
+
 invasive_carps=["""CTTCTGGTAGTACCTATATGGTTCAGTACATATTATGTATTATGTTACCTAATGTACTAATACCTATATATG
 TATTATCACCATTAATTTATTTTAACCTTAAAGCAAGTACTAACGTTTAAAAACGTACATAAACCAAAAT
 ATTAAGATTCATAAATAAATTATCTTAACTTAAATAAACAGATTATTCCACTAACAATTGATTCTCAAATT
@@ -64,45 +63,61 @@ AGCCCACCACATGTTTACTGTCGGAATAGACGTAGACACTCGTGCATACTTTACATCCGCAACAATAA
 TTATTGCTATCCCAACAGGTGTAAAAGTGTTTAGCTGACTAGCC"""#Black Carp
 ]
 
+# ✅ Set your service account key
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+key_path = os.path.join(BASE_DIR, "mate-rov-41442644ab80.json")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
+
+
 species_names = ["Bighead Carp", "Silver Carp", "Grass Carp", "Black Carp"]
 invasive_carps = [''.join(seq.split()) for seq in invasive_carps]
 
-# Load all images from 'samples/' directory
-sample_images = sorted(glob.glob("samples/sample*.jpeg"))
+print("🧬 DNA Analysis Started")
 
-# Load Gemini Vision model
-model = genai.GenerativeModel("gemini-2.0-flash")
+# ✅ Load images from folder
 
-# Process each image sample
+# Construct the full path to the samples directory
+samples_path = os.path.join(BASE_DIR, "samples", "sample*.jpeg")
+sample_images = sorted(glob.glob(samples_path))
+
+# ✅ Create Vision API client
+client = vision.ImageAnnotatorClient()
+
+# 🔁 Process each image
 for i, image_path in enumerate(sample_images, start=1):
-    print(f"\n📸Sample {i}: {image_path}")
+    print(f"\n📸 Sample {i}: {image_path}")
 
-    # Load image using PIL
-    image = Image.open(image_path)
+    with open(image_path, "rb") as img_file:
+        content = img_file.read()
 
-    # Send image + prompt to Gemini API
-    response = model.generate_content(
-        ["Extract this text. Your only characters are CGAT.", image],
-        stream=False
-    )
+    image = vision.Image(content=content)
+    response = client.text_detection(image=image)
+    texts = response.text_annotations
 
-    # Clean the extracted text: keep only A, T, G, C
-    raw_text = response.text.strip().upper()
-    extracted_dna = ''.join(c for c in raw_text if c in "CGAT")
+    if not texts:
+        print("⚠️ No text detected.")
+        continue
 
-    #  Match against invasive carp sequences
-    best_similarity = 0
-    best_species = None
+    # 🧹 Clean the extracted DNA (keep only CGAT)
+    extracted_raw = texts[0].description.upper()
+    extracted_dna = ''.join(c for c in extracted_raw if c in "CGAT")
+
+    
+
+    # 🧠 Match against known DNA
+    best_score = 0.0
+    best_match = None
 
     for j, ref_dna in enumerate(invasive_carps):
-        similarity = 1 - Levenshtein.distance(extracted_dna, ref_dna) / max(len(ref_dna), 1)
-        if similarity > best_similarity:
-            best_similarity = similarity
-            best_species = species_names[j]
+        score = 1 - Levenshtein.distance(extracted_dna, ref_dna) / max(len(ref_dna), 1)
+        if score > best_score:
+            best_score = score
+            best_match = species_names[j]
 
-    # Output results
-    if best_similarity >= 0.90:
-        print(f" Sample {i} is INVASIVE ({best_similarity:.2%} match with {best_species})")
+    # ✅ Output result
+    if best_score >= 0.90:
+        print(f"✅ INVASIVE! Match: {best_match} ({best_score:.2%})")
     else:
-        print(f"Sample {i} is NOT invasive (best match: {best_species}, similarity: {best_similarity:.2%})")
+        print(f"❌ Not invasive. Closest: {best_match} ({best_score:.2%})")
 
+print("\n✅ Analysis Complete")
