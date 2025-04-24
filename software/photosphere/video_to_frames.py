@@ -2,7 +2,7 @@ import cv2
 import os
 
 # --- Configuration ---
-video_path = "video.mp4"          # Path to your video file
+video_path = "PhotosphereTask.mp4"          # Path to your video file
 frames_dir = "frames"             # Directory to save full frames
 new_frames = "new_frames"   # Directory to save left halves of frames
 resize_scale = 1                  # Scale for resizing frames
