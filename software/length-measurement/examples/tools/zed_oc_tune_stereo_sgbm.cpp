@@ -68,10 +68,11 @@ int main(int argc, char *argv[])
     // 1. Set up GStreamer Pipeline for the UDP Video Stream.
     // -------------------------------------------------------------
     // This pipeline receives an H264-encoded RTP stream on UDP port 5000.
+
+    //Change this ip to your the engineer laptop ip and build the pipeline again
     std::string pipeline =
-        "udpsrc port=5000 ! "
-        "application/x-rtp, encoding-name=H264, payload=96 ! "
-        "rtph264depay ! avdec_h264 ! videoconvert ! appsink";
+        "rtspsrc location=rtsp://192.168.1.100:8554/videofeed latency=0 buffer-mode=auto "
+        "! decodebin ! videoconvert ! appsink max-buffers=1 drop=True";
 
     cv::VideoCapture cap(pipeline, cv::CAP_GSTREAMER);
     if (!cap.isOpened())

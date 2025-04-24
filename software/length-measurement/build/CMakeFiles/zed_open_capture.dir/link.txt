@@ -1,1 +1,1 @@
-/usr/bin/c++ -fPIC -no-pie -O2 -s -flto -shared -Wl,-soname,libzed_open_capture.so -o libzed_open_capture.so CMakeFiles/zed_open_capture.dir/src/sensorcapture.cpp.o CMakeFiles/zed_open_capture.dir/src/videocapture.cpp.o  -lhidapi-libusb -lpthread -lusb-1.0 
+/usr/bin/c++ -fPIC -no-pie -O2 -s -flto  -shared -Wl,-soname,libzed_open_capture.so -o libzed_open_capture.so CMakeFiles/zed_open_capture.dir/src/sensorcapture.cpp.o CMakeFiles/zed_open_capture.dir/src/videocapture.cpp.o  -lhidapi-libusb -lpthread -lusb-1.0 

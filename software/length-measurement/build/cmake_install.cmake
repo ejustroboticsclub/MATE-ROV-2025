@@ -1,4 +1,4 @@
-# Install script for directory: /home/tasbih/zed-open-capture
+# Install script for directory: /home/nadine/latest-mate-repo/MATE-ROV-2025/software/length-measurement
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -37,11 +37,6 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
 endif()
 
-# Set default install directory permissions.
-if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/usr/bin/objdump")
-endif()
-
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   if(EXISTS "$ENV{DESTDIR}/usr/local/lib/libzed_open_capture.so" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}/usr/local/lib/libzed_open_capture.so")
@@ -57,7 +52,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/usr/local/lib" TYPE SHARED_LIBRARY FILES "/home/tasbih/zed-open-capture/build/libzed_open_capture.so")
+file(INSTALL DESTINATION "/usr/local/lib" TYPE SHARED_LIBRARY FILES "/home/nadine/latest-mate-repo/MATE-ROV-2025/software/length-measurement/build/libzed_open_capture.so")
   if(EXISTS "$ENV{DESTDIR}/usr/local/lib/libzed_open_capture.so" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}/usr/local/lib/libzed_open_capture.so")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -78,13 +73,13 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/usr/local/include/zed-open-capture" TYPE FILE FILES
-    "/home/tasbih/zed-open-capture/include/sensorcapture.hpp"
-    "/home/tasbih/zed-open-capture/include/defines.hpp"
-    "/home/tasbih/zed-open-capture/include/sensorcapture_def.hpp"
-    "/home/tasbih/zed-open-capture/include/videocapture.hpp"
-    "/home/tasbih/zed-open-capture/include/defines.hpp"
-    "/home/tasbih/zed-open-capture/include/videocapture_def.hpp"
+file(INSTALL DESTINATION "/usr/local/include/zed-open-capture" TYPE FILE FILES
+    "/home/nadine/latest-mate-repo/MATE-ROV-2025/software/length-measurement/include/sensorcapture.hpp"
+    "/home/nadine/latest-mate-repo/MATE-ROV-2025/software/length-measurement/include/defines.hpp"
+    "/home/nadine/latest-mate-repo/MATE-ROV-2025/software/length-measurement/include/sensorcapture_def.hpp"
+    "/home/nadine/latest-mate-repo/MATE-ROV-2025/software/length-measurement/include/videocapture.hpp"
+    "/home/nadine/latest-mate-repo/MATE-ROV-2025/software/length-measurement/include/defines.hpp"
+    "/home/nadine/latest-mate-repo/MATE-ROV-2025/software/length-measurement/include/videocapture_def.hpp"
     )
 endif()
 
@@ -103,12 +98,12 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/usr/local/bin" TYPE EXECUTABLE FILES "/home/tasbih/zed-open-capture/build/zed_open_capture_depth_tune_stereo")
+file(INSTALL DESTINATION "/usr/local/bin" TYPE EXECUTABLE FILES "/home/nadine/latest-mate-repo/MATE-ROV-2025/software/length-measurement/build/zed_open_capture_depth_tune_stereo")
   if(EXISTS "$ENV{DESTDIR}/usr/local/bin/zed_open_capture_depth_tune_stereo" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}/usr/local/bin/zed_open_capture_depth_tune_stereo")
     file(RPATH_CHANGE
          FILE "$ENV{DESTDIR}/usr/local/bin/zed_open_capture_depth_tune_stereo"
-         OLD_RPATH "/home/tasbih/zed-open-capture/build:"
+         OLD_RPATH "/home/nadine/latest-mate-repo/MATE-ROV-2025/software/length-measurement/build:"
          NEW_RPATH "")
     if(CMAKE_INSTALL_DO_STRIP)
       execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}/usr/local/bin/zed_open_capture_depth_tune_stereo")
@@ -124,5 +119,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/tasbih/zed-open-capture/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/nadine/latest-mate-repo/MATE-ROV-2025/software/length-measurement/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
