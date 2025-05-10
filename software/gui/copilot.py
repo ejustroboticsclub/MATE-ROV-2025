@@ -11,10 +11,10 @@ from utils import reconnect_command, terminal_execute
 
 
 CAM_PORTS = {
-    "Side": ["/dev/video2", "rtsp://192.168.1.100:5001/unicast"],
-    "Net": ["/dev/video4", "rtsp://192.168.1.100:5002/unicast"],
-    "Jelly": ["/dev/video8", "rtsp://192.168.1.100:5004/unicast"],
-    "Gripper": ["/dev/video6", "rtsp://192.168.1.100:5003/unicast"],
+    "Side": ["/dev/video4", "rtsp://192.168.1.100:5001/unicast"],
+    "Net": ["/dev/video2", "rtsp://192.168.1.100:5002/unicast"],
+    "Jelly": ["/dev/video6", "rtsp://192.168.1.100:5004/unicast"],
+    "Gripper": ["/dev/video8", "rtsp://192.168.1.100:5003/unicast"],
     "ZED": ["/dev/video0", "rtsp://192.168.1.100:8554/unicast"]
 }    
     
@@ -36,7 +36,7 @@ class CopilotUi(object):
         self.ip = ip
         self.username = username
         self.password = password
-        # self.client = create_ssh_client(ip, username, password)
+        self.client = create_ssh_client(ip, username, password)
         self.ros_interface = ros_interface
     def setupUi(self, Dialog):
         #loading font
@@ -686,11 +686,11 @@ class CopilotUi(object):
         Update the status of the indicators.
         :param statuses: List of booleans representing the status of each indicator.
         """
-        colors = ["green" if status else "red" for status in statuses.data]
-        self.indicator1_status.setStyleSheet(f"background-color: {colors[0]}; border-radius: 10px;")
-        self.indicator2_status.setStyleSheet(f"background-color: {colors[1]}; border-radius: 10px;")
-        self.indicator3_status.setStyleSheet(f"background-color: {colors[2]}; border-radius: 10px;")
-        self.indicator4_status.setStyleSheet(f"background-color: {colors[3]}; border-radius: 10px;")
+        # colors = ["green" if status else "red" for status in statuses.data]
+        # self.indicator1_status.setStyleSheet(f"background-color: {colors[0]}; border-radius: 10px;")
+        # self.indicator2_status.setStyleSheet(f"background-color: {colors[1]}; border-radius: 10px;")
+        # self.indicator3_status.setStyleSheet(f"background-color: {colors[2]}; border-radius: 10px;")
+        # self.indicator4_status.setStyleSheet(f"background-color: {colors[3]}; border-radius: 10px;")
 
 
     def update_jellyfish_status(self, status):
@@ -698,5 +698,6 @@ class CopilotUi(object):
         Update the status of the jellyfish indicator.
         :param status: Boolean representing the status of the jellyfish indicator.
         """
+        return None
         color = "green" if status.data else "red"
         self.jellyfish_indicator_status.setStyleSheet(f"background-color: {color}; border-radius: 10px;")

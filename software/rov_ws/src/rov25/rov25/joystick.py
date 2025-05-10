@@ -3,7 +3,7 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
-from std_msgs.msg import Bool, Int32
+from std_msgs.msg import Bool, Int32, Float32
 import pygame
 import time
 
@@ -110,12 +110,35 @@ class _GameController(Controller):
             self.depth += 0.005
         self.depth = min(1, self.depth)
 
-    
-    def depthUp(self):
-        # Don't rise up if the maximum value reached
+    def updateDepth(self):
         if self.joystick.get_button(5):
-            self.depth -= 0.005
-        self.depth = max(0, self.depth)
+            self.depth -= 0.003
+        elif self.joystick.get_button(4):
+            self.depth += 0.003
+        # else:
+        #     self.depth = 0
+        
+        self.depth = max(-1, self.depth)
+        self.depth = min(1, self.depth)
+
+    # TODO: uncomment if the depth worked
+    # def updateDepth(self):
+    #     if self.joystick.get_button(5):
+    #         self.depth = -1
+    #     elif self.joystick.get_button(4):
+    #         self.depth = 1
+    #     else:
+    #         self.depth = 0
+        
+
+        
+
+
+    # def depthUp(self):
+        # Don't rise up if the maximum value reached
+        # if self.joystick.get_button(5):
+        #     self.depth -= 0.005
+        # self.depth = max(0, self.depth)
 
     def leftGripper(self):
         if self.joystick.get_button(2):
@@ -158,7 +181,8 @@ class _GameController(Controller):
             self.pitch_button_is_down = True
         else:
             self.pitch_button_is_down = False
-
+    def get_throttle(self):
+        return self.joystick.get_axis(0)
     
         
 class _SpringyThrottleController(_GameController):
@@ -218,7 +242,7 @@ controllers = {
     "Sony Interactive Entertainment Wireless Controller": _Playstation((-1, 3, -4, 0)),
     "Logitech Extreme 3D": _GameController((-2, 0, -1, 3), 0),
     "Logitech Logitech Extreme 3D": _GameController((-3, 0, -1, 2), 0),
-    "Logitech Extreme 3D pro": _GameController((-3, 0, -1, 2), 0),
+    "Logitech Extreme 3D pro": _GameController((3, 0, -1, 2), 0),
     "FrSky Taranis Joystick": _RcTransmitter((0, 1, 2, 5), 3),
     "FrSky FrSky Taranis Joystick": _RcTransmitter((0, 1, 2, 3), 5),
     "SPEKTRUM RECEIVER": _RcTransmitter((1, 2, 5, 0), 4),
@@ -250,7 +274,7 @@ class JoyStickNode(Node):
         super().__init__("joystick")
         #Create a publisher for sending Twist messages on the "ROV/joystick" topic with a queue size of 10
         self.joystick_publisher = self.create_publisher(Twist, "ROV/joystick", 10)
-
+        self.pitch_publisher = self.create_publisher(Float32, "ROV/pitch", 1)
         #Create a publisher for sending Bool messages on the gripper topics with a queue size of 1
         self.gripper_r_publisher = self.create_publisher(Bool, "ROV/gripper_r", 1)
         self.gripper_l_publisher = self.create_publisher(Bool, "ROV/gripper_l", 1)
@@ -259,9 +283,9 @@ class JoyStickNode(Node):
         self.rotatingROV_publisher=self.create_publisher(Bool, "ROV/rotating", 1)
 
         # Publisher to set Pitch
-        self.pitch_publisher = self.create_publisher(
-            Int32, "ROV/pitch", 1
-        )
+        # self.pitch_publisher = self.create_publisher(
+        #     Int32, "ROV/pitch", 1
+        # )
         # Subscriber to know if the ROV reached 360 rotation so it can set rotating_button to False.
         self.rotation_done = self.create_subscription(
             Bool, "ROV/rotation_done", self.rotation_done_callback, 10
@@ -316,12 +340,14 @@ class JoyStickNode(Node):
         # getAimball() from PySticks.py returns a tuple (x, y); we unpack them into aim_ball_x and aim_ball_y.
         aim_ball_x = self.controller.getAimball()[0]
         aim_ball_y = self.controller.getAimball()[1]
-
+        new_pitch = Float32()
+        new_pitch.data = float(self.controller.getThrottle())
+        self.pitch_publisher.publish(new_pitch)
         # Read the depth controls:
         # depthUp() and depthDown() from PySticks.py update the controller's depth attribute based on button presses.
-        self.controller.depthUp()
-        self.controller.depthDown()
-
+        # self.controller.depthUp()
+        # self.controller.depthDown()
+        self.controller.updateDepth()
         # Update the gripper states (toggle left/right gripper using button presses) 
         # toggle action is managed in PySticks.py
         self.controller.leftGripper()
@@ -393,12 +419,12 @@ class JoyStickNode(Node):
         else:
             self.pitch_msg.data = 0
          
-        # Publish the pitch message only  if the pitch value has changed.        
-        if self.pitch_msg.data != self.prev_pitch:
-            self.pitch_publisher.publish(self.pitch_msg)
-            self.prev_pitch = self.pitch_msg.data
-        else:
-            self.pitch_msg.data = 0
+        # # Publish the pitch message only  if the pitch value has changed.        
+        # if self.pitch_msg.data != self.prev_pitch:
+        #     self.pitch_publisher.publish(self.pitch_msg)
+        #     self.prev_pitch = self.pitch_msg.data
+        # else:
+        #     self.pitch_msg.data = 0
 
         # Check if the stop button is pressed; if so, reset the twist message to a new, empty Twist (all zeros)
         if self.controller.stopAll():

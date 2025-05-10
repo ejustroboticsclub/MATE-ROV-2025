@@ -16,7 +16,7 @@ class Param:
     vy_const: float = 1         # Scaling factor for left/right velocity (linear.y)
     wz_const: float = 1         # Scaling factor for angular velocity (angular.z)
     dz_const: float = 1         # Scaling factor for depth velocity (linear.z)
-    pool_depth: float = 2.0     # Maximum pool depth; value can be changed (e.g., 4 for competition)
+    pool_depth: float = 1.0     # Maximum pool depth; value can be changed (e.g., 4 for competition)
 
 # Create an instance of Param with default values.
 PARAM = Param()

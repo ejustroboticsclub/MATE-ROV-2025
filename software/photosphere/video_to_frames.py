@@ -2,11 +2,11 @@ import cv2
 import os
 
 # --- Configuration ---
-video_path = "PhotosphereTask.mp4"          # Path to your video file
-frames_dir = "frames"             # Directory to save full frames
-new_frames = "new_frames"   # Directory to save left halves of frames
-resize_scale = 1                  # Scale for resizing frames
-S = 2                             # Interval in seconds between frames
+video_path = "/home/abdelrhman/MATE-ROV-2025/software/photosphere/PhotosphereTask.mp4"  # Path to your video file
+frames_dir = "frames"  # Directory to save full frames
+new_frames = "new_frames"  # Directory to save left halves of frames
+resize_scale = 1  # Scale for resizing frames
+S = 0.5  # Interval in seconds between frames
 
 # --- Setup ---
 os.makedirs(frames_dir, exist_ok=True)
@@ -39,7 +39,7 @@ while cap.isOpened():
 
         # Slice and save left half
         height, width = frame.shape[:2]
-        left_half = frame[:, :width // 2]
+        left_half = frame[:, : width // 2]
         left_half_path = os.path.join(new_frames, f"left_{frame_filename}")
         cv2.imwrite(left_half_path, left_half)
 

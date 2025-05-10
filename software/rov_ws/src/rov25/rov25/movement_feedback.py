@@ -176,11 +176,11 @@ class Param:
     windup_val_pitch = 0.1
 
     # Thruster limits
-    thruster_max = 1660
-    thruster_min = 1310  # Changed to 1180 instead of 1160 to make sure that the center is 1485 which is a stoping value
+    thruster_max = 1900
+    thruster_min = 1100  # Changed to 1180 instead of 1160 to make sure that the center is 1485 which is a stoping value
 
-    thruster_side_max = 1700
-    thruster_side_min = 1300
+    thruster_side_max = 1800
+    thruster_side_min = 1200
 
     # Velocity and angular constraints
     # corredponding to motion control node
@@ -220,6 +220,7 @@ class Reference:
 
     v_x = 0
     v_y = 0
+    v_z = 0
     w_z = 0
     yaw = 0
     roll = 0
@@ -270,9 +271,9 @@ def create_pid_objects(parameter_object: Param):
     )
 
     pid_pitch = PID(
-        k_proportaiol= parameter_object.kp_depth,
-        k_derivative=parameter_object.kd_depth,
-        k_integral=parameter_object.ki_depth,
+        k_proportaiol= parameter_object.kp_pitch,
+        k_derivative=parameter_object.kd_pitch,
+        k_integral=parameter_object.ki_pitch,
         windup_val=parameter_object.windup_val_pitch
     )
         
@@ -380,9 +381,10 @@ class CalibrationNode(Node):
         self.t = Time()
         self.actual = Measured()
         self.desired = Reference()
+            
         self.t.t_prev = time()
-
-        self.queue = live_queue_plotter.initialize_queue(1000, 10)
+        self.desired_gui = Twist()
+        live_queue_plotter.initialize_queue(1000, 10)
         
         ###
         self.is_rotating = False  # Is the ROV currently rotating?
@@ -391,6 +393,7 @@ class CalibrationNode(Node):
         ###
 
         super().__init__("kinematic_model")
+        
         """
             publisher to ROV/thrusters topic
 
@@ -426,7 +429,7 @@ class CalibrationNode(Node):
             Imu, "ROV/imu", self.imu_recieved_callback, 10
         )
         self.pitch_subscriber = self.create_subscription(
-            Int32, "ROV/pitch", self.pitch_received_callback, 10
+            Float32, "ROV/pitch", self.pitch_received_callback, 10
         )
         self.rotating_button_subscriber = self.create_subscription(
             Bool, "ROV/rotating", self.rotating_button_callback, 10
@@ -527,6 +530,8 @@ class CalibrationNode(Node):
             updates the desired velocities in the x and y axis and the desired depth using the 
             proportional constants  
         """
+        # live_queue_plotter.draw()
+        
         v_x = self.desired.v_x * self.PARAM.kp_x
         v_y = self.desired.v_y * self.PARAM.kp_y
         d_z = self.desired.depth * self.PARAM.kp_depth
@@ -558,12 +563,12 @@ class CalibrationNode(Node):
             w_z = self.desired.w_z
             self.desired.yaw = self.actual.yaw
 
-        self.get_logger().info(f"Desired yaw: {self.desired.yaw}, Actual yaw: {self.actual.yaw}")
+        # self.get_logger().info(f"Desired yaw: {self.desired.yaw}, Actual yaw: {self.actual.yaw}")
         """
             calculate the four planner thrusters' values and  bounds them between the minimum and
             maximum value for the thrusters 
         """
-        phi_1, phi_2, phi_3, phi_4 = self.ROV.kinematic_control(v_x, v_y, w_z)
+        phi_1, phi_2, phi_3, phi_4 = self.ROV.kinematic_control(v_x, -v_y, w_z)
         min_phi_val, max_phi_val = self.ROV.find_phi_boudary_values(self.PARAM)
 
         phi_1, phi_2, phi_3, phi_4 = self.ROV.saturate_actuators(
@@ -616,16 +621,34 @@ class CalibrationNode(Node):
             multiply it with the proportionality constant then scale it between the max and min
             values of the side thrusters 
         """
-        depth_error = self.desired.depth - self.actual.depth
-        # self.get_logger().info(f"desired depth: {self.desired.depth}")
-        correction_value = depth_error * self.PARAM.kp_depth
-        
-        
+
+        #TODO: uncomment if depth worked
+        # depth_error = self.desired.depth - self.actual.depth
+        # depth_error = map_from_to(
+        #     depth_error,
+        #     -2,
+        #     2,
+        #     self.PARAM.thruster_side_min/self.PARAM.kp_depth,
+        #     self.PARAM.thruster_side_max/ self.PARAM.kp_depth,
+        # )
+        # correction_value = depth_error * self.PARAM.kp_depth
+        # if self.desired.v_z != 0:
+        #     correction_value = self.desired.v_z
+        #     correction_value = map_from_to(
+        #     correction_value,
+        #     -1,
+        #     1,
+        #     self.PARAM.thruster_side_min,
+        #     self.PARAM.thruster_side_max,
+        # )
+        # depth_thruster = correction_value
+
+
         # self.get_logger().info(f"correction_value: {correction_value}")
         depth_thruster = map_from_to(
-            correction_value,
-            -2,
-            2,
+            self.desired.depth,
+            -1,
+            1,
             self.PARAM.thruster_side_min,
             self.PARAM.thruster_side_max,
         )
@@ -648,13 +671,31 @@ class CalibrationNode(Node):
         phi_5 = min(phi_5, self.PARAM.thruster_side_max)
         phi_6 = min(phi_6, self.PARAM.thruster_side_max)
 
-    
+        
+        
         phi_7 = self.pid_pitch.compute(self.actual.pitch, self.desired.pitch)
+        
+        phi_7 = map_from_to(
+            self.desired.pitch,
+            -1,
+            1,
+            self.PARAM.thruster_min,    
+            self.PARAM.thruster_max
+        )
+        
+        
         phi_7 = max(phi_7, self.PARAM.thruster_side_min)
         phi_7 = min(phi_7, self.PARAM.thruster_side_max)
         
 
-        planer_thrusters_list = [phi_2, phi_5, phi_4, phi_3, phi_1, phi_6, phi_7]
+        # planer_thrusters_list = [phi_2, phi_5, phi_4, phi_3, phi_1, phi_6, phi_7]
+        
+        
+        planer_thrusters_list = [phi_4, phi_5, phi_2, phi_1, phi_3, phi_6, phi_7] # Working R and L reversed.
+        
+        # for thruster in range(4):
+        #     planer_thrusters_list[thruster] = 1500 - (planer_thrusters_list[thruster] - 1500)
+
         # create the message instance
         thrusters_voltages = Int32MultiArray()
 
@@ -662,10 +703,15 @@ class CalibrationNode(Node):
         thrusters_voltages.data = list(map(int,planer_thrusters_list))
 
         # publish the message
-        # self.get_logger().info(str(list(thrusters_voltages.data)))
+        self.get_logger().info(str(list(thrusters_voltages.data)))
 
         self.thrusters_voltages_publisher.publish(thrusters_voltages)
 
+        self.desired_gui.linear.z = float(self.desired.depth)
+        self.desired_gui.angular.z = float(self.desired.yaw)
+        self.desired_values_gui_publisher.publish(self.desired_gui)
+        
+        
 
  
     def rotating_button_callback(self, msg: Bool):
@@ -686,8 +732,10 @@ class CalibrationNode(Node):
         """
         self.desired.v_x = twist_msg.linear.x
         self.desired.v_y = twist_msg.linear.y
-        self.desired.depth = twist_msg.linear.z
         self.desired.w_z = twist_msg.angular.z
+        # TODO: switch to the commented and comment the next
+        # self.desired.v_z = twist_msg.linear.z
+        self.desired.depth = twist_msg.linear.z
         
 
 
@@ -698,6 +746,7 @@ class CalibrationNode(Node):
             pitch_msg (Float64): pitch in degrees
         """
         # self.get_logger().info(f"Target pitch: {pitch_msg.data}")
+        
         self.desired.pitch = pitch_msg.data
     def depth_recieved_callback(self, depth_msg: Float32):
         """callback function for the subscriber to the ROV/depth topic and updates teh self.actual attribute
@@ -707,7 +756,7 @@ class CalibrationNode(Node):
         """
 
         # self.get_logger().info(f"depth: {depth_msg}")
-        live_queue_plotter.update(depth_msg.data)
+        # live_queue_plotter.update(depth_msg.data)
         self.actual.depth = depth_msg.data
 
     def imu_recieved_callback(self, imu: Imu):

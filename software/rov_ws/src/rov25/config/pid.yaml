@@ -10,7 +10,7 @@ kinematic_model:
       ki: 0.0
       kd: 0.0
     w:
-      kp: 2.0
+      kp: 1.0
       ki: 0.0
       kd: 0.0
     depth:
@@ -18,11 +18,11 @@ kinematic_model:
       ki: 0.0
       kd: 0.0
     roll:
-      kp: 7.0
+      kp: 2.0
       ki: 0.0
       kd: 0.12
     pitch:
-      kd: 3.0
+      kd: 1.0
       ki: 0.0
       kp: 0.0
     floatability: 0.23

@@ -56,16 +56,20 @@ class ROVSimulator(Node):
 
         sqrt2 = math.sqrt(2) / 2
         vectors = [
-            ( sqrt2,  sqrt2),  # T1
-            (-sqrt2,  sqrt2),  # T2
-            ( sqrt2, -sqrt2),  # T3
             (-sqrt2, -sqrt2),  # T4
+            (0.0, 0.0,),
+            (-sqrt2,  sqrt2),  # T2
+            ( sqrt2,  sqrt2),  # T1
+            ( sqrt2, -sqrt2)  # T3
+            
         ]
         yaw_signs = [1, -1, -1, 1]
 
         fx_total, fy_total, torque_z = 0.0, 0.0, 0.0
 
-        for i in range(4):
+        for i in range(5):
+            if i == 1:
+                continue
             f = self.pwm_to_force(self.last_forces[i], self.thruster_min, self.thruster_max, self.max_thrust)
             fx_total += vectors[i][0] * f
             fy_total += vectors[i][1] * f
