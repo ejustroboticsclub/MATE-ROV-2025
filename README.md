@@ -7,3 +7,6 @@
   <img src="images/team_photo.jpg" width="600" height="350">
 </p>
 
+<p align="center">
+  <img src="images/2025team.png" width="750" height="350">
+</p>
